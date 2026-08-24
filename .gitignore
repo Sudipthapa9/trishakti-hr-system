@@ -1,0 +1,4 @@
+.env
+infrastructure/keycloak/.env
+*.log
+node_modules/
