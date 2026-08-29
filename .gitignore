@@ -2,3 +2,4 @@
 infrastructure/keycloak/.env
 *.log
 node_modules/
+infrastructure/keycloak/keycloak.tsx
