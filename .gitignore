@@ -3,3 +3,58 @@ infrastructure/keycloak/.env
 *.log
 node_modules/
 infrastructure/keycloak/keycloak.tsx
+# ── Environment / secrets ────────────────────────────
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# ── Node (frontend + backend) ────────────────────────
+node_modules/
+**/node_modules/
+dist/
+build/
+.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# ── Python (ai-service) ──────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ── AI model cache (large files, re-downloadable) ────
+ai-service/**/models_cache/
+ai-service/**/.cache/
+huggingface_cache/
+
+# ── Docker ────────────────────────────────────────────
+*.pid
+
+# ── IDE / editor ──────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS junk ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Keycloak / infra secrets ──────────────────────────
+infrastructure/keycloak/.env
+
+# ── Logs ──────────────────────────────────────────────
+logs/
+*.log
