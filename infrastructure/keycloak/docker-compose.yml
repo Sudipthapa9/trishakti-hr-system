@@ -46,11 +46,11 @@ services:
 
     networks:
       - trishakti-network
-
+#http://localhost:8080
 
 volumes:
   keycloak_postgres_data:
-  external:
+  external: 
     name: keycloak_keycloak_postgres_data
 
 
