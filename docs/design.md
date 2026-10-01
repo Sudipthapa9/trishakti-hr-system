@@ -198,6 +198,29 @@ Use Tailwind-compatible token names in code and keep component behavior aligned 
 - Use meaningful button labels and accessible names for icon-only controls.
 - Keep status and error text readable against its background.
 
+## Authentication Workflow
+
+Keycloak owns credential collection and recovery. The React app owns the entry screen, post-authentication welcome state, and future workspace shell.
+
+```text
+Signed out
+  -> Sign in -> Keycloak login -> authenticated -> Welcome to TSHR -> Workspace
+  -> Create an account -> Keycloak registration -> authenticated -> Welcome to TSHR
+  -> Forgot password -> Keycloak login -> Forgot password -> email reset -> login
+  -> Sign out -> Keycloak logout -> Signed out
+```
+
+Required Keycloak realm settings:
+
+- Registration enabled
+- Reset password enabled
+- Email login enabled
+- Web client uses Standard Flow with PKCE `S256`
+- Web client does not use Direct Access Grants
+- Redirect URI: the frontend origin with a trailing `/*`
+
+The frontend uses only public `VITE_KEYCLOAK_*` configuration. Never put client secrets, admin credentials, tokens, or reset links in the frontend or in this repository.
+
 ## Review Checklist
 
 Before changing a Figma screen or component:
