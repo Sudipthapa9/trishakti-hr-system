@@ -58,3 +58,6 @@ infrastructure/keycloak/.env
 # ── Logs ──────────────────────────────────────────────
 logs/
 *.log
+
+# Private implementation notes
+docs/figma-to-code-guide.md
