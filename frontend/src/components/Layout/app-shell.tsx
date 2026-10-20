@@ -19,6 +19,7 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export type NavItem = {
@@ -51,81 +52,83 @@ export function AppShell({
   const location = useLocation();
 
   return (
-    <SidebarProvider className={cn("min-h-screen", className)}>
-      <Sidebar>
-        <SidebarHeader className="p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-              T
-            </span>
-            <div>
-              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Trishakti</p>
-              <p className="m-0 text-lg font-bold text-foreground">HR Suite</p>
+    <TooltipProvider>
+      <SidebarProvider className={cn("min-h-screen", className)}>
+        <Sidebar>
+          <SidebarHeader className="p-4">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
+                T
+              </span>
+              <div>
+                <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Trishakti</p>
+                <p className="m-0 text-lg font-bold text-foreground">HR Suite</p>
+              </div>
             </div>
-          </div>
-        </SidebarHeader>
+          </SidebarHeader>
 
-        <SidebarSeparator />
+          <SidebarSeparator />
 
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {navItems.map(({ label, to, icon: Icon }) => {
-                  const isActive =
-                    location.pathname === to ||
-                    (to !== "/dashboard" && location.pathname.startsWith(`${to}/`));
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {navItems.map(({ label, to, icon: Icon }) => {
+                    const isActive =
+                      location.pathname === to ||
+                      (to !== "/dashboard" && location.pathname.startsWith(`${to}/`));
 
-                  return (
-                    <SidebarMenuItem key={label}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
-                        <NavLink to={to} end={to === "/dashboard"}>
-                          <Icon aria-hidden="true" />
-                          <span>{label}</span>
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
+                    return (
+                      <SidebarMenuItem key={label}>
+                        <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
+                          <NavLink to={to} end={to === "/dashboard"}>
+                            <Icon aria-hidden="true" />
+                            <span>{label}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
 
-        <SidebarSeparator />
+          <SidebarSeparator />
 
-        <SidebarFooter className="p-3">
-          <div className="flex min-w-0 items-center gap-3 rounded-lg bg-sidebar-accent p-3 text-sidebar-accent-foreground">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-              <UserRound aria-hidden="true" className="h-4 w-4" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold">{username}</span>
-              <span className="block truncate text-xs opacity-75">{roleLabel}</span>
-            </span>
-          </div>
+          <SidebarFooter className="p-3">
+            <div className="flex min-w-0 items-center gap-3 rounded-lg bg-sidebar-accent p-3 text-sidebar-accent-foreground">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <UserRound aria-hidden="true" className="h-4 w-4" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">{username}</span>
+                <span className="block truncate text-xs opacity-75">{roleLabel}</span>
+              </span>
+            </div>
 
-          {onLogout ? (
-            <Button variant="outline" className="mt-2 w-full justify-start" onClick={onLogout}>
-              <LogOut aria-hidden="true" />
-              <span>Sign out</span>
-            </Button>
-          ) : null}
-        </SidebarFooter>
-      </Sidebar>
+            {onLogout ? (
+              <Button variant="outline" className="mt-2 w-full justify-start" onClick={onLogout}>
+                <LogOut aria-hidden="true" />
+                <span>Sign out</span>
+              </Button>
+            ) : null}
+          </SidebarFooter>
+        </Sidebar>
 
-      <SidebarInset className="min-w-0">
-        <header className="flex min-h-16 items-center gap-3 border-b border-border bg-background px-4 md:px-8">
-          <SidebarTrigger className="md:hidden" />
-          <div className="ml-auto flex items-center gap-3">
-            {topBar}
-            {headerAction}
-          </div>
-        </header>
+        <SidebarInset className="min-w-0">
+          <header className="flex min-h-16 items-center gap-3 border-b border-border bg-background px-4 md:px-8">
+            <SidebarTrigger className="md:hidden" />
+            <div className="ml-auto flex items-center gap-3">
+              {topBar}
+              {headerAction}
+            </div>
+          </header>
 
-        <div className="min-w-0 p-4 md:p-8">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+          <div className="min-w-0 p-4 md:p-8">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }

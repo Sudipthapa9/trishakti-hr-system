@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { Candidate, CandidateStage } from "@/types/hr";
 
-import "./pages.css";
+import "../pages.css";
 
 type CandidatesPageProps = {
   candidates: Candidate[];

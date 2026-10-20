@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import type { Job, JobStatus } from "@/types/hr";
 
-import "./pages.css";
+import "../pages.css";
 
 type JobsPageProps = {
   jobs: Job[];
