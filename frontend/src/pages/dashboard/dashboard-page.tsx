@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { demoActivity } from "@/data/demo-data";
 import type { Candidate, Job } from "@/types/hr";
 
-import "./pages.css";
+import "../pages.css";
 
 type DashboardPageProps = {
   jobs: Job[];
