@@ -1,9 +1,4 @@
-.env
-infrastructure/keycloak/.env
-*.log
-node_modules/
-infrastructure/keycloak/keycloak.tsx
-# ── Environment / secrets ────────────────────────────
+# Environment and secrets
 .env
 .env.*
 !.env.example
@@ -11,53 +6,57 @@ infrastructure/keycloak/keycloak.tsx
 **/.env.*
 !**/.env.example
 
-# ── Node (frontend + backend) ────────────────────────
-node_modules/
+# Node
 **/node_modules/
 dist/
 build/
 .vite/
-*.log
+.npm/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.npm/
 
-# ── Python (ai-service) ──────────────────────────────
+# Python
 __pycache__/
 *.py[cod]
-*.pyc
 .venv/
 venv/
 env/
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# ── AI model cache (large files, re-downloadable) ────
-ai-service/**/models_cache/
-ai-service/**/.cache/
+# AI model cache
+cv-screening/**/models_cache/
+cv-screening/**/.cache/
 huggingface_cache/
 
-# ── Docker ────────────────────────────────────────────
+# Docker
 *.pid
 
-# ── IDE / editor ──────────────────────────────────────
+# IDE and editor
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# ── OS junk ───────────────────────────────────────────
+# OS
 .DS_Store
 Thumbs.db
 
-# ── Keycloak / infra secrets ──────────────────────────
+# Local Keycloak config
+infrastructure/keycloak/keycloak.tsx
 infrastructure/keycloak/.env
 
-# ── Logs ──────────────────────────────────────────────
+# Logs
 logs/
 *.log
 
-# Local documentation and implementation notes
+# Keep only this local implementation note unignored.
 docs/
+!docs/
+docs/*
+!docs/ai-work.md

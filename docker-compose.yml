@@ -72,16 +72,14 @@ services:
   #   networks:
   #     - trishakti-network
 
-  # ── AI Service (Python/FastAPI) ──────────────────────────
-  # Commented out until ai-service/Dockerfile + code exist
-  # ai-service:
-  #   build: ./ai-service
-  #   restart: unless-stopped
-  #   env_file: ./ai-service/.env
-  #   ports:
-  #     - "8000:8000"
-  #   networks:
-  #     - trishakti-network
+  # ── CV Screening (Python/FastAPI) ────────────────────────
+  cv-screening:
+    build: ./cv-screening
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      - trishakti-network
 
   # ── Frontend (React/Vite) ────────────────────────────────
   # Commented out until frontend/Dockerfile exists
