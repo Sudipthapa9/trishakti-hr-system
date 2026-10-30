@@ -48,17 +48,15 @@ export function JobsPage({ jobs, onStatusChange }: JobsPageProps) {
     <div className="page-stack">
       <PageHeader
         eyebrow="Recruitment"
-        title="Job management"
-        description="Create openings and keep track of your hiring activity."
+        title="Job Management"
+        description="Overview of open requisitions, drafts, and closed positions."
         className="page-heading"
         action={
           <Button asChild>
-            <Link to="/jobs/new">Create a job</Link>
+            <Link to="/jobs/new">Post New Job</Link>
           </Button>
         }
       />
-
-      <p className="demo-note">Demo data only. Changes stay in this browser session and are not saved to a server.</p>
 
       <Card>
         <CardContent className="pt-6">

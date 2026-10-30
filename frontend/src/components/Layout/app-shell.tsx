@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { LogOut, UserRound, type LucideIcon } from "lucide-react";
+import { Bell, LogOut, Search, UserRound, type LucideIcon } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Sidebar,
   SidebarContent,
@@ -61,8 +62,8 @@ export function AppShell({
                 T
               </span>
               <div>
-                <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Trishakti</p>
-                <p className="m-0 text-lg font-bold text-foreground">HR Suite</p>
+                <p className="m-0 text-lg font-bold leading-tight text-primary">Trishakti HR</p>
+                <p className="m-0 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground">RECRUITMENT SUITE</p>
               </div>
             </div>
           </SidebarHeader>
@@ -120,7 +121,12 @@ export function AppShell({
         <SidebarInset className="min-w-0">
           <header className="flex min-h-16 items-center gap-3 border-b border-border bg-background px-4 md:px-8">
             <SidebarTrigger className="md:hidden" />
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-auto flex min-w-0 items-center gap-4">
+              <label className="shell-search hidden min-w-0 items-center gap-2 rounded-full border border-border bg-card px-3 md:flex">
+                <Search aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                <Input aria-label="Search across Trishakti HR" placeholder="Search across Trishakti HR..." className="h-9 min-w-0 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0" />
+              </label>
+              <Bell aria-hidden="true" className="hidden size-5 text-muted-foreground sm:block" />
               {topBar}
               {headerAction}
             </div>
