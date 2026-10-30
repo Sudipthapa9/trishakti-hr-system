@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState, type FormEvent } from "react";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { PageHeader } from "@/components/Layout/page-header";
@@ -188,8 +188,8 @@ export function NewJobPage({ onCreate }: NewJobPageProps) {
     <div className="page-stack">
       <PageHeader
         eyebrow="Recruitment"
-        title="Create a job"
-        description="Add the basics now. You can publish the opening later."
+        title="Create New Job"
+        description="Define the role parameters and configure AI screening criteria."
         className="page-heading"
       />
 
@@ -233,6 +233,15 @@ export function NewJobPage({ onCreate }: NewJobPageProps) {
                 <Textarea id="job-description" name="description" placeholder="Describe the role and its responsibilities." />
               </div>
             </div>
+
+            <section className="job-ai-section">
+              <div className="job-ai-heading"><div><p className="section-label">AI Screening Configuration</p><p>Define the parameters used to score and rank applicants.</p></div><Badge variant="success">Active engine</Badge></div>
+              <div className="job-skill-grid">
+                <div className="job-skill-box"><div><strong>Required Skills</strong><Badge variant="danger">Must have</Badge></div><div className="job-skill-input"><Input placeholder="e.g. Python" /><select className="form-select" defaultValue="5"><option value="5">Wt: 5</option><option value="4">Wt: 4</option></select><Button type="button" variant="outline" size="icon" aria-label="Add required skill"><Plus aria-hidden="true" /></Button></div><Badge variant="default">Python Development · W: 5</Badge><Badge variant="default">System Architecture · W: 4</Badge></div>
+                <div className="job-skill-box"><div><strong>Preferred Skills</strong><Badge variant="success">Nice to have</Badge></div><div className="job-skill-input"><Input placeholder="e.g. AWS Certification" /><select className="form-select" defaultValue="2"><option value="2">Wt: 2</option><option value="1">Wt: 1</option></select><Button type="button" variant="outline" size="icon" aria-label="Add preferred skill"><Plus aria-hidden="true" /></Button></div><Badge variant="neutral">Docker/Kubernetes · W: 2</Badge></div>
+              </div>
+              <div className="job-ai-footer"><div className="form-field"><Label htmlFor="vacancy-count">Vacancy count</Label><Input id="vacancy-count" name="vacancyCount" type="number" min="1" defaultValue="1" /></div><div className="form-field"><Label htmlFor="shortlist-multiplier">Shortlist multiplier</Label><Input id="shortlist-multiplier" name="shortlistMultiplier" type="number" min="1" defaultValue="5" /></div></div>
+            </section>
 
             {error ? <p role="alert" className="mt-4 text-sm text-[var(--color-status-danger)]">{error}</p> : null}
 

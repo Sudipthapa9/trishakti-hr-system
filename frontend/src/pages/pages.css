@@ -315,6 +315,9 @@ td, th { border-bottom-color: #e1e5e7 !important; }
   text-align: center;
 }
 
+.job-ai-section { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--color-border-default); }
+.job-ai-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }.job-ai-heading > div > p:last-child { margin-top: 4px; color: var(--color-text-secondary); font-size: 13px; }.job-skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }.job-skill-box { display: grid; gap: 13px; padding: 18px; border: 1px solid var(--color-border-default); border-radius: 10px; background: #fffdfa; }.job-skill-box > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 10px; }.job-skill-input { display: flex; align-items: center; gap: 8px; }.job-skill-input input { min-width: 0; flex: 1; }.job-skill-input select { width: 92px; }.job-skill-box > .badge { width: fit-content; }.job-ai-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--color-border-default); }
+
 .candidate-pipeline-toolbar {
   display: flex;
   align-items: flex-end;
@@ -383,4 +386,5 @@ td, th { border-bottom-color: #e1e5e7 !important; }
   .candidate-pipeline-toolbar { align-items: stretch; flex-direction: column; }
   .candidate-pipeline-toolbar select, .pipeline-search { width: 100%; }
   .pipeline-filter { margin-right: 0; justify-content: flex-start; padding: 0; }
+  .job-skill-grid, .job-ai-footer { grid-template-columns: 1fr; }
 }
