@@ -1,3 +1,4 @@
+# Ignore local tooling, dependency folders, and generated build output; patterns below are unchanged.
 # Logs
 logs
 *.log

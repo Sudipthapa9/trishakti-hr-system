@@ -1,0 +1,265 @@
+/* employee-record-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-employees-employee-record-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-heading small {
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #8a9282;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.employee-heading h1 {
+  font-size: 30px;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  margin-top: 6px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-heading > div:last-child {
+  display: flex;
+  gap: 12px;
+}
+/* set text hierarchy and readability. */
+.employee-heading button {
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.employee-profile,
+.employee-personal,
+.employee-documents {
+  background: #fffdf8;
+  border: 1px solid #e5e1d7;
+  border-radius: 10px;
+  padding: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-profile {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 30px;
+}
+/* set spacing between this region and its content; control dimensions. */
+.employee-profile > img {
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 24px;
+}
+/* set text hierarchy and readability. */
+.employee-profile h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-profile > p {
+  font-size: 12px;
+  color: #7c8475;
+  margin-top: 6px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.employee-profile > [data-slot="badge"] {
+  min-height: 20px;
+  font-size: 10px;
+  padding: 2px 8px;
+  margin-top: 8px;
+}
+/* arrange the contained elements; set spacing between this region and its content; control dimensions. */
+.employee-profile dl {
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid #deded4;
+  padding-top: 24px;
+  margin-top: auto;
+  display: grid;
+  gap: 16px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-profile dt {
+  font-size: 10px;
+  color: #8c9385;
+  margin-bottom: 5px;
+}
+/* set text hierarchy and readability. */
+.employee-profile dd {
+  font-size: 13px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-details {
+  display: grid;
+  gap: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.employee-personal h2,
+.employee-documents h2,
+.employee-journey h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+/* apply the intended surface or text colors. */
+.employee-personal h2 svg {
+  color: #194e65;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 36px;
+  margin-top: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-fields label {
+  display: block;
+  font-size: 10px;
+  color: #92998c;
+  margin-bottom: 6px;
+}
+/* set text hierarchy and readability. */
+.employee-fields p {
+  font-size: 13px;
+}
+/* set spacing between this region and its content. */
+.employee-personal > h2:nth-of-type(2) {
+  border-top: 1px solid #deded4;
+  margin-top: 26px;
+  padding-top: 22px;
+}
+/* set spacing between this region and its content. */
+.employee-personal > button {
+  margin-top: 20px;
+}
+/* arrange the contained elements. */
+.emergency-fields {
+  grid-template-columns: 1fr 1fr 1.3fr;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.employee-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.employee-documents button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #deddd3;
+  background: #faf4e9;
+  text-align: left;
+  font-size: 12px;
+}
+/* define the visual boundary or interaction treatment. */
+.employee-documents button > span {
+  flex: 1;
+}
+/* set spacing between this region and its content. */
+.employee-documents h2 {
+  margin-bottom: 22px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; position this element relative to its surrounding layout. */
+.employee-journey {
+  padding: 24px;
+  background: #194e65;
+  color: white;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-journey p {
+  font-size: 12px;
+  color: #d0dee0;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-journey [data-slot="button"] {
+  margin-top: 20px;
+  font-size: 11px;
+  background: #fff8ef;
+  color: #194e65;
+}
+/* position this element relative to its surrounding layout; control dimensions. */
+.employee-journey:after {
+  content: "";
+  position: absolute;
+  right: -25px;
+  bottom: -30px;
+  width: 140px;
+  height: 140px;
+  border: 24px solid #ffffff08;
+  border-radius: 50%;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .employee-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .employee-bottom {
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .employee-profile,
+  .employee-personal,
+  .employee-documents,
+  .employee-journey {
+    padding: 20px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .emergency-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .employee-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .employee-profile dl {
+    margin-top: 30px;
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .employee-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 500px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .employee-bottom,
+  .employee-fields {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .employee-heading h1 {
+    font-size: 25px;
+  }
+}

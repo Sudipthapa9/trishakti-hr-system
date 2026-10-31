@@ -1,0 +1,330 @@
+/* shared: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+/* Shared page patterns and component defaults. Page-specific styles live beside each page. */
+/* arrange the contained elements; set spacing between this region and its content. */
+.page-stack {
+  display: grid;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* set spacing between this region and its content; set text hierarchy and readability. */
+
+.page-heading h1 {
+  margin: 6px 0 0;
+  font-size: 36px;
+  letter-spacing: -0.04em;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+
+.page-heading p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+
+.demo-note {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+/* define the visual boundary or interaction treatment. */
+
+[data-slot="card"] {
+  border-color: var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 3px 10px rgb(39 53 60 / 4%);
+}
+
+/* set text hierarchy and readability. */
+
+[data-slot="card-title"] {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* set spacing between this region and its content. */
+
+[data-slot="card-header"] {
+  padding: 22px 22px 0;
+}
+/* set spacing between this region and its content. */
+[data-slot="card-content"] {
+  padding: 22px;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+
+.search-row {
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+}
+
+/* apply the intended surface or text colors. */
+
+.search-row input {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+/* Focus feedback: define the visual boundary or interaction treatment. */
+.search-row input:focus {
+  box-shadow: none;
+}
+
+/* define the visual boundary or interaction treatment. */
+
+table {
+  border-collapse: collapse;
+}
+/* apply the intended surface or text colors. */
+thead {
+  background: var(--color-bg-canvas);
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+th {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+/* define the visual boundary or interaction treatment. */
+td,
+th {
+  border-bottom-color: var(--color-border-default);
+}
+
+/* control dimensions. */
+
+.shell-search {
+  width: min(460px, 42vw);
+}
+/* apply the intended surface or text colors. */
+.shell-search input::placeholder {
+  color: #8b98a0;
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  gap: 16px;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+
+.panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+/* set spacing between this region and its content; set text hierarchy and readability. */
+
+.panel-heading h2,
+.panel h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+
+.panel-heading p,
+.section-label {
+  margin: 0;
+  color: var(--color-action-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.search-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* position this element relative to its surrounding layout. */
+
+.search-field {
+  position: relative;
+  flex: 1;
+}
+
+/* apply the intended surface or text colors; position this element relative to its surrounding layout. */
+
+.search-field svg {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* set spacing between this region and its content. */
+
+.search-field input {
+  padding-left: 38px;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+
+.form-select {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.candidate-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+
+.candidate-initials {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e7f0ed;
+  color: var(--color-action-primary);
+  font-weight: 700;
+}
+
+/* arrange the contained elements. */
+
+.candidate-name small,
+.candidate-name strong {
+  display: block;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+
+.candidate-name small {
+  margin-top: 3px;
+  color: var(--color-text-secondary);
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.form-field {
+  display: grid;
+  gap: 7px;
+}
+
+/* set text hierarchy and readability. */
+
+.form-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* define the visual boundary or interaction treatment. */
+
+.form-field-wide {
+  grid-column: 1 / -1;
+}
+
+/* arrange the contained elements; set spacing between this region and its content. */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+
+.empty-message {
+  padding: 28px 12px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+
+  .page-heading h1 {
+    font-size: 26px;
+  }
+
+  /* Viewport-specific adjustment: arrange the contained elements. */
+
+  .search-row,
+  .form-grid {
+    flex-direction: column;
+  }
+
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+
+  .page-heading h1 {
+    font-size: 30px;
+  }
+
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+
+  .form-field-wide {
+    grid-column: auto;
+  }
+}

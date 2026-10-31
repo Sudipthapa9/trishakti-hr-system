@@ -1,3 +1,10 @@
+# Runtime dependencies for the screening service; version ranges are unchanged.
+
+# HTTP endpoints and validated request/response models.
 fastapi>=0.115,<1
+
+# TF-IDF vectorization and cosine-similarity calculations.
 scikit-learn>=1.5,<2
+
+# ASGI server used to run the FastAPI application.
 uvicorn[standard]>=0.30,<1

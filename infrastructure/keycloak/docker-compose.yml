@@ -1,23 +1,29 @@
+# Legacy Keycloak-only development composition; the repository-root Compose file includes the application database.
+# Declare the containers that share this Compose project.
 services:
 
   postgres:
     image: postgres:17
     restart: unless-stopped
 
+    # Read runtime settings from the local environment; keep real secrets out of committed YAML.
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
+    # Attach or declare persistent storage so data can survive container recreation.
     volumes:
       - keycloak_postgres_data:/var/lib/postgresql/data
 
+    # Check database readiness before dependent services start.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
 
@@ -28,6 +34,7 @@ services:
 
     command: start-dev
 
+    # Read runtime settings from the local environment; keep real secrets out of committed YAML.
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
@@ -37,22 +44,27 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
 
+    # Map service ports to the host; localhost bindings limit access to this computer.
     ports:
       - "127.0.0.1:8080:8080"
 
+    # Wait for the required upstream service condition.
     depends_on:
       postgres:
         condition: service_healthy
 
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
 #http://localhost:8080
 
+# Attach or declare persistent storage so data can survive container recreation.
 volumes:
   keycloak_postgres_data:
   external: 
     name: keycloak_keycloak_postgres_data
 
 
+# Connect related containers through the named development network.
 networks:
   trishakti-network:

@@ -1,0 +1,354 @@
+/* onboarding-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-onboarding-onboarding-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+/* set text hierarchy and readability. */
+.onboarding-heading h1 {
+  font-size: 28px;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-heading p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #7a8376;
+  margin-top: 8px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.onboarding-heading [data-slot="badge"] {
+  min-height: 22px;
+  font-size: 10px;
+  padding: 3px 8px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-heading > div:last-child {
+  display: flex;
+  gap: 12px;
+}
+/* set text hierarchy and readability. */
+.onboarding-heading button {
+  font-size: 11px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-layout {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-layout aside,
+.onboarding-details {
+  display: grid;
+  gap: 24px;
+}
+/* apply the intended surface or text colors. */
+.onboarding-profile,
+.onboarding-progress,
+.onboarding-checklist,
+.onboarding-documents {
+  border: 1px solid #dedfd6;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+/* set spacing between this region and its content. */
+.onboarding-profile,
+.onboarding-progress {
+  padding: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-person {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+/* control dimensions. */
+.onboarding-person img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* set text hierarchy and readability. */
+.onboarding-person h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-person p {
+  font-size: 12px;
+  color: #81877d;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-profile > dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-profile dt {
+  font-size: 10px;
+  color: #8c9388;
+  margin-bottom: 7px;
+}
+/* set text hierarchy and readability. */
+.onboarding-profile dd {
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.reused-data {
+  display: flex;
+  gap: 10px;
+  background: #faf4ea;
+  border: 1px solid #e9e4d9;
+  border-radius: 5px;
+  padding: 14px;
+  margin-top: 30px;
+  font-size: 11px;
+  color: #778071;
+}
+/* define the visual boundary or interaction treatment. */
+.reused-data svg {
+  flex-shrink: 0;
+}
+/* set text hierarchy and readability. */
+.onboarding-progress h2 {
+  font-size: 13px;
+  font-weight: 500;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-progress > div {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+/* arrange the contained elements; set text hierarchy and readability; control dimensions. */
+.onboarding-progress strong {
+  display: grid;
+  place-items: center;
+  border: 7px solid #194e65;
+  border-radius: 50%;
+  width: 84px;
+  height: 84px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-progress dl {
+  flex: 1;
+  display: grid;
+  gap: 10px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-progress dl div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  gap: 10px;
+  color: #7e887a;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.onboarding-checklist header,
+.onboarding-documents header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 24px;
+  font-size: 12px;
+}
+/* apply the intended surface or text colors. */
+.onboarding-checklist header {
+  background: #faf3e9;
+  border-bottom: 1px solid #e2dfd5;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-checklist header span {
+  font-size: 10px;
+  color: #888e80;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-task {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 21px 24px;
+  border-bottom: 1px solid #efeee8;
+}
+/* define the visual boundary or interaction treatment. */
+.onboarding-task:last-child {
+  border: 0;
+}
+/* arrange the contained elements; control dimensions. */
+.onboarding-task > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+/* apply the intended surface or text colors. */
+.task-complete {
+  background: #cdebd3;
+  color: #517853;
+}
+/* apply the intended surface or text colors. */
+.task-pending {
+  background: #f2eddf;
+  color: #8d8058;
+}
+/* define the visual boundary or interaction treatment. */
+.onboarding-task > div {
+  flex: 1;
+}
+/* set text hierarchy and readability. */
+.onboarding-task strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-task p {
+  font-size: 10px;
+  color: #87917f;
+  margin-top: 5px;
+}
+/* set text hierarchy and readability. */
+.onboarding-task button {
+  font-size: 11px;
+}
+/* set spacing between this region and its content. */
+.onboarding-documents {
+  padding-bottom: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.onboarding-documents > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-documents > div > button,
+.tax-document {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e3e0d8;
+  padding: 16px;
+  flex: 1;
+  min-width: 160px;
+  border-radius: 7px;
+  background: #fdfaf5;
+  font-size: 12px;
+  text-align: left;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.onboarding-documents small {
+  display: block;
+  font-size: 10px;
+  color: #929889;
+  margin-top: 4px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.upload-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #194e65;
+  cursor: pointer;
+  font-size: 11px;
+}
+/* position this element relative to its surrounding layout; control dimensions. */
+.upload-action input,
+.tax-document input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors. */
+.tax-document {
+  flex-direction: column;
+  background: white;
+  border-style: dashed;
+  cursor: pointer;
+  font-size: 11px;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .onboarding-layout {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .onboarding-heading {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .onboarding-progress > div {
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .onboarding-profile,
+  .onboarding-progress {
+    padding: 18px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .onboarding-task {
+    padding: 18px;
+    gap: 12px;
+  }
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .onboarding-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .onboarding-layout aside {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .onboarding-heading h1 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .onboarding-layout aside {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .onboarding-task {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .onboarding-task button {
+    margin-left: auto;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .onboarding-heading > div:last-child {
+    flex-wrap: wrap;
+  }
+}

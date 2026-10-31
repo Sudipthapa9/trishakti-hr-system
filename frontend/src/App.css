@@ -1,3 +1,7 @@
+/* App: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -8,17 +12,24 @@
   transition: border-color 0.3s;
   margin-bottom: 24px;
 
+  /* Hover feedback: define the visual boundary or interaction treatment. */
+
   &:hover {
     border-color: var(--accent-border);
   }
+  /* Focus feedback: define the visual boundary or interaction treatment. */
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 }
 
+/* position this element relative to its surrounding layout. */
+
 .hero {
   position: relative;
+
+  /* set spacing between this region and its content. */
 
   .base,
   .framework,
@@ -27,16 +38,22 @@
     margin: 0 auto;
   }
 
+  /* position this element relative to its surrounding layout; control dimensions. */
+
   .base {
     width: 170px;
     position: relative;
     z-index: 0;
   }
 
+  /* position this element relative to its surrounding layout. */
+
   .framework,
   .vite {
     position: absolute;
   }
+
+  /* control dimensions. */
 
   .framework {
     z-index: 1;
@@ -45,6 +62,8 @@
     transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
       scale(1.4);
   }
+
+  /* control dimensions. */
 
   .vite {
     z-index: 0;
@@ -55,6 +74,8 @@
       scale(0.8);
   }
 }
+
+/* arrange the contained elements; set spacing between this region and its content. */
 
 #center {
   display: flex;
@@ -70,10 +91,14 @@
   }
 }
 
+/* arrange the contained elements. */
+
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
   text-align: left;
+
+  /* set spacing between this region and its content. */
 
   & > div {
     flex: 1 1 0;
@@ -82,6 +107,8 @@
       padding: 24px 20px;
     }
   }
+
+  /* set spacing between this region and its content; control dimensions. */
 
   .icon {
     margin-bottom: 16px;
@@ -95,6 +122,8 @@
   }
 }
 
+/* define the visual boundary or interaction treatment. */
+
 #docs {
   border-right: 1px solid var(--border);
 
@@ -104,6 +133,8 @@
   }
 }
 
+/* arrange the contained elements; set spacing between this region and its content. */
+
 #next-steps ul {
   list-style: none;
   padding: 0;
@@ -111,9 +142,13 @@
   gap: 8px;
   margin: 32px 0 0;
 
+  /* control dimensions. */
+
   .logo {
     height: 18px;
   }
+
+  /* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
 
   a {
     color: var(--text-h);
@@ -127,9 +162,12 @@
     text-decoration: none;
     transition: box-shadow 0.3s;
 
+    /* Hover feedback: define the visual boundary or interaction treatment. */
+
     &:hover {
       box-shadow: var(--shadow);
     }
+    /* control dimensions. */
     .button-icon {
       height: 18px;
       width: 18px;
@@ -141,9 +179,13 @@
     flex-wrap: wrap;
     justify-content: center;
 
+    /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+
     li {
       flex: 1 1 calc(50% - 8px);
     }
+
+    /* Viewport-specific adjustment: control dimensions. */
 
     a {
       width: 100%;
@@ -153,6 +195,8 @@
   }
 }
 
+/* control dimensions. */
+
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
@@ -161,9 +205,13 @@
   }
 }
 
+/* position this element relative to its surrounding layout; control dimensions. */
+
 .ticks {
   position: relative;
   width: 100%;
+
+  /* position this element relative to its surrounding layout. */
 
   &::before,
   &::after {
@@ -173,10 +221,13 @@
     border: 5px solid transparent;
   }
 
+  /* define the visual boundary or interaction treatment. */
+
   &::before {
     left: 0;
     border-left-color: var(--border);
   }
+  /* define the visual boundary or interaction treatment. */
   &::after {
     right: 0;
     border-right-color: var(--border);

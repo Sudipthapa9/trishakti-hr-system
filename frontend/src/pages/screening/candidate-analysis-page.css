@@ -1,0 +1,273 @@
+/* candidate-analysis-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-screening-candidate-analysis-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-layout {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-layout aside {
+  display: grid;
+  gap: 24px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.analysis-profile,
+.analysis-decisions,
+.analysis-breakdown,
+.analysis-skills > section,
+.analysis-highlights {
+  border: 1px solid #dcded5;
+  background: white;
+  border-radius: 10px;
+  padding: 24px;
+}
+/* define the visual boundary or interaction treatment. */
+.analysis-profile {
+  text-align: center;
+}
+/* set spacing between this region and its content; control dimensions. */
+.analysis-profile > img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+}
+/* set text hierarchy and readability. */
+.analysis-profile h1 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-profile > p {
+  font-size: 14px;
+  color: #878e80;
+  margin-top: 8px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.analysis-match {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 138px;
+  height: 138px;
+  margin: 44px auto 30px;
+  border: 11px solid #194e65;
+  border-radius: 50%;
+  color: #194e65;
+}
+/* set text hierarchy and readability. */
+.analysis-match strong {
+  font-size: 48px;
+  line-height: 1;
+}
+/* set text hierarchy and readability. */
+.analysis-match strong small {
+  font-size: 18px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.analysis-match > span {
+  font-size: 11px;
+  margin-top: 6px;
+  letter-spacing: 0.08em;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-profile .analysis-notice {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  background: #faf4ea;
+  border: 1px solid #e6e1d7;
+  border-radius: 5px;
+  padding: 14px;
+  text-align: left;
+  color: #7b8575;
+}
+/* set spacing between this region and its content. */
+.analysis-notice svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-decisions {
+  display: grid;
+  gap: 14px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.analysis-decisions h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+/* set text hierarchy and readability. */
+.analysis-decisions button,
+.analysis-decisions a {
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-details {
+  display: grid;
+  gap: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.analysis-details h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+/* apply the intended surface or text colors. */
+.analysis-details h2 svg {
+  color: #6d9296;
+}
+/* set spacing between this region and its content. */
+.analysis-breakdown h2 {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eee;
+}
+/* set spacing between this region and its content. */
+.analysis-score-row {
+  margin-top: 22px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.analysis-score-row > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+/* set text hierarchy and readability. */
+.analysis-score-row strong {
+  font-weight: 500;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-score-row span {
+  font-size: 11px;
+  color: #8b9383;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.analysis-score-track {
+  height: 8px;
+  border-radius: 8px;
+  background: #e6e5df;
+  margin-top: 8px;
+  overflow: hidden;
+}
+/* apply the intended surface or text colors; control dimensions. */
+.analysis-score-track > div {
+  height: 100%;
+  background: #194e65;
+  border-radius: 8px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+/* set spacing between this region and its content. */
+.analysis-skills > section {
+  padding: 24px 20px;
+}
+/* set text hierarchy and readability. */
+.analysis-skills h2 {
+  font-size: 17px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.analysis-skills > section > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.analysis-skills [data-slot="badge"] {
+  font-size: 11px;
+  min-height: 24px;
+  padding: 3px 8px;
+  gap: 3px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-skills p {
+  font-size: 12px;
+  color: #8b9383;
+  margin-top: 18px;
+  line-height: 1.6;
+}
+/* set spacing between this region and its content. */
+.analysis-highlights h2 {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-highlights blockquote {
+  border-left: 3px solid #51778a;
+  background: #fff8ef;
+  padding: 16px;
+  margin-top: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.analysis-highlights blockquote small {
+  display: block;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #7a8371;
+  margin-bottom: 8px;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .analysis-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .analysis-skills {
+    gap: 14px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .analysis-skills > section {
+    padding: 18px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .analysis-skills h2 {
+    font-size: 15px;
+  }
+}
+@media (max-width: 850px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .analysis-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .analysis-layout aside {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .analysis-match {
+    margin: 24px auto;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .analysis-profile {
+    padding: 20px;
+  }
+}
+@media (max-width: 550px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .analysis-layout aside,
+  .analysis-skills {
+    grid-template-columns: 1fr;
+  }
+}

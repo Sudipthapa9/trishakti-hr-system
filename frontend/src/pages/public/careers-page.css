@@ -1,0 +1,447 @@
+/* careers-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-public-careers-page {
+  display: contents;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-hero {
+  text-align: center;
+  padding: 72px 24px 64px;
+  border-bottom: 1px solid #e8e1d3;
+  background: #faf4e9;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-hero h1 {
+  font-size: 40px;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+  color: #194e65;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-hero > p {
+  font-size: 14px;
+  color: #7b8676;
+  line-height: 1.6;
+  margin-top: 18px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-search {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 740px;
+  margin: 38px auto 0;
+  background: white;
+  border: 1px solid #e3e0d6;
+  padding: 10px;
+  border-radius: 6px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-search label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a0a899;
+  min-width: 0;
+  flex: 1;
+}
+/* define the visual boundary or interaction treatment. */
+.careers-search label:first-child {
+  flex: 1.7;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.careers-search input {
+  border: 0;
+  background: white !important;
+  font-size: 11px;
+  height: 34px;
+  box-shadow: none;
+  padding: 0;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.careers-search select {
+  font-size: 11px;
+  color: #8d9784;
+  min-width: 0;
+  width: 100%;
+  background: white;
+}
+/* set text hierarchy and readability; control dimensions. */
+.careers-search button {
+  height: 34px;
+  border-radius: 3px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+/* set spacing between this region and its content. */
+.careers-values,
+.careers-life {
+  padding: 64px 32px;
+  border-bottom: 1px solid #e8e1d3;
+  max-width: 1280px;
+  margin: auto;
+}
+/* set spacing between this region and its content. */
+.careers-values > header,
+.careers-life > header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.public-site h2 {
+  font-size: 25px;
+  font-weight: 650;
+  color: #194e65;
+  letter-spacing: -0.025em;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.public-site section > header p {
+  font-size: 12px;
+  color: #8a9381;
+  margin-top: 6px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.careers-values > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-values article {
+  background: #fff;
+  padding: 32px 24px;
+  text-align: center;
+  border: 1px solid #ece7db;
+  border-radius: 4px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.careers-values article > span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e6edf1;
+  color: #527387;
+  margin: 0 auto 18px;
+}
+/* apply the intended surface or text colors. */
+.careers-values article:nth-child(2) > span {
+  background: #e8f3e6;
+  color: #739171;
+}
+/* apply the intended surface or text colors. */
+.careers-values article:nth-child(3) > span {
+  background: #f0e9d7;
+  color: #91865a;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.careers-values h3,
+.careers-benefits h3 {
+  font-size: 15px;
+  font-weight: 650;
+  margin-bottom: 10px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-values article p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #8c9583;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-benefits {
+  padding: 64px 32px;
+  background: #faf4e9;
+  border-bottom: 1px solid #e8e1d3;
+}
+/* set spacing between this region and its content. */
+.careers-benefits > header,
+.careers-benefits > div {
+  max-width: 1216px;
+  margin: auto;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.careers-benefits > div {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 28px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-benefits article {
+  border: 1px solid #e2dccd;
+  background: #fffaf2;
+  padding: 24px 20px;
+  border-radius: 4px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-benefits article > svg {
+  color: #6f8790;
+  margin-bottom: 12px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-benefits p {
+  font-size: 11px;
+  color: #8d9684;
+  line-height: 1.6;
+}
+/* set spacing between this region and its content. */
+.careers-life {
+  padding-bottom: 72px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.careers-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 220px 180px;
+  gap: 24px;
+}
+/* control dimensions. */
+.careers-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+/* control dimensions. */
+.careers-gallery img:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1/3;
+  height: 320px;
+}
+/* define the visual boundary or interaction treatment. */
+.careers-gallery img:nth-child(4) {
+  grid-column: 1;
+  grid-row: 2;
+}
+/* define the visual boundary or interaction treatment. */
+.careers-gallery img:nth-child(5) {
+  grid-column: 3;
+  grid-row: 2;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-testimonial {
+  text-align: center;
+  background: #faf4e9;
+  padding: 64px 24px;
+  border-bottom: 1px solid #e8e1d3;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-testimonial > span:first-child {
+  font-size: 42px;
+  color: #b4c9cc;
+  line-height: 1;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.careers-testimonial blockquote {
+  font-size: 19px;
+  line-height: 1.5;
+  font-weight: 500;
+  max-width: 700px;
+  margin: 16px auto 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.testimonial-avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #194e65;
+  color: #c8d7d7;
+  font-size: 13px;
+  margin: 0 auto 10px;
+}
+/* arrange the contained elements; set text hierarchy and readability. */
+.careers-testimonial strong,
+.careers-testimonial small {
+  display: block;
+  font-size: 11px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-testimonial small {
+  font-size: 10px;
+  color: #8f9883;
+  margin-top: 5px;
+}
+/* set spacing between this region and its content. */
+.careers-open {
+  max-width: 1280px;
+  padding: 64px 32px;
+  margin: auto;
+}
+/* arrange the contained elements. */
+.careers-open > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-open > header > span {
+  font-size: 11px;
+  color: #8a9381;
+  border: 1px solid #e4dfd3;
+  padding: 5px 8px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.careers-job-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 30px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.careers-job-grid article {
+  background: white;
+  border: 1px solid #e5e0d5;
+  padding: 22px 20px;
+  border-radius: 5px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-job-grid article > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #8c9786;
+  gap: 10px;
+}
+/* set text hierarchy and readability. */
+.careers-job-grid article > div > span {
+  text-transform: uppercase;
+  font-size: 9px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.careers-job-grid h3 {
+  font-size: 15px;
+  font-weight: 650;
+  margin-top: 16px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-job-location {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 10px;
+  color: #87927c;
+  margin-top: 6px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-job-grid article > p:last-of-type {
+  font-size: 11px;
+  color: #9a9f91;
+  line-height: 1.6;
+  margin: 14px 0 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.careers-job-grid footer {
+  border-top: 1px solid #efeee8;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.careers-job-grid footer > a:first-child {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 10px;
+  color: #52798a;
+  text-decoration: none;
+}
+/* set text hierarchy and readability; control dimensions. */
+.careers-job-grid footer [data-slot="button"] {
+  font-size: 9px;
+  height: 25px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.careers-open > button {
+  display: flex;
+  margin: 32px auto 0;
+  border-radius: 3px;
+  font-size: 11px;
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-hero {
+    padding: 44px 20px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .careers-hero h1 {
+    font-size: 32px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-values,
+  .careers-life,
+  .careers-benefits,
+  .careers-open {
+    padding: 40px 20px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-values > div,
+  .careers-job-grid {
+    gap: 14px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .careers-benefits > div {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-gallery {
+    gap: 12px;
+    grid-template-rows: 160px 140px;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .careers-gallery img:nth-child(2) {
+    height: 250px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-values article {
+    padding: 20px 14px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .careers-job-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 550px) {
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .careers-search {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .careers-search label:first-child {
+    flex-basis: 100%;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .careers-values > div,
+  .careers-job-grid {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .careers-gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 150px);
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .careers-gallery img:nth-child(n) {
+    grid-row: auto;
+    grid-column: auto;
+    height: 150px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .careers-gallery img:first-child {
+    grid-column: 1/-1;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .careers-testimonial blockquote {
+    font-size: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .careers-open > header {
+    gap: 16px;
+  }
+}
