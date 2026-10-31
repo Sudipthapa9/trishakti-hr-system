@@ -1,0 +1,190 @@
+/* public-shell: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.public-site {
+  --primary: #194e65;
+  --primary-foreground: #fff;
+  --color-action-primary: #194e65;
+  --color-action-primary-hover: #133d50;
+  --background: #fff8ef;
+  --color-bg-canvas: #fff8ef;
+  min-height: 100svh;
+  background: #fff8ef;
+  color: #2a3029;
+  font-family: Inter, "Segoe UI", sans-serif;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.public-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 64px;
+  padding: 12px 40px;
+  border-bottom: 1px solid #dedbd1;
+  background: #f3eee4;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.public-brand {
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 650;
+  color: #194e65;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.public-header nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  font-size: 12px;
+}
+/* apply the intended surface or text colors. */
+.public-header nav > a {
+  text-decoration: none;
+  color: #526052;
+}
+/* set spacing between this region and its content. */
+.public-header nav > a:first-child {
+  border-bottom: 2px solid #194e65;
+  padding: 12px 0;
+}
+/* position this element relative to its surrounding layout. */
+.public-header details {
+  position: relative;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.public-header summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #526052;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; position this element relative to its surrounding layout; control dimensions. */
+.public-header details p {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  z-index: 10;
+  width: 240px;
+  padding: 18px;
+  background: white;
+  border: 1px solid #dedbd1;
+  border-radius: 6px;
+  line-height: 1.5;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.public-header [data-slot="button"] {
+  font-size: 11px;
+  height: 34px;
+  padding-inline: 20px;
+  border-radius: 4px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.public-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #e1dccf;
+  padding: 48px 40px;
+  margin-top: auto;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.public-footer .public-brand {
+  font-size: 14px;
+  color: #527153;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.public-footer > div {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: #7a8473;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.public-footer small {
+  font-size: 10px;
+  color: #89927e;
+}
+/* define the visual boundary or interaction treatment. */
+.public-footer a {
+  text-decoration: none;
+}
+/* apply the intended surface or text colors. */
+.public-site [data-slot="input"],
+.public-site [data-slot="textarea"] {
+  background: #fff8ef;
+  border-radius: 4px;
+}
+/* set text hierarchy and readability. */
+.public-site [data-slot="button"] {
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.job-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  color: #6d7d6b;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.job-metadata span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: #edf0e4;
+  border-radius: 4px;
+}
+/* apply the intended surface or text colors. */
+.job-metadata span + span {
+  background: #e9eeef;
+  color: #5c7984;
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .public-header {
+    padding: 12px 20px;
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .public-header nav {
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .public-brand {
+    font-size: 15px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .public-footer {
+    padding: 32px 20px;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 550px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .public-header nav {
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .public-header nav details {
+    display: none;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .public-header nav a {
+    font-size: 11px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .public-header > .public-brand {
+    max-width: 105px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .public-footer > div {
+    gap: 12px;
+  }
+}

@@ -1,0 +1,138 @@
+/* communication-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-recruitment-communication-page {
+  display: contents;
+}
+/* arrange the contained elements. */
+.page-recruitment-communication-page > .page-stack > .page-heading {
+  display: none;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.communication-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 48px;
+}
+/* set spacing between this region and its content. */
+.communication-layout > div:first-child {
+  border-right: 1px solid #dedbd1;
+  padding-right: 24px;
+}
+/* control dimensions. */
+.communication-layout > div:first-child > [data-slot="card"] {
+  min-height: 310px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.communication-layout [data-slot="card-header"] {
+  background: #faf4ea;
+  padding: 22px 20px !important;
+  border-bottom: 1px solid #dedbd1;
+}
+/* set text hierarchy and readability. */
+.communication-layout [data-slot="card-header"] h2 {
+  font-size: 16px;
+}
+/* set spacing between this region and its content. */
+.communication-layout > div:first-child [data-slot="card-content"] {
+  padding: 12px !important;
+}
+/* set text hierarchy and readability. */
+.communication-layout > div:first-child button {
+  font-size: 12px;
+}
+/* set spacing between this region and its content. */
+.communication-layout > div:last-child [data-slot="card-content"] {
+  padding: 24px !important;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.communication-layout form > .form-field {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: center;
+  border-bottom: 1px solid #dedbd1;
+  padding-bottom: 12px;
+}
+/* arrange the contained elements. */
+.communication-layout form > .form-field:last-of-type {
+  display: block;
+  border: 0;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.communication-layout label {
+  font-size: 11px;
+  color: #8c9186;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.communication-layout input,
+.communication-layout select {
+  border: 0;
+  background: transparent !important;
+  font-size: 12px;
+}
+/* position this element relative to its surrounding layout; control dimensions. */
+.communication-layout form > .form-field:last-of-type > label {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.communication-layout .communication-body {
+  min-height: 530px;
+  background: #fff8ef !important;
+  font-size: 14px;
+  padding: 24px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.communication-layout .border-y button {
+  font-size: 10px;
+  min-height: 25px;
+}
+/* set text hierarchy and readability. */
+.page-recruitment-communication-page > .page-stack > p.text-xs {
+  order: 2;
+  font-size: 10px;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .communication-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .communication-layout > div:first-child {
+    padding-right: 16px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .communication-layout [data-slot="card-header"] .flex {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 750px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .communication-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .communication-layout > div:first-child {
+    border: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .communication-layout > div:first-child > [data-slot="card"] {
+    min-height: 0;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .communication-layout .communication-body {
+    min-height: 350px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .communication-layout form > .form-field {
+    grid-template-columns: 45px 1fr;
+  }
+}

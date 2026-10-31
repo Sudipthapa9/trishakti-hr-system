@@ -1,3 +1,6 @@
+/**
+ * Displays candidate rows and optional stage controls; parent callbacks own updates to shared state.
+ */
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -9,19 +12,26 @@ import {
 } from "@/components/ui/table";
 import type { Candidate, CandidateStage } from "@/types/hr";
 
+// Define CandidateTableProps so callers and implementations agree on the required data shape.
 type CandidateTableProps = {
   candidates: Candidate[];
   onStageChange?: (candidateId: string, stage: CandidateStage) => void;
 };
 
+// Map business stages to visual badge tones without changing the stored stage.
 function getStageVariant(stage: CandidateStage) {
   if (stage === "Shortlisted") return "success";
-  if (stage === "Interview") return "warning";
+  if (stage === "Screening") return "warning";
+  if (stage === "Interview") return "neutral";
   if (stage === "Review") return "neutral";
   return "default";
 }
 
-export function CandidateTable({ candidates, onStageChange }: CandidateTableProps) {
+// Displays candidate rows and optional stage controls; parent callbacks own updates to shared state.
+export function CandidateTable({
+  candidates,
+  onStageChange,
+}: CandidateTableProps) {
   if (candidates.length === 0) {
     return <p className="empty-message">No candidates match your search.</p>;
   }
@@ -31,9 +41,9 @@ export function CandidateTable({ candidates, onStageChange }: CandidateTableProp
       <TableHeader>
         <TableRow>
           <TableHead>Candidate</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Match</TableHead>
-          <TableHead>Stage</TableHead>
+          <TableHead>Position</TableHead>
+          <TableHead>AI Match</TableHead>
+          <TableHead>Status</TableHead>
           {onStageChange ? <TableHead>Update stage</TableHead> : null}
         </TableRow>
       </TableHeader>
@@ -57,10 +67,12 @@ export function CandidateTable({ candidates, onStageChange }: CandidateTableProp
             </TableCell>
             <TableCell>{candidate.role}</TableCell>
             <TableCell>
-              <span className="font-semibold">{candidate.score}%</span>
+              <span className="candidate-match-score">{candidate.score}%</span>
             </TableCell>
             <TableCell>
-              <Badge variant={getStageVariant(candidate.stage)}>{candidate.stage}</Badge>
+              <Badge variant={getStageVariant(candidate.stage)}>
+                {candidate.stage}
+              </Badge>
             </TableCell>
             {onStageChange ? (
               <TableCell>
@@ -75,6 +87,7 @@ export function CandidateTable({ candidates, onStageChange }: CandidateTableProp
                     const nextStage = event.target.value;
                     if (
                       nextStage === "Review" ||
+                      nextStage === "Screening" ||
                       nextStage === "Shortlisted" ||
                       nextStage === "Interview" ||
                       nextStage === "Offer"
@@ -84,6 +97,7 @@ export function CandidateTable({ candidates, onStageChange }: CandidateTableProp
                   }}
                 >
                   <option>Review</option>
+                  <option>Screening</option>
                   <option>Shortlisted</option>
                   <option>Interview</option>
                   <option>Offer</option>

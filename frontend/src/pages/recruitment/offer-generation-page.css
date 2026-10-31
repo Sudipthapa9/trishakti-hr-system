@@ -1,0 +1,277 @@
+/* offer-generation-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-recruitment-offer-generation-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content; position this element relative to its surrounding layout. */
+.offer-steps {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  border: 1px solid #dfdbd1;
+  border-radius: 9px;
+  padding: 8px 24px;
+  position: relative;
+}
+/* apply the intended surface or text colors; position this element relative to its surrounding layout; control dimensions. */
+.offer-steps:before {
+  content: "";
+  height: 1px;
+  background: #d6d3ca;
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 23px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-steps button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  z-index: 1;
+  background: #fff8ef;
+  padding: 0 12px;
+  color: #a0a59c;
+}
+/* arrange the contained elements; apply the intended surface or text colors; control dimensions. */
+.offer-steps button span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #9ba7a7;
+  background: #fff8ef;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-steps button[aria-current="step"] {
+  color: #194e65;
+  font-weight: 600;
+}
+/* apply the intended surface or text colors. */
+.offer-steps button[aria-current="step"] span {
+  background: #194e65;
+  color: white;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.offer-layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.offer-details {
+  border: 1px solid #dedbd1;
+  border-radius: 10px;
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+/* set text hierarchy and readability. */
+.offer-details h1 {
+  font-size: 19px;
+  font-weight: 600;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-details label {
+  font-size: 11px;
+  color: #60675f;
+}
+/* set text hierarchy and readability; control dimensions. */
+.offer-details input,
+.offer-details select {
+  height: 38px;
+  min-width: 0;
+  font-size: 13px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.offer-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.offer-details button {
+  font-size: 11px;
+  margin-top: 2px;
+}
+/* apply the intended surface or text colors. */
+.offer-preview {
+  border: 1px solid #dedbd1;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-preview > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #e4ded3;
+  font-size: 12px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.offer-preview > header button {
+  font-size: 10px;
+  height: 30px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.offer-paper {
+  margin: 56px 40px 20px;
+  border: 1px solid #ecebe7;
+  padding: 48px 40px;
+  min-height: 950px;
+  font-family: Georgia, serif;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #424b43;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.offer-letterhead {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e4e4df;
+  margin-bottom: 54px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-letterhead h2 {
+  font-family: Inter, "Segoe UI", sans-serif;
+  color: #194e65;
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.offer-letterhead p {
+  font-size: 10px;
+  margin-top: 10px;
+}
+/* set text hierarchy and readability. */
+.offer-letterhead > p {
+  text-align: right;
+  font-size: 9px;
+}
+/* set spacing between this region and its content. */
+.offer-paper > p {
+  margin-bottom: 14px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.offer-paper h3 {
+  font-family: Inter, "Segoe UI", sans-serif;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+/* set spacing between this region and its content. */
+.offer-paper ul {
+  padding-left: 22px;
+  list-style: disc;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.offer-signature {
+  border-top: 1px solid #e4e4df;
+  margin-top: 70px;
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #9ca194;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.offer-layout .demo-note {
+  margin: 14px 4px;
+  font-size: 10px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.prototype-feedback {
+  padding: 12px;
+  background: #e6eee6;
+  border-radius: 6px;
+  font-size: 12px;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .offer-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .offer-paper {
+    margin: 30px 20px;
+    padding: 30px 24px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .offer-details {
+    padding: 18px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .offer-letterhead {
+    flex-direction: column;
+    gap: 8px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .offer-letterhead > p {
+    text-align: left;
+  }
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .offer-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .offer-details {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .offer-details h1,
+  .offer-details > .offer-dates,
+  .offer-details > .form-field:last-of-type,
+  .offer-details > button {
+    grid-column: 1/-1;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .offer-steps {
+    gap: 20px;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .offer-paper {
+    min-height: 0;
+  }
+}
+@media print {
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  body * {
+    visibility: hidden;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .offer-paper,
+  .offer-paper * {
+    visibility: visible;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content; position this element relative to its surrounding layout; control dimensions. */
+  .offer-paper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    min-height: 0;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .workspace-header,
+  .workspace-prototype-note {
+    display: none;
+  }
+}

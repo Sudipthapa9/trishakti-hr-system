@@ -1,0 +1,159 @@
+/* not-found-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements; apply the intended surface or text colors; control dimensions. */
+.page-public-not-found-page {
+  min-height: 100svh;
+  background: #faf9f5;
+  display: flex;
+  flex-direction: column;
+  color: #303c31;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.page-public-not-found-page > header,
+.page-public-not-found-page > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 6%;
+  gap: 24px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.page-public-not-found-page > header > a {
+  font:
+    italic 21px Georgia,
+    serif;
+  text-decoration: none;
+  color: #3f4c40;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.page-public-not-found-page nav,
+.page-public-not-found-page footer > div {
+  display: flex;
+  gap: 28px;
+  font-size: 11px;
+  color: #8d9688;
+}
+/* define the visual boundary or interaction treatment. */
+.page-public-not-found-page nav a {
+  text-decoration: none;
+}
+/* arrange the contained elements; set spacing between this region and its content; position this element relative to its surrounding layout. */
+.page-public-not-found-page main {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 100px 24px 180px;
+}
+/* apply the intended surface or text colors; position this element relative to its surrounding layout; control dimensions. */
+.page-public-not-found-page main:after {
+  content: "";
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  z-index: -1;
+  top: 32%;
+  left: 45%;
+  background: radial-gradient(ellipse, #dfe5d9aa, transparent 70%);
+  filter: blur(25px);
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.not-found-orb {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(
+    #dcb49c 45%,
+    #efd2bc 46%,
+    #f2e2d0 53%,
+    #dcb49c 55%
+  );
+  filter: blur(2px);
+  box-shadow: 0 12px 25px #cdb79e22;
+  margin-bottom: 44px;
+}
+/* set text hierarchy and readability. */
+.page-public-not-found-page h1 {
+  font:
+    150px/0.95 Georgia,
+    serif;
+  letter-spacing: -0.08em;
+  font-weight: 400;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.page-public-not-found-page h2 {
+  font:
+    32px Georgia,
+    serif;
+  margin-top: 18px;
+  letter-spacing: -0.04em;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.page-public-not-found-page main p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #949b8f;
+  margin-top: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.not-found-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 14px 28px;
+  background: #46594b;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-top: 36px;
+  box-shadow: 0 5px 12px #46594b16;
+}
+/* Hover feedback: apply the intended surface or text colors. */
+.not-found-home:hover {
+  background: #344638;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.page-public-not-found-page > footer {
+  border-top: 1px solid #efeee7;
+  font-size: 10px;
+  color: #a4ab9b;
+}
+/* set text hierarchy and readability. */
+.page-public-not-found-page > footer small {
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .page-public-not-found-page main {
+    padding: 70px 20px 120px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .page-public-not-found-page h1 {
+    font-size: 120px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .page-public-not-found-page h2 {
+    font-size: 27px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .page-public-not-found-page > header,
+  .page-public-not-found-page > footer {
+    padding: 24px;
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .page-public-not-found-page nav {
+    gap: 16px;
+  }
+}
+
+/* define the visual boundary or interaction treatment. */
+
+.page-public-not-found-page main {
+  overflow: hidden;
+}

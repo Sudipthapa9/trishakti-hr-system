@@ -1,0 +1,149 @@
+/* application-confirmation-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-public-application-confirmation-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content; control dimensions. */
+.application-confirmation {
+  padding: 32px 24px;
+  display: grid;
+  place-items: center;
+  min-height: 900px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.application-confirmation > section {
+  background: white;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  padding: 64px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.confirmation-check {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #c3ebcc;
+  color: #547957;
+  margin: 0 auto 40px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.confirmation-check svg {
+  background: #517653;
+  color: #cce9cd;
+  padding: 5px;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.application-confirmation h1 {
+  font-size: 44px;
+  color: #194e65;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.application-confirmation > section > p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #7e887a;
+  margin-top: 28px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.confirmation-reference {
+  display: block;
+  margin-top: 16px;
+  color: #899681;
+  font-size: 11px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.confirmation-next {
+  background: #f3eee5;
+  border: 1px solid #dcded2;
+  border-radius: 7px;
+  margin-top: 56px;
+  padding: 24px;
+  text-align: left;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.confirmation-next h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.confirmation-next > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 18px;
+  color: #6f8a6c;
+}
+/* set spacing between this region and its content. */
+.confirmation-next > div > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.confirmation-next p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #89917f;
+}
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors. */
+.confirmation-next strong {
+  display: block;
+  font-size: 13px;
+  color: #626e5b;
+  font-weight: 600;
+}
+/* arrange the contained elements. */
+.confirmation-next span {
+  display: block;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.application-confirmation [data-slot="button"] {
+  margin-top: 60px;
+  border-radius: 24px;
+  padding-inline: 32px;
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.confirmation-demo {
+  display: block;
+  font-size: 10px;
+  margin-top: 20px;
+  color: #9ca391;
+}
+@media (max-width: 700px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content; control dimensions. */
+  .application-confirmation {
+    min-height: 760px;
+    padding: 20px 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .application-confirmation > section {
+    padding: 40px 24px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .application-confirmation h1 {
+    font-size: 32px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .application-confirmation > section > p {
+    font-size: 14px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .confirmation-next {
+    margin-top: 32px;
+    padding: 20px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .application-confirmation [data-slot="button"] {
+    margin-top: 36px;
+  }
+}

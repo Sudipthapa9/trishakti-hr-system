@@ -1,0 +1,9 @@
+/* auth-landing: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+
+@reference "../../index.css";
+
+/* Page-only styles. Tailwind utilities are available through @apply. */
+/* define the visual boundary or interaction treatment. */
+.page-auth-auth-landing {
+  @apply contents;
+}
