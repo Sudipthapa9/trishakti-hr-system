@@ -1,20 +1,26 @@
+# Local development services. Identity storage and HR application storage use separate persistent databases.
+# Declare the containers that share this Compose project.
 services:
 
   # ── Keycloak's own database ──────────────────────────────
   postgres:
     image: postgres:17
     restart: unless-stopped
+    # Read runtime settings from the local environment; keep real secrets out of committed YAML.
     environment:
       POSTGRES_DB: ${KC_POSTGRES_DB}
       POSTGRES_USER: ${KC_POSTGRES_USER}
       POSTGRES_PASSWORD: ${KC_POSTGRES_PASSWORD}
+    # Attach or declare persistent storage so data can survive container recreation.
     volumes:
       - keycloak_postgres_data:/var/lib/postgresql/data
+    # Check database readiness before dependent services start.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${KC_POSTGRES_USER} -d ${KC_POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
 
@@ -22,6 +28,7 @@ services:
     image: quay.io/keycloak/keycloak:26.7.1
     restart: unless-stopped
     command: start-dev
+    # Read runtime settings from the local environment; keep real secrets out of committed YAML.
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${KC_POSTGRES_DB}
@@ -29,11 +36,14 @@ services:
       KC_DB_PASSWORD: ${KC_POSTGRES_PASSWORD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    # Map service ports to the host; localhost bindings limit access to this computer.
     ports:
       - "127.0.0.1:8080:8080"
+    # Wait for the required upstream service condition.
     depends_on:
       postgres:
         condition: service_healthy
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
     # http://localhost:8080
@@ -42,17 +52,21 @@ services:
   app-postgres:
     image: postgres:17
     restart: unless-stopped
+    # Read runtime settings from the local environment; keep real secrets out of committed YAML.
     environment:
       POSTGRES_DB: ${APP_POSTGRES_DB}
       POSTGRES_USER: ${APP_POSTGRES_USER}
       POSTGRES_PASSWORD: ${APP_POSTGRES_PASSWORD}
+    # Attach or declare persistent storage so data can survive container recreation.
     volumes:
       - app_postgres_data:/var/lib/postgresql/data
+    # Check database readiness before dependent services start.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${APP_POSTGRES_USER} -d ${APP_POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
 
@@ -76,8 +90,10 @@ services:
   cv-screening:
     build: ./cv-screening
     restart: unless-stopped
+    # Map service ports to the host; localhost bindings limit access to this computer.
     ports:
       - "127.0.0.1:8000:8000"
+    # Connect related containers through the named development network.
     networks:
       - trishakti-network
 
@@ -93,9 +109,11 @@ services:
   #   networks:
   #     - trishakti-network
 
+# Attach or declare persistent storage so data can survive container recreation.
 volumes:
   keycloak_postgres_data:
   app_postgres_data:
 
+# Connect related containers through the named development network.
 networks:
   trishakti-network:

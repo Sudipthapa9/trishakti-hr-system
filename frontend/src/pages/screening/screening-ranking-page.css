@@ -1,0 +1,196 @@
+/* screening-ranking-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-screening-screening-ranking-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.ranking-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+/* set text hierarchy and readability. */
+.ranking-heading h1 {
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-heading > div > select {
+  margin-top: 8px;
+  max-width: 100%;
+  background: transparent;
+  font-size: 15px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.ranking-totals {
+  display: flex;
+  gap: 12px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.ranking-totals > div {
+  border: 1px solid #dedfd9;
+  background: white;
+  border-radius: 6px;
+  padding: 12px 18px;
+  min-width: 115px;
+}
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-totals small {
+  display: block;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #71786f;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-totals strong {
+  display: block;
+  color: #194e65;
+  font-size: 20px;
+  margin-top: 4px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.ranking-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #dedfd9;
+  border-radius: 6px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.ranking-toolbar .form-select {
+  font-size: 12px;
+  min-height: 32px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-toolbar p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 11px;
+  color: #777e74;
+  background: #f7f3eb;
+  padding: 6px;
+}
+/* apply the intended surface or text colors. */
+.ranking-table-wrap {
+  border: 1px solid #dedfd9;
+  border-radius: 8px;
+  background: white;
+  overflow-x: auto;
+}
+/* control dimensions. */
+.ranking-table {
+  width: 100%;
+  min-width: 740px;
+  text-align: left;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-table th {
+  background: white;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.3;
+  padding: 18px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.ranking-table td {
+  padding: 22px 18px;
+  font-size: 13px;
+  border-top: 1px solid #e8e9e5;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-table td:first-child {
+  font-weight: 700;
+  color: #194e65;
+}
+/* apply the intended surface or text colors. */
+.ranking-table td a {
+  text-decoration: none;
+  color: inherit;
+}
+/* control dimensions. */
+.ranking-table [data-slot="avatar"] {
+  width: 36px;
+  height: 36px;
+}
+/* define the visual boundary or interaction treatment. */
+.ranking-table td p {
+  white-space: normal;
+  max-width: 135px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-table .ranking-score {
+  font-weight: 700;
+  color: #527486;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.ranking-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.ranking-table [data-slot="badge"] {
+  min-height: 22px;
+  font-size: 10px;
+  padding: 3px 7px;
+}
+/* define the visual boundary or interaction treatment. */
+.ranking-table .ranking-tags [data-slot="badge"] {
+  border-radius: 3px;
+}
+/* define the visual boundary or interaction treatment. */
+.ranking-table td:last-child [data-slot="badge"] {
+  max-width: 110px;
+  white-space: normal;
+  text-align: center;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.ranking-table small {
+  color: #7c807a;
+  font-size: 10px;
+}
+@media (max-width: 1000px) {
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .ranking-toolbar {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .ranking-toolbar p {
+    margin-left: 0;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .ranking-heading {
+    align-items: flex-start;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .ranking-totals > div {
+    min-width: 80px;
+    padding: 10px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .ranking-heading h1 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .ranking-heading {
+    flex-direction: column;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .ranking-totals {
+    width: 100%;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .ranking-totals > div {
+    flex: 1;
+  }
+}

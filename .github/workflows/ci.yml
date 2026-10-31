@@ -1,5 +1,7 @@
+# Frontend CI: install the lockfile dependencies, then check lint and the production build.
 name: CI
 
+# Trigger checks for pushes and pull requests targeting main.
 on:
   pull_request:
     branches:
@@ -8,6 +10,7 @@ on:
     branches:
       - main
 
+# Keep GitHub workflow permissions limited to reading repository contents.
 permissions:
   contents: read
 
@@ -16,10 +19,12 @@ jobs:
     name: Frontend build
     runs-on: ubuntu-latest
 
+    # Run frontend commands from the frontend directory.
     defaults:
       run:
         working-directory: frontend
 
+    # Run the reproducible validation steps in order.
     steps:
       - name: Checkout
         uses: actions/checkout@v4

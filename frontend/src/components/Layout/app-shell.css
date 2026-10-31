@@ -1,0 +1,467 @@
+/* app-shell: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.hr-workspace {
+  --primary: #194e65;
+  --primary-foreground: #fff;
+  --ring: #194e65;
+  --color-action-primary: #194e65;
+  --color-action-primary-hover: #133d50;
+  --background: #fff8ef;
+  --color-bg-canvas: #fff8ef;
+  --sidebar: #f0ece3;
+  --sidebar-accent: #e4e4df;
+  --sidebar-accent-foreground: #194e65;
+  --sidebar-foreground: #344d58;
+  --sidebar-border: #d9d8d2;
+  color: #242927;
+  font-size: 14px;
+  background: var(--background);
+}
+/* apply the intended surface or text colors. */
+.hr-workspace [data-slot="sidebar-inner"] {
+  background: var(--sidebar);
+}
+/* set spacing between this region and its content; control dimensions. */
+.workspace-brand {
+  padding: 28px 20px 24px;
+  min-height: 120px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.workspace-brand > a:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #194e65;
+}
+/* arrange the contained elements; set text hierarchy and readability. */
+.workspace-brand strong {
+  display: block;
+  font-size: 21px;
+  line-height: 1.15;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.workspace-brand small {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 500;
+}
+/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.workspace-logo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 40px;
+  border-radius: 7px;
+  background: #194e65;
+  color: white;
+  font-weight: 700;
+}
+/* set spacing between this region and its content; control dimensions. */
+.workspace-brand .post-job {
+  margin-top: 24px;
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+}
+/* set spacing between this region and its content. */
+.hr-workspace [data-slot="sidebar-group"] {
+  padding: 16px 12px;
+}
+/* set spacing between this region and its content. */
+.hr-workspace [data-slot="sidebar-menu"] {
+  gap: 4px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.hr-workspace [data-slot="sidebar-menu-button"] {
+  height: 36px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+/* control dimensions. */
+.hr-workspace [data-slot="sidebar-menu-button"] svg {
+  width: 19px;
+  height: 19px;
+}
+/* set text hierarchy and readability. */
+.hr-workspace [data-active="true"] {
+  font-weight: 600;
+}
+/* set spacing between this region and its content. */
+.workspace-footer {
+  padding: 0 16px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.workspace-footer details {
+  padding: 10px 6px;
+  font-size: 13px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.workspace-footer summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.workspace-footer details p {
+  padding: 10px 0;
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.workspace-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--sidebar-border);
+  margin-top: 12px;
+  padding: 18px 0;
+}
+/* define the visual boundary or interaction treatment. */
+.workspace-account > span:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+}
+/* arrange the contained elements. */
+.workspace-account strong,
+.workspace-account small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* set text hierarchy and readability. */
+.workspace-account strong {
+  font-size: 12px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.workspace-account small {
+  font-size: 10px;
+  margin-top: 3px;
+}
+/* arrange the contained elements; apply the intended surface or text colors; control dimensions. */
+.workspace-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #dce3df;
+  color: #194e65;
+}
+/* apply the intended surface or text colors. */
+.workspace-inset {
+  min-width: 0;
+  background: var(--background);
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.workspace-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 64px;
+  padding: 0 32px;
+  border-bottom: 1px solid #d9d6ce;
+  background: #e5dfd3;
+}
+/* set text hierarchy and readability. */
+.workspace-header-title {
+  font-size: 18px;
+  white-space: nowrap;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
+.workspace-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 290px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid #d9d7d0;
+  border-radius: 20px;
+  background: #fff8ef;
+  color: #7a807c;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.workspace-search [data-slot="input"] {
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  font-size: 12px;
+}
+/* Focus feedback: define the visual boundary or interaction treatment. */
+.workspace-search:focus-within {
+  outline: 2px solid var(--ring);
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.workspace-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
+}
+/* position this element relative to its surrounding layout. */
+.workspace-header-actions details {
+  position: relative;
+}
+/* arrange the contained elements; position this element relative to its surrounding layout. */
+.workspace-header-actions summary {
+  display: flex;
+  cursor: pointer;
+  list-style: none;
+  position: relative;
+}
+/* apply the intended surface or text colors; position this element relative to its surrounding layout; control dimensions. */
+.workspace-header-actions summary i {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #cf5c5c;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors; position this element relative to its surrounding layout; control dimensions. */
+.workspace-header-actions details p {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  top: 28px;
+  padding: 20px;
+  width: 220px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.admin-panel {
+  padding-left: 16px;
+  border-left: 1px solid #c9c9c0;
+  font-size: 12px;
+  white-space: nowrap;
+}
+/* set spacing between this region and its content. */
+.workspace-main {
+  padding: 32px;
+  min-width: 0;
+}
+/* set spacing between this region and its content. */
+.workspace-prototype-note {
+  padding: 16px 32px;
+  margin-top: auto;
+  opacity: 0.65;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.workspace-prototype-note [data-slot="badge"] {
+  min-height: 20px;
+  font-size: 10px;
+  padding: 2px 8px;
+}
+/* apply the intended surface or text colors. */
+.hr-dashboard .workspace-header {
+  background: #f6f1e8;
+}
+/* control dimensions. */
+.hr-dashboard .workspace-brand {
+  min-height: 160px;
+}
+/* define the visual boundary or interaction treatment. */
+.hr-dashboard .workspace-search {
+  border-radius: 6px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.hr-workspace [data-slot="card"] {
+  background: #fff;
+  border: 1px solid #dedfd9;
+  box-shadow: 0 2px 5px #233b4610;
+  border-radius: 10px;
+  padding-block: 0;
+  gap: 0;
+}
+/* set spacing between this region and its content. */
+.hr-workspace [data-slot="card-header"] {
+  padding: 22px 24px 0;
+}
+/* set spacing between this region and its content. */
+.hr-workspace [data-slot="card-content"] {
+  padding: 24px;
+}
+/* set text hierarchy and readability. */
+.hr-workspace [data-slot="card-title"] {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+/* set spacing between this region and its content. */
+.hr-workspace .page-stack {
+  gap: 24px;
+  max-width: none;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.hr-workspace .page-heading h1 {
+  font-size: 30px;
+  margin: 0;
+  letter-spacing: -0.035em;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.hr-workspace .page-heading p {
+  font-size: 14px;
+  margin-top: 6px;
+}
+/* arrange the contained elements. */
+.hr-workspace .page-heading .section-label {
+  display: none;
+}
+/* apply the intended surface or text colors. */
+.hr-workspace .form-select {
+  background: #fff8ef;
+  border-color: #d9d8d0;
+  border-radius: 5px;
+}
+/* apply the intended surface or text colors. */
+.hr-workspace [data-slot="input"],
+.hr-workspace [data-slot="textarea"] {
+  background: #fffaf3;
+}
+/* set text hierarchy and readability. */
+.hr-workspace .demo-note {
+  font-size: 11px;
+}
+/* set text hierarchy and readability. */
+.hr-workspace .page-heading [data-slot="button"] {
+  font-size: 12px;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .workspace-header-title {
+    font-size: 15px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-header {
+    padding-inline: 24px;
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-header-actions {
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .workspace-search {
+    width: 230px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-main {
+    padding: 24px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .admin-panel {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content; control dimensions. */
+  .workspace-header {
+    padding: 0 16px;
+    height: 60px;
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-main {
+    padding: 20px 16px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .workspace-header-title {
+    display: none;
+  }
+  /* Viewport-specific adjustment: control dimensions. */
+  .workspace-search {
+    flex: 1;
+    width: auto;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .workspace-header-actions > svg,
+  .workspace-header-actions > .workspace-avatar {
+    display: none;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-header-actions {
+    gap: 8px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .hr-workspace .page-heading h1 {
+    font-size: 24px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-brand {
+    padding: 20px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .workspace-prototype-note {
+    padding: 12px 16px;
+  }
+}
+
+/* arrange the contained elements. */
+
+.hr-workspace .page-heading p.uppercase {
+  display: none;
+}
+/* apply the intended surface or text colors. */
+.hr-workspace .page-heading h1 {
+  color: #262c25;
+}
+
+/* apply the intended surface or text colors. */
+
+.workspace-brand .post-job {
+  color: white;
+}
+/* define the visual boundary or interaction treatment. */
+.workspace-header {
+  flex-shrink: 0;
+}
+/* define the visual boundary or interaction treatment. */
+.hr-workspace [data-slot="sidebar-inner"] {
+  overflow: hidden;
+}
+/* define the visual boundary or interaction treatment. */
+.hr-workspace [data-slot="sidebar-footer"] {
+  flex-shrink: 0;
+}
+
+/* define the visual boundary or interaction treatment. */
+
+.hr-workspace [data-slot="table-row"] {
+  border-color: #e2e4dc;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.candidate-match-score {
+  background: #edf1eb;
+  border: 1px solid #d7dfd4;
+  color: #668173;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* apply the intended surface or text colors. */
+
+.workspace-sidebar[data-mobile="true"] {
+  background: var(--sidebar);
+}
+/* control dimensions. */
+.workspace-sidebar[data-mobile="true"] .workspace-brand {
+  min-height: 120px;
+}
+/* control dimensions. */
+.workspace-sidebar[data-mobile="true"] [data-slot="sidebar-menu-button"] {
+  height: 34px;
+}

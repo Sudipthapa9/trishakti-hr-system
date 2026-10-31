@@ -1,5 +1,13 @@
+/* index: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* The Figma library has one light mode; dark styles require an explicit class. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -30,26 +38,46 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+
 :root {
   font-family: Inter, "Segoe UI", sans-serif;
-  color: #1d1b20;
-  background: #f8f8f6;
+  color: var(--color-text-primary);
+  background: var(--color-bg-canvas);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --color-bg-canvas: #faf7f1;
+  --color-bg-canvas: #fffcf7;
   --color-bg-surface: #ffffff;
-  --color-text-primary: #17151a;
-  --color-text-secondary: #6d6a72;
+  --color-text-primary: #13334c;
+  --color-text-secondary: #6b7475;
   --color-text-inverse: #ffffff;
-  --color-action-primary: #15506e;
-  --color-action-primary-hover: #0f4662;
-  --color-status-success: #477459;
-  --color-status-warning: #8b6505;
-  --color-status-danger: #bd3b35;
-  --color-border-default: #c9d0d5;
+  --color-action-primary: #148c6d;
+  --color-action-primary-hover: #1e4d6b;
+  --color-status-success: #148c6d;
+  --color-status-warning: #d9911b;
+  --color-status-danger: #d95c5c;
+  --color-border-default: #e6e9e6;
+
+  /* Verified against the native Trishakti HR UI Library. */
+  --color-status-success-bg: #d9f5e8;
+  --color-status-warning-bg: #fcf0c7;
+  --color-status-danger-bg: #fae0e0;
+  --color-status-neutral-bg: #f0f2f0;
+  --color-control-bg: #e5e8e5;
+  --color-control-disabled-bg: #f0f2f0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
 
   --background: var(--color-bg-canvas);
   --foreground: var(--color-text-primary);
@@ -59,33 +87,39 @@
   --popover-foreground: var(--color-text-primary);
   --primary: var(--color-action-primary);
   --primary-foreground: var(--color-text-inverse);
-  --secondary: #edf1ee;
-  --secondary-foreground: var(--color-text-primary);
-  --muted: #f1f1ee;
+  --secondary: #13334c;
+  --secondary-foreground: var(--color-text-inverse);
+  --muted: #f0f2f0;
   --muted-foreground: var(--color-text-secondary);
-  --accent: #e7eef1;
+  --accent: #d9f5e8;
   --accent-foreground: var(--color-action-primary);
   --destructive: var(--color-status-danger);
   --border: var(--color-border-default);
   --input: var(--color-border-default);
   --ring: var(--color-action-primary);
-  --sidebar: #e9e3d8;
+  --sidebar: var(--color-bg-canvas);
   --sidebar-foreground: var(--color-text-primary);
   --sidebar-primary: var(--color-action-primary);
   --sidebar-primary-foreground: var(--color-text-inverse);
-  --sidebar-accent: #fffaf2;
+  --sidebar-accent: #d9f5e8;
   --sidebar-accent-foreground: var(--color-action-primary);
   --sidebar-border: var(--color-border-default);
   --sidebar-ring: var(--color-action-primary);
 }
 
+/* define the visual boundary or interaction treatment. */
+
 * {
   box-sizing: border-box;
 }
 
+/* apply the intended surface or text colors. */
+
 html {
   background: var(--color-bg-canvas);
 }
+
+/* set spacing between this region and its content; apply the intended surface or text colors. */
 
 body {
   margin: 0;
@@ -94,14 +128,22 @@ body {
   color: var(--color-text-primary);
 }
 
+/* set text hierarchy and readability. */
+
 button,
-input {
-  font: inherit;
+input,
+textarea,
+select {
+  font-family: inherit;
 }
+
+/* define the visual boundary or interaction treatment. */
 
 button {
   cursor: pointer;
 }
+
+/* control dimensions. */
 
 #root {
   min-height: 100svh;
