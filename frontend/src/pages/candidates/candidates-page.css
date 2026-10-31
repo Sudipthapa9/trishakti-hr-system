@@ -1,0 +1,256 @@
+/* candidates-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-candidates-candidates-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.candidate-pipeline-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: white;
+  border: 1px solid #dedfd7;
+  padding: 24px;
+  border-radius: 7px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-pipeline-toolbar > div {
+  display: grid;
+  gap: 5px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.candidate-pipeline-toolbar label {
+  font-size: 11px;
+  color: #747d6c;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.candidate-pipeline-toolbar .form-select {
+  font-size: 12px;
+  min-height: 34px;
+  padding: 6px 12px;
+  min-width: 210px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-pipeline-toolbar > .pipeline-filter {
+  border-left: 1px solid #dedfd7;
+  padding-left: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.pipeline-filter select {
+  background: transparent;
+  font-size: 11px;
+  color: #56634f;
+  max-width: 160px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.candidate-pipeline-toolbar > button {
+  font-size: 11px;
+  height: 36px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-pipeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-column-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 8px 14px;
+}
+/* set text hierarchy and readability. */
+.candidate-column-heading h1 {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  font-weight: 650;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.candidate-column-heading > span {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #e9e5da;
+  color: #7e8976;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-column-cards {
+  display: grid;
+  gap: 12px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.pipeline-candidate-card {
+  padding: 16px;
+  background: white;
+  border: 1px solid #d9ddd4;
+  border-radius: 7px;
+  box-shadow: 0 2px 4px #253d4210;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.pipeline-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* define the visual boundary or interaction treatment. */
+.pipeline-card-head > div {
+  min-width: 0;
+  flex: 1;
+}
+/* arrange the contained elements; set text hierarchy and readability. */
+.pipeline-card-head strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.pipeline-card-head small {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.pipeline-card-head .candidate-initials {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+  background: #f1ecdf;
+  color: #526b72;
+  font-size: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.pipeline-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid #eee;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.pipeline-card-foot > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #888f7f;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.pipeline-card-foot [data-slot="badge"] {
+  border-radius: 3px;
+  min-height: 21px;
+  padding: 3px 8px;
+  font-size: 10px;
+  background: #f3eee4;
+  color: #52798b;
+}
+/* position this element relative to its surrounding layout. */
+.candidate-actions {
+  position: relative;
+  align-self: flex-start;
+}
+/* apply the intended surface or text colors. */
+.candidate-actions summary {
+  list-style: none;
+  cursor: pointer;
+  color: #9ba191;
+}
+/* apply the intended surface or text colors; position this element relative to its surrounding layout. */
+.candidate-actions > div {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  top: 22px;
+  min-width: 165px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: white;
+  box-shadow: 0 4px 12px #0001;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.candidate-actions button {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+  padding: 10px;
+  text-align: left;
+}
+/* Hover feedback: apply the intended surface or text colors. */
+.candidate-actions button:hover {
+  background: #f3eee4;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.candidate-add-form {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.candidate-add-form > div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  grid-column: 1/-1;
+}
+@media (max-width: 1100px) {
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .candidate-pipeline {
+    gap: 14px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .candidate-pipeline-toolbar {
+    gap: 16px;
+    padding: 18px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .candidate-pipeline-toolbar > .pipeline-filter {
+    padding-left: 16px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .candidate-pipeline-toolbar .form-select {
+    min-width: 160px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .pipeline-card-head {
+    gap: 6px;
+  }
+  /* Viewport-specific adjustment: set text hierarchy and readability. */
+  .pipeline-card-head strong {
+    font-size: 12px;
+  }
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .candidate-pipeline {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .candidate-pipeline-toolbar {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .candidate-pipeline-toolbar > div {
+    flex: 1;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .candidate-pipeline-toolbar > .pipeline-filter {
+    border: 0;
+    padding-left: 0;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .candidate-add-form {
+    grid-template-columns: 1fr;
+  }
+}

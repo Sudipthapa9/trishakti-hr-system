@@ -1,0 +1,140 @@
+/* jobs-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-recruitment-jobs-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.jobs-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #dedfd7;
+  background: white;
+  border-radius: 7px;
+  margin-top: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content; position this element relative to its surrounding layout. */
+.jobs-toolbar > label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 460px;
+  flex: 1;
+  margin-right: auto;
+}
+/* apply the intended surface or text colors; position this element relative to its surrounding layout. */
+.jobs-toolbar > label svg {
+  position: absolute;
+  left: 12px;
+  color: #90978b;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.jobs-toolbar input {
+  padding-left: 36px;
+  height: 40px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+/* set text hierarchy and readability. */
+.jobs-toolbar select {
+  font-size: 12px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.jobs-table-wrap {
+  border: 1px solid #dcddd4;
+  background: white;
+  border-radius: 7px;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+/* control dimensions. */
+.jobs-table {
+  width: 100%;
+  min-width: 720px;
+  text-align: left;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.jobs-table th {
+  padding: 16px 22px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #faf4e9;
+  font-weight: 600;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.jobs-table td {
+  padding: 24px 22px;
+  font-size: 13px;
+  border-top: 1px solid #e3e5dd;
+  color: #78816f;
+}
+/* apply the intended surface or text colors. */
+.jobs-table td:first-child {
+  max-width: 240px;
+  color: #323c2b;
+}
+/* arrange the contained elements; set text hierarchy and readability. */
+.jobs-table td:first-child strong {
+  font-weight: 500;
+  display: block;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.jobs-table small {
+  display: block;
+  font-size: 10px;
+  margin-top: 6px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.jobs-table [data-slot="badge"] {
+  font-size: 10px;
+  min-height: 22px;
+  padding: 3px 8px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.jobs-table .job-expanded td {
+  background: #faf7ee;
+  padding: 24px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.job-expanded h2 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+/* set spacing between this region and its content. */
+.job-expanded p {
+  margin-bottom: 12px;
+}
+/* apply the intended surface or text colors; control dimensions. */
+.jobs-table td:last-child {
+  width: 90px;
+  color: #2f392a;
+}
+@media (max-width: 800px) {
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .jobs-toolbar {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .jobs-toolbar > label {
+    max-width: none;
+    flex-basis: 100%;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .jobs-toolbar > select {
+    flex: 1;
+    min-width: 0;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .jobs-table th,
+  .jobs-table td {
+    padding-inline: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .jobs-table td {
+    padding-block: 20px;
+  }
+}

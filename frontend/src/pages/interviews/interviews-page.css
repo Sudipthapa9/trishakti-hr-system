@@ -1,0 +1,226 @@
+/* interviews-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-interviews-interviews-page {
+  display: contents;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.interview-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.interview-layout aside {
+  display: grid;
+  gap: 24px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.interview-calendar,
+.interview-filters {
+  border: 1px solid #e1dfd6;
+  background: #fffdf8;
+  border-radius: 7px;
+  padding: 22px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.interview-calendar header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+/* set text hierarchy and readability. */
+.interview-calendar header strong {
+  font-size: 18px;
+}
+/* arrange the contained elements. */
+.interview-calendar header > div {
+  display: flex;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.calendar-days small {
+  font-size: 10px;
+  color: #92988d;
+  margin-bottom: 8px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.calendar-days button {
+  font-size: 11px;
+  min-height: 26px;
+  border-radius: 4px;
+}
+/* apply the intended surface or text colors. */
+.calendar-days button[aria-pressed="true"] {
+  background: #194e65;
+  color: white;
+}
+/* Hover feedback: define the visual boundary or interaction treatment. */
+.calendar-days button:hover {
+  outline: 1px solid #194e65;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.interview-filters h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.interview-filters label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-top: 10px;
+  color: #7e8579;
+}
+/* define the visual boundary or interaction treatment. */
+.interview-filters input {
+  accent-color: #194e65;
+}
+/* apply the intended surface or text colors. */
+.interview-table {
+  border: 1px solid #e1dfd6;
+  border-radius: 7px;
+  background: #fffdf8;
+  overflow: hidden;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.interview-table > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px;
+  background: #f8f2e8;
+  border-bottom: 1px solid #dedbd0;
+  gap: 10px;
+}
+/* set text hierarchy and readability. */
+.interview-table h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+/* arrange the contained elements; set spacing between this region and its content; control dimensions. */
+.interview-table > header > label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 160px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.interview-table > header input {
+  height: 30px;
+  font-size: 11px;
+}
+/* define the visual boundary or interaction treatment. */
+.table-scroll {
+  overflow-x: auto;
+}
+/* control dimensions. */
+.interview-table table {
+  width: 100%;
+  text-align: left;
+  min-width: 600px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.interview-table th {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 14px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.interview-table td {
+  padding: 25px 14px;
+  font-size: 12px;
+  max-width: 160px;
+  border-bottom: 1px solid #eceae3;
+  vertical-align: top;
+}
+/* set text hierarchy and readability. */
+.interview-table td p {
+  font-size: 12px;
+  white-space: normal;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.interview-table td small {
+  display: block;
+  font-size: 10px;
+  margin-top: 5px;
+  color: #8d9387;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.interview-table [data-slot="badge"] {
+  font-size: 10px;
+  min-height: 21px;
+  padding: 3px 6px;
+}
+/* set spacing between this region and its content. */
+.interview-table footer {
+  padding: 12px;
+}
+/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
+.interview-schedule {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+}
+/* define the visual boundary or interaction treatment. */
+.interview-schedule h2,
+.interview-schedule > div:last-child {
+  grid-column: 1/-1;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.interview-schedule > div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+@media (max-width: 1050px) {
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .interview-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 16px;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .interview-calendar,
+  .interview-filters {
+    padding: 14px;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .interview-table > header {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 700px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .interview-layout {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
+  .interview-layout aside {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .interview-schedule {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .calendar-days {
+    gap: 2px;
+  }
+}

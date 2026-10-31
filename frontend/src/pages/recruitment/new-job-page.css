@@ -1,0 +1,222 @@
+/* new-job-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+@reference "../../index.css";
+/* arrange the contained elements. */
+.page-recruitment-new-job-page {
+  display: contents;
+}
+/* define the visual boundary or interaction treatment. */
+.new-job-form {
+  max-width: 960px;
+}
+/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
+.new-job-form h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #e6e0d4;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-information {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+}
+/* define the visual boundary or interaction treatment. */
+.job-information .job-title {
+  grid-column: 1/-1;
+}
+/* set text hierarchy and readability. */
+.new-job-form label {
+  font-size: 12px;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.new-job-form input,
+.new-job-form textarea {
+  background: #fff !important;
+  border-radius: 3px !important;
+  font-size: 13px;
+}
+/* control dimensions. */
+.new-job-form input {
+  height: 40px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-role-details {
+  margin-top: 24px;
+  display: grid;
+  gap: 18px;
+}
+/* set spacing between this region and its content. */
+.job-role-details h2 {
+  margin-bottom: 0;
+}
+/* control dimensions. */
+.new-job-form .job-description {
+  min-height: 150px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.job-ai-section {
+  margin-top: 28px;
+  padding: 24px;
+  background: #faf4e9;
+  border-top: 1px solid #e3ddcf;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-ai-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+/* set spacing between this region and its content. */
+.job-ai-heading h2 {
+  border: 0;
+  margin-bottom: 4px;
+  padding: 0;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.job-ai-heading p {
+  font-size: 11px;
+  color: #858a7e;
+  line-height: 1.5;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.job-ai-heading > [data-slot="badge"] {
+  font-size: 10px;
+  min-height: 20px;
+  padding: 3px 7px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-skill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+/* set spacing between this region and its content; apply the intended surface or text colors. */
+.job-skill-box {
+  padding: 18px;
+  background: #fff9ef;
+  border: 1px solid #ded9cd;
+  border-radius: 6px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-skill-box header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+/* set text hierarchy and readability. */
+.job-skill-box h3 {
+  font-size: 12px;
+  font-weight: 600;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.job-skill-box header [data-slot="badge"] {
+  font-size: 9px;
+  min-height: 18px;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-skill-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* set text hierarchy and readability; control dimensions. */
+.job-skill-input input {
+  min-width: 0;
+  flex: 1;
+  font-size: 12px;
+  height: 36px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability. */
+.job-skill-input .form-select {
+  min-width: 74px;
+  padding: 5px;
+  font-size: 11px;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
+.job-skill-tags [data-slot="badge"] {
+  border-radius: 3px;
+  font-size: 10px;
+  min-height: 23px;
+  padding: 3px 7px;
+}
+/* set spacing between this region and its content. */
+.job-skill-tags span > span {
+  border-left: 1px solid #ffffff40;
+  padding-left: 6px;
+  margin-left: 4px;
+}
+/* arrange the contained elements. */
+.job-skill-tags button {
+  display: flex;
+  align-items: center;
+}
+/* arrange the contained elements; set spacing between this region and its content. */
+.job-ai-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid #e3ddcf;
+}
+/* set text hierarchy and readability; apply the intended surface or text colors. */
+.job-ai-footer small {
+  font-size: 10px;
+  color: #8b9183;
+  line-height: 1.5;
+}
+/* define the visual boundary or interaction treatment. */
+.job-ai-footer input {
+  max-width: 230px;
+}
+/* set spacing between this region and its content. */
+.new-job-form .form-actions {
+  margin-top: 20px;
+}
+/* set text hierarchy and readability. */
+.new-job-form .form-actions button {
+  font-size: 12px;
+}
+@media (max-width: 1000px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .job-skill-grid {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: set spacing between this region and its content. */
+  .job-ai-section {
+    padding: 18px;
+  }
+}
+@media (max-width: 600px) {
+  /* Viewport-specific adjustment: arrange the contained elements. */
+  .job-information,
+  .job-ai-footer {
+    grid-template-columns: 1fr;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .job-ai-heading {
+    flex-wrap: wrap;
+  }
+  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
+  .job-ai-footer input {
+    max-width: 100%;
+  }
+}

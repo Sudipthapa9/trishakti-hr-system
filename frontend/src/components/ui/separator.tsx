@@ -1,7 +1,11 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Separator as SeparatorPrimitive } from "radix-ui"
+/**
+ * Provides a consistently styled Radix divider between related interface regions.
+ */
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Separator as SeparatorPrimitive } from "radix-ui";
 
+// Render the separator region while forwarding supported props and caller styling.
 function Separator({
   className,
   orientation = "horizontal",
@@ -15,11 +19,11 @@ function Separator({
       orientation={orientation}
       className={cn(
         "shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Separator }
+export { Separator };
