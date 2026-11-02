@@ -55,8 +55,9 @@ infrastructure/keycloak/.env
 logs/
 *.log
 
-# Keep only this local implementation note unignored.
+# Track module work notes while keeping other local documents ignored.
 docs/
 !docs/
 docs/*
 !docs/ai-work.md
+!docs/backend-jobs-module.md
