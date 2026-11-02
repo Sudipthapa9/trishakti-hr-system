@@ -6,6 +6,36 @@
 **/.env.*
 !**/.env.example
 
+# Private keys, credentials, and local service configuration
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.npmrc
+.pypirc
+credentials.json
+service-account*.json
+secrets/
+*.local
+
+# Identity exports can contain users, password hashes, and signing keys.
+keycloak-export/
+**/realm-export.json
+**/*-realm.json
+
+# Private HR files and database backups (keep SQL migrations trackable).
+uploads/
+private/
+backups/
+dumps/
+*.dump
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+
 # Node
 **/node_modules/
 dist/
