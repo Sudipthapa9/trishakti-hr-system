@@ -1,3 +1,4 @@
+const jobsRoutes = require("./routes/jobs.routes");
 /**
  * Creates the Express pipeline: request middleware, protected test routes, then the final error handler.
  */
@@ -15,6 +16,8 @@ app.use(express.json());
 // Mount the protected verification routes under one API prefix.
 app.use("/api/test", testRoutes);
 
+// Mount the jobs routes under one API prefix.
+app.use("/api/jobs", jobsRoutes);
 // Register error handling last so upstream middleware errors reach it.
 app.use(errorHandler);
 
