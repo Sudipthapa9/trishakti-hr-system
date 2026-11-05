@@ -8,17 +8,18 @@ AI is used as decision support. HR remains responsible for the final hiring deci
 
 The source design is maintained in [Figma](https://www.figma.com/design/5SB0Ob4nxl1KEAqDVPz0EF/trishakti_hr).
 
-See [docs/design.md](docs/design.md) for the screen inventory, design tokens, component library, naming rules, and design-to-code guidance.
+Local design notes live in the ignored docs directory. Tracked implementation notes include [backend jobs progress](docs/backend-jobs-module.md) and [screening progress](docs/ai-work.md).
 
 ## Repository Layout
 
 ```text
 backend/                 Node.js and Express API
 frontend/                React, TypeScript, and Vite application
-infrastructure/          Local infrastructure configuration
-keycloak-export/         Keycloak realm export without runtime secrets
+cv-screening/            Standalone Python text-similarity API
+infrastructure/          Legacy Keycloak stack configuration (see below)
+keycloak-export/         Private local identity backup; ignored by Git
 docs/                    Project and design documentation
-docker-compose.yml       Local PostgreSQL and Keycloak services
+docker-compose.yml       Main stack: databases, Keycloak, and screening
 ```
 
 ## Prerequisites
@@ -29,6 +30,10 @@ docker-compose.yml       Local PostgreSQL and Keycloak services
 - A local Keycloak development configuration
 
 ## Local Setup
+
+Run Docker Compose commands from the repository root using the root `docker-compose.yml`. Install npm dependencies separately in `backend/` and `frontend/`; there is no root npm application.
+
+`infrastructure/keycloak/docker-compose.yml` belongs to an older, separate stack. Its `keycloak-keycloak-1` and `keycloak-postgres-1` containers were still running during the 2 November 2026 cleanup. Keep that configuration until its users and database have been reviewed for retirement. Do not remove its volumes merely to tidy the project.
 
 1. Create local environment files from the documented variable names. Keep real values only in ignored `.env` files.
 2. Start the local infrastructure:
@@ -104,7 +109,7 @@ Use focused commits with a clear validation note. Never force-push shared branch
 
 ```bash
 git status
-git add README.md docs/design.md
+git add README.md docs/backend-jobs-module.md
 git diff --cached --check
 git commit -m "docs: add project and design documentation"
 git push origin HEAD
