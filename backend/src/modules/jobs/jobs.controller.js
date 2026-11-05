@@ -1,4 +1,4 @@
-const pool = require("../config/db");
+const pool = require("../../config/db");
 
 // Read jobs from PostgreSQL and return them as JSON.
 async function getJobs(req, res, next) {
@@ -60,4 +60,28 @@ async function createJob(req, res, next) {
     next(error);
   }
 }
-module.exports = { getJobs, createJob };
+// Return only fields meant for the public careers page.
+async function getPublicJobs(req, res, next) {
+  try {
+    const result = await pool.query(`
+      SELECT
+        id,
+        title,
+        department,
+        location,
+        employment_type AS "employmentType",
+        description,
+        status,
+        closing_date AS "closingDate"
+      FROM public.jobs
+      WHERE status = 'Open'
+      ORDER BY created_at DESC
+    `);
+
+    res.json({ jobs: result.rows });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { getJobs, getPublicJobs, createJob };
