@@ -8,8 +8,6 @@ AI is used as decision support. HR remains responsible for the final hiring deci
 
 The source design is maintained in [Figma](https://www.figma.com/design/5SB0Ob4nxl1KEAqDVPz0EF/trishakti_hr).
 
-Local design notes live in the ignored docs directory. Tracked implementation notes include [backend jobs progress](docs/backend-jobs-module.md) and [screening progress](docs/ai-work.md).
-
 ## Repository Layout
 
 ```text
@@ -18,7 +16,6 @@ frontend/                React, TypeScript, and Vite application
 cv-screening/            Standalone Python text-similarity API
 infrastructure/          Legacy Keycloak stack configuration (see below)
 keycloak-export/         Private local identity backup; ignored by Git
-docs/                    Project and design documentation
 docker-compose.yml       Main stack: databases, Keycloak, and screening
 ```
 
@@ -109,8 +106,8 @@ Use focused commits with a clear validation note. Never force-push shared branch
 
 ```bash
 git status
-git add README.md docs/backend-jobs-module.md
+git add README.md
 git diff --cached --check
-git commit -m "docs: add project and design documentation"
+git commit -m "Update project setup instructions"
 git push origin HEAD
 ```

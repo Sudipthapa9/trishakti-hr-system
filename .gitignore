@@ -5,7 +5,7 @@
 **/.env
 **/.env.*
 !**/.env.example
-
+docs
 # Private keys, credentials, and local service configuration
 *.pem
 *.key
@@ -85,9 +85,5 @@ infrastructure/keycloak/.env
 logs/
 *.log
 
-# Track module work notes while keeping other local documents ignored.
-docs/
-!docs/
-docs/*
-!docs/ai-work.md
-!docs/backend-jobs-module.md
+# Private project documentation
+/docs/
