@@ -1,9 +1,26 @@
 const express = require("express");
-// Import the getJobs controller function to handle requests to the jobs API.
-const { getJobs } = require("../controllers/jobs.controller");
-// Create a new router instance to define routes for the jobs API.
+const {
+  getJobs,
+  createJob,
+} = require("../controllers/jobs.controller");
+
+const checkJwt = require("../middleware/auth");
+const requireRole = require("../middleware/rbac");
+const validate = require("../middleware/validate");
+const { createJobSchema } = require("../validators/jobs.schema");
+
 const router = express.Router();
-// Define a route to handle GET requests to the root path of the jobs API.
+
+// Read jobs.
 router.get("/", getJobs);
+
+// Authenticate, check the role, validate input, then create a job.
+router.post(
+  "/",
+  checkJwt,
+  requireRole("hr", "hr-head"),
+  validate(createJobSchema),
+  createJob
+);
 
 module.exports = router;

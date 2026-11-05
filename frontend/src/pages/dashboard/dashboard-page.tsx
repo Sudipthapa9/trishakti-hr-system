@@ -40,10 +40,18 @@ export function DashboardPage({ jobs, candidates }: DashboardPageProps) {
             <h1>Dashboard Overview</h1>
             <p>Here is what's happening with your hiring pipeline today.</p>
           </div>
-          <span className="dashboard-date">
-            <CalendarDays size={13} />
-            Today, Oct 24
-          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="dashboard-date">
+              <CalendarDays size={13} />
+              Today, Oct 24
+            </span>
+            {/* Open the public careers experience from the workspace. */}
+            <Button asChild variant="outline">
+              <Link to="/careers">
+                Public careers <ArrowRight size={16} />
+              </Link>
+            </Button>
+          </div>
         </div>
         {/* Group related content and controls in this screen section. */}
         <section className="metric-grid" aria-label="HR summary">

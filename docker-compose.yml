@@ -57,6 +57,9 @@ services:
       POSTGRES_DB: ${APP_POSTGRES_DB}
       POSTGRES_USER: ${APP_POSTGRES_USER}
       POSTGRES_PASSWORD: ${APP_POSTGRES_PASSWORD}
+    # Windows backend connects to localhost:5433; PostgreSQL listens on 5432 inside Docker.
+    ports:
+      - "127.0.0.1:5433:5432"
     # Attach or declare persistent storage so data can survive container recreation.
     volumes:
       - app_postgres_data:/var/lib/postgresql/data
