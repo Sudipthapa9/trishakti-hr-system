@@ -100,6 +100,10 @@ The user started the backend and confirmed the expected JSON response in the bro
 
 ## Planned next steps
 
+### Database port setup — 2 November 2026
+
+Added `127.0.0.1:5433:5432` to the root Compose `app-postgres` service so Express running on Windows can reach PostgreSQL at `127.0.0.1:5433`. Containers on the Compose network continue using `app-postgres:5432`. The localhost binding limits host access to this computer. The named database volume is preserved; no schema or credentials were changed. This provides network access only; Express database integration remains pending.
+
 1. Inspect the existing PostgreSQL/Compose setup and identify the application database separately from Keycloak storage.
 2. Compare proposed database columns with the frontend Job type.
 3. Create a versioned SQL migration for the jobs table and separate sample seed data.
