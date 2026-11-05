@@ -1,4 +1,4 @@
-const jobsRoutes = require("./routes/jobs.routes");
+const jobsRoutes = require("./modules/jobs/jobs.routes");
 /**
  * Creates the Express pipeline: request middleware, protected test routes, then the final error handler.
  */
