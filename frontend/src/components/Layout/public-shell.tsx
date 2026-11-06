@@ -57,7 +57,7 @@ export function PublicShell({
   );
 }
 // Provides the public careers header, footer, and reusable job metadata without the HR workspace sidebar.
-export function JobSummary({ job }: { job: Job }) {
+export function JobSummary({ job }: { job: Pick<Job, "location" | "employmentType"> }) {
   return (
     <div className="job-metadata">
       <span>

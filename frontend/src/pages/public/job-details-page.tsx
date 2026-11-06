@@ -1,26 +1,26 @@
 /**
- * Shows a published sample job, validates the selected CV file, and opens a prototype confirmation without uploading it.
+ * Shows a published job, validates the selected CV file, and opens a prototype confirmation without uploading it.
  */
 import { JobSummary, PublicShell } from "@/components/Layout/public-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Job } from "@/types/hr";
 import {
-  BriefcaseBusiness,
   FileUp,
-  GraduationCap,
-  ListChecks,
   Send,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { usePublicJobs } from "./use-public-jobs";
 import "./job-details-page.css";
-// Shows a published sample job, validates the selected CV file, and opens a prototype confirmation without uploading it.
-export function JobDetailsPage({ jobs }: { jobs: Job[] }) {
+// Shows a published job, validates the selected CV file, and opens a prototype confirmation without uploading it.
+export function JobDetailsPage() {
   const { jobId } = useParams();
-  const job = jobs.find((j) => j.id === jobId && j.status === "Open");
+  const result = usePublicJobs();
+  const job = result.status === "success"
+    ? result.jobs.find((j) => j.id === jobId)
+    : undefined;
   const navigate = useNavigate();
   // Keep fileName in component state; updates trigger a render.
   const [fileName, setFileName] = useState("");
@@ -52,7 +52,11 @@ export function JobDetailsPage({ jobs }: { jobs: Job[] }) {
   return (
     <div className="page-public-job-details-page">
       <PublicShell>
-        {!job ? (
+        {result.status === "loading" ? (
+          <main className="public-job-unavailable" role="status">Loading job…</main>
+        ) : result.status === "error" ? (
+          <main className="public-job-unavailable" role="alert">Could not load this job.</main>
+        ) : !job ? (
           <main className="public-job-unavailable">
             <h1>Position unavailable</h1>
             <p>This position is closed or no longer available.</p>
@@ -67,79 +71,9 @@ export function JobDetailsPage({ jobs }: { jobs: Job[] }) {
               <header className="public-job-intro">
                 <JobSummary job={job} />
                 <h1>{job.title}</h1>
-                <p>
-                  {job.description ??
-                    "Lead the design, development, and implementation of innovative and sustainable packaging solutions for Trikshati Poly Packs. Join a team dedicated to engineering excellence."}
-                </p>
+                <p>{job.department}</p>
+                <p>{job.description ?? "No description provided."}</p>
               </header>
-              {/* Group related content and controls in this screen section. */}
-              <section className="public-job-section">
-                <h2>
-                  <BriefcaseBusiness />
-                  Job Summary
-                </h2>
-                <p>
-                  As a {job.title} at Trikshati Poly Packs, you will be the
-                  cornerstone of our product development cycle, ensuring that
-                  our flexible packaging solutions meet stringent quality,
-                  sustainability, and performance metrics.
-                </p>
-                <p>
-                  You will collaborate cross-functionally with R&D,
-                  manufacturing, and quality assurance to optimize existing
-                  materials and pioneer new eco-friendly alternatives.
-                </p>
-              </section>
-              {/* Group related content and controls in this screen section. */}
-              <section className="public-job-section">
-                <h2>
-                  <ListChecks />
-                  Key Responsibilities
-                </h2>
-                <ul>
-                  {(job.responsibilities
-                    ? job.responsibilities.split("\n").filter(Boolean)
-                    : [
-                        "Design and develop robust flexible packaging structures tailored to specific client needs.",
-                        "Lead root-cause analysis for packaging-related issues in production and implement corrective actions.",
-                        "Conduct rigorous material testing, ensuring compliance with ASTM/ISO standards.",
-                        "Drive sustainability initiatives, focusing on down-gauging and recyclable structures.",
-                        "Mentor junior engineering staff and foster a culture of continuous technical improvement.",
-                      ]
-                  ).map((v, i) => (
-                    <li key={i}>{v}</li>
-                  ))}
-                </ul>
-              </section>
-              {/* Group related content and controls in this screen section. */}
-              <section className="public-job-section">
-                <h2>
-                  <GraduationCap />
-                  Required Qualifications
-                </h2>
-                <ul>
-                  <li>
-                    Bachelor's or Master's degree in a relevant engineering or
-                    professional field.
-                  </li>
-                  <li>
-                    Relevant hands-on experience in{" "}
-                    {job.department.toLowerCase()}.
-                  </li>
-                  <li>
-                    Strong technical knowledge and practical problem-solving
-                    skills.
-                  </li>
-                  <li>
-                    Proven track record of managing projects from
-                    conceptualization to delivery.
-                  </li>
-                  <li>
-                    Clear communication and commitment to sustainable ways of
-                    working.
-                  </li>
-                </ul>
-              </section>
             </div>
             {/* Supporting profile, navigation, or filter content beside the main panel. */}
             <aside className="public-application">
