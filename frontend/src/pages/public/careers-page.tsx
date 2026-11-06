@@ -1,10 +1,9 @@
 /**
- * Composes the public careers design and filters published sample vacancies without contacting a recruitment API.
+ * Displays and filters open jobs from the public jobs API.
  */
 import { PublicShell } from "@/components/Layout/public-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Job } from "@/types/hr";
 import {
   ArrowRight,
   Clock3,
@@ -18,9 +17,10 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePublicJobs } from "./use-public-jobs";
 import "./careers-page.css";
-// Composes the public careers design and filters published sample vacancies without contacting a recruitment API.
-export function CareersPage({ jobs }: { jobs: Job[] }) {
+export function CareersPage() {
+  const result = usePublicJobs();
   // Keep query in component state; updates trigger a render.
   const [query, setQuery] = useState("");
   // Keep location in component state; updates trigger a render.
@@ -30,15 +30,14 @@ export function CareersPage({ jobs }: { jobs: Job[] }) {
   // Recompute this derived view only when its declared inputs change.
   const open = useMemo(
     () =>
-      jobs.filter(
+      (result.status === "success" ? result.jobs : []).filter(
         (j) =>
-          j.status === "Open" &&
           (location === "All Locations" || j.location === location) &&
           (j.title + " " + j.department)
             .toLowerCase()
             .includes(query.toLowerCase()),
       ),
-    [jobs, query, location],
+    [result, query, location],
   );
   return (
     <div className="page-public-careers-page">
@@ -89,8 +88,7 @@ export function CareersPage({ jobs }: { jobs: Job[] }) {
                   <option>All Locations</option>
                   {[
                     ...new Set(
-                      jobs
-                        .filter((j) => j.status === "Open")
+                      (result.status === "success" ? result.jobs : [])
                         .map((j) => j.location),
                     ),
                   ].map((l) => (
@@ -228,10 +226,10 @@ export function CareersPage({ jobs }: { jobs: Job[] }) {
             <header>
               <div>
                 <h2>Open Positions</h2>
-                <p>
+                {result.status === "success" && <p>
                   Showing {Math.min(count, open.length)} of {open.length} open
                   roles
-                </p>
+                </p>}
               </div>
               <span>All Departments</span>
             </header>
@@ -266,8 +264,14 @@ export function CareersPage({ jobs }: { jobs: Job[] }) {
                 </article>
               ))}
             </div>
-            {!open.length ? (
-              <p className="empty-message">No positions match your search.</p>
+            {result.status === "loading" ? (
+              <p className="empty-message" role="status">Loading jobs…</p>
+            ) : result.status === "error" ? (
+              <p className="empty-message" role="alert">Could not load jobs.</p>
+            ) : !open.length ? (
+              <p className="empty-message">
+                {result.jobs.length ? "No positions match your search." : "No open positions."}
+              </p>
             ) : null}
             {count < open.length ? (
               <Button variant="outline" onClick={() => setCount((v) => v + 3)}>
