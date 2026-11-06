@@ -5,7 +5,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthSessionGate } from "@/auth/AuthSessionGate";
 import { ProtectedRoute } from "@/auth/ProtectedRoute";
 import { WorkspaceLayout } from "@/layouts/WorkspaceLayout";
-import { initialJobs } from "@/data/demo-data";
 import { WorkspaceNotFoundPage } from "@/pages/WorkspaceNotFoundPage";
 import {
   DashboardRoute,
@@ -34,16 +33,16 @@ export default function App() {
         {/* Declare this URL match or nested layout boundary. */}
         <Route path="/404" element={<PublicNotFoundPage />} />
         {/* Declare this URL match or nested layout boundary. */}
-        <Route path="/careers" element={<CareersPage jobs={initialJobs} />} />
+        <Route path="/careers" element={<CareersPage />} />
         {/* Declare this URL match or nested layout boundary. */}
         <Route
           path="/careers/:jobId"
-          element={<JobDetailsPage jobs={initialJobs} />}
+          element={<JobDetailsPage />}
         />
         {/* Declare this URL match or nested layout boundary. */}
         <Route
           path="/careers/:jobId/application"
-          element={<JobDetailsPage jobs={initialJobs} />}
+          element={<JobDetailsPage />}
         />
         {/* Declare this URL match or nested layout boundary. */}
         <Route
