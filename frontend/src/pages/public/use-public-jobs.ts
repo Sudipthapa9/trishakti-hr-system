@@ -7,6 +7,8 @@ type PublicJob = {
   location: string;
   employmentType: string;
   description: string | null;
+  responsibilities: string;
+  closingDate: string | null;
 };
 
 type JobsResult =

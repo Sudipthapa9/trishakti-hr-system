@@ -1,7 +1,7 @@
 /**
- * Combines shared navigation with in-memory jobs and candidate state; Outlet renders the selected workspace page.
+ * Combines shared navigation with database jobs and sample candidate state; Outlet renders the selected workspace page.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BriefcaseBusiness,
   CalendarDays,
@@ -17,8 +17,10 @@ import { Outlet } from "react-router-dom";
 import { AppShell, type NavItem } from "@/components/Layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/auth/auth-context";
-import { initialCandidates, initialJobs } from "@/data/demo-data";
+import { initialCandidates } from "@/data/demo-data";
 import { WorkspaceContext } from "@/data/workspace-context";
+import keycloak from "@/keycloak";
+import { requestJobs, saveDraft, updateJob, type JobChanges } from "@/data/jobs-api";
 import type { CandidateStage, Job, JobStatus } from "@/types/hr";
 
 // Keep navigation labels, icons, and destinations in one shared list.
@@ -38,41 +40,47 @@ const navigationItems: NavItem[] = [
   { label: "Employees", icon: UserRound, to: "/employees/eleanor-shellstrop" },
 ];
 
-// Combines shared navigation with in-memory jobs and candidate state; Outlet renders the selected workspace page.
+// Combines shared navigation with database jobs and sample candidate state; Outlet renders the selected workspace page.
 export function WorkspaceLayout() {
   const { username, roleLabel, logout } = useAuth();
   // Keep jobs in component state; updates trigger a render.
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
+  const [jobsError, setJobsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    requestJobs(controller.signal)
+      .then((records) => {
+        if (!controller.signal.aborted) setJobs(records);
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          setJobsError(error instanceof Error ? error.message : "Could not load jobs.");
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setJobsLoading(false);
+      });
+    return () => controller.abort();
+  }, []);
   // Keep candidates in component state; updates trigger a render.
   const [candidates, setCandidates] = useState(initialCandidates);
 
-  // Change only the matching job; remember its previous status so archiving can be reversed.
-  function updateJobStatus(jobId: string, status: JobStatus) {
-    setJobs((currentJobs) =>
-      currentJobs.map((job) => {
-        if (job.id !== jobId) return job;
-
-        // Keep the prior active/draft state so Restore can reverse this local archive action.
-        if (status === "Archived") {
-          return {
-            ...job,
-            previousStatus:
-              job.status === "Archived" ? job.previousStatus : job.status,
-            status,
-          };
-        }
-
-        return { ...job, status, previousStatus: undefined };
-      }),
-    );
+  async function editJob(id: string, changes: JobChanges) {
+    const saved = await updateJob(id, changes);
+    setJobs((current) => current.map((job) => job.id === id ? saved : job));
   }
 
-  // Prepend a new in-memory vacancy with a local identifier and zero applicants.
-  function createJob(newJob: Omit<Job, "id" | "applicants">) {
-    setJobs((currentJobs) => [
-      { ...newJob, id: `job-${Date.now()}`, applicants: 0 },
-      ...currentJobs,
-    ]);
+  async function updateJobStatus(id: string, status: JobStatus) {
+    await editJob(id, { status });
+  }
+
+  // Add the saved database record only after the API confirms creation.
+  async function createJob(newJob: Omit<Job, "id" | "applicants">) {
+    if (!keycloak.authenticated) throw new Error("Please sign in again.");
+    const saved = await saveDraft(newJob);
+    setJobs((current) => [saved, ...current]);
   }
 
   // Change the matching candidate stage and update its relative timestamp in shared state.
@@ -90,8 +98,11 @@ export function WorkspaceLayout() {
     <WorkspaceContext.Provider
       value={{
         jobs,
+        jobsLoading,
+        jobsError,
         candidates,
         updateJobStatus,
+        editJob,
         createJob,
         updateCandidateStage,
       }}

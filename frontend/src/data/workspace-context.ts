@@ -1,6 +1,7 @@
 /**
  * Shares prototype recruitment records and mutation callbacks between route adapters and the workspace layout.
  */
+import type { JobChanges } from "@/data/jobs-api";
 import { createContext, useContext } from "react";
 import type { Candidate, CandidateStage, Job, JobStatus } from "@/types/hr";
 
@@ -8,8 +9,11 @@ import type { Candidate, CandidateStage, Job, JobStatus } from "@/types/hr";
 export type WorkspaceData = {
   jobs: Job[];
   candidates: Candidate[];
-  updateJobStatus: (jobId: string, status: JobStatus) => void;
-  createJob: (job: Omit<Job, "id" | "applicants">) => void;
+  updateJobStatus: (jobId: string, status: JobStatus) => Promise<void>;
+  editJob: (jobId: string, changes: JobChanges) => Promise<void>;
+  createJob: (job: Omit<Job, "id" | "applicants">) => Promise<void>;
+  jobsLoading: boolean;
+  jobsError: string | null;
   updateCandidateStage: (candidateId: string, stage: CandidateStage) => void;
 };
 // Use null as the missing-provider sentinel; the companion hook reports incorrect usage.

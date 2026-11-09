@@ -1,22 +1,44 @@
 /**
- * Filters and paginates prototype jobs and delegates archive/restore changes to the workspace.
+ * Lists database jobs and saves edits and status changes through the workspace.
  */
 import "./jobs-page.css";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { Job, JobStatus } from "@/types/hr";
-// Filters and paginates prototype jobs and delegates archive/restore changes to the workspace.
+// Lists database jobs and saves edits and status changes through the workspace.
 export function JobsPage({
   jobs,
   onStatusChange,
 }: {
   jobs: Job[];
-  onStatusChange: (id: string, status: JobStatus) => void;
+  onStatusChange: (id: string, status: JobStatus) => Promise<void>;
 }) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const busy = useRef(false);
+
+  async function runAction(action: () => Promise<void>) {
+    if (busy.current) return;
+    busy.current = true;
+    setIsSaving(true);
+    setActionError(null);
+    setFeedback(null);
+    try {
+      await action();
+      setFeedback("Job saved.");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Could not save this job.");
+    } finally {
+      busy.current = false;
+      setIsSaving(false);
+    }
+  }
+
   // Keep search in component state; updates trigger a render.
   const [search, setSearch] = useState("");
   // Keep department in component state; updates trigger a render.
@@ -43,6 +65,8 @@ export function JobsPage({
   const visible = filtered.slice(page * 8, page * 8 + 8);
   return (
     <div className="page-recruitment-jobs-page">
+      {actionError && <p role="alert">{actionError}</p>}
+      {feedback && <p role="status">{feedback}</p>}
       <div className="page-stack">
         <div className="page-heading">
           <div>
@@ -170,20 +194,28 @@ export function JobsPage({
                           {j.description || "No description has been added."}
                         </p>
                         <p>Closing date: {j.closingDate}</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            onStatusChange(
-                              j.id,
-                              j.status === "Archived"
-                                ? (j.previousStatus ?? "Draft")
-                                : "Archived",
-                            )
-                          }
-                        >
-                          {j.status === "Archived" ? "Restore" : "Archive"}
-                        </Button>
+                        <fieldset disabled={isSaving}>
+                            <div className="flex flex-wrap gap-2">
+                              <Button asChild size="sm" variant="outline">
+                                <Link to={"/jobs/" + j.id + "/edit"}>Edit job details</Link>
+                              </Button>
+
+                              {j.status === "Draft" && (
+                                <Button type="button" size="sm" onClick={() => void runAction(() => onStatusChange(j.id, "Open"))}>
+                                  Publish
+                                </Button>
+                              )}
+                              {j.status === "Open" && (
+                                <Button type="button" size="sm" variant="outline" onClick={() => void runAction(() => onStatusChange(j.id, "Draft"))}>
+                                  Unpublish
+                                </Button>
+                              )}
+                              <Button type="button" variant="outline" size="sm"
+                                onClick={() => void runAction(() => onStatusChange(j.id, j.status === "Archived" ? "Draft" : "Archived"))}>
+                                {j.status === "Archived" ? "Restore as draft" : "Archive"}
+                              </Button>
+                            </div>
+                        </fieldset>
                       </td>
                     </tr>
                   ) : null}

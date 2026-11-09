@@ -1,6 +1,8 @@
 /**
  * Connects shared workspace data to page props, keeping route declarations separate from data wiring.
  */
+import { useParams } from "react-router-dom";
+import type { JobChanges } from "@/data/jobs-api";
 import { useWorkspace } from "@/data/workspace-context";
 import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { JobsPage } from "@/pages/recruitment/jobs-page";
@@ -18,7 +20,9 @@ export function DashboardRoute() {
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function JobsRoute() {
-  const { jobs, updateJobStatus } = useWorkspace();
+  const { jobs, jobsLoading, jobsError, updateJobStatus } = useWorkspace();
+  if (jobsLoading) return <p role="status">Loading jobs…</p>;
+  if (jobsError) return <p role="alert">{jobsError}</p>;
   return <JobsPage jobs={jobs} onStatusChange={updateJobStatus} />;
 }
 
@@ -61,4 +65,21 @@ export function CommunicationRoute() {
 export function OfferGenerationRoute() {
   const { candidates } = useWorkspace();
   return <OfferGenerationPage candidates={candidates} />;
+}
+
+
+// Reuse the complete job form for editing the selected database record.
+export function EditJobRoute() {
+  const { jobId } = useParams();
+  const { jobs, jobsLoading, jobsError, editJob } = useWorkspace();
+  if (jobsLoading) return <p role="status">Loading job…</p>;
+  if (jobsError) return <p role="alert">{jobsError}</p>;
+  const job = jobs.find((record) => record.id === jobId);
+  if (!job) return <p role="alert">Job not found.</p>;
+  return <NewJobPage key={job.id} initialJob={job} onCreate={async (changes) => {
+    // Saving details preserves the current published/archived status.
+    const details: JobChanges = { ...changes };
+    delete details.status;
+    await editJob(job.id, details);
+  }} />;
 }

@@ -10,6 +10,7 @@ import {
   DashboardRoute,
   JobsRoute,
   NewJobRoute,
+  EditJobRoute,
   CandidatesRoute,
   ScreeningRankingRoute,
   CommunicationRoute,
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="/jobs" element={<JobsRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/jobs/new" element={<NewJobRoute />} />
+            <Route path="/jobs/:jobId/edit" element={<EditJobRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/candidates" element={<CandidatesRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
