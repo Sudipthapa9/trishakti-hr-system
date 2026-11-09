@@ -73,6 +73,13 @@ export function JobDetailsPage() {
                 <h1>{job.title}</h1>
                 <p>{job.department}</p>
                 <p>{job.description ?? "No description provided."}</p>
+                {job.closingDate && <p>Closing date: {job.closingDate}</p>}
+                {job.responsibilities && (
+                  <section className="public-job-section">
+                    <h2>Responsibilities</h2>
+                    <p className="whitespace-pre-line">{job.responsibilities}</p>
+                  </section>
+                )}
               </header>
             </div>
             {/* Supporting profile, navigation, or filter content beside the main panel. */}

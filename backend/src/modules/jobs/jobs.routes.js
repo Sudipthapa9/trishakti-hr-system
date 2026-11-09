@@ -3,12 +3,13 @@ const {
   getJobs,
   getPublicJobs,
   createJob,
+  updateJob,
 } = require("./jobs.controller");
 
 const checkJwt = require("../../middleware/auth");
 const requireRole = require("../../middleware/rbac");
 const validate = require("../../middleware/validate");
-const { createJobSchema } = require("./jobs.schema");
+const { createJobSchema, updateJobSchema } = require("./jobs.schema");
 
 const router = express.Router();
 
@@ -26,5 +27,7 @@ router.post(
   validate(createJobSchema),
   createJob
 );
+
+router.patch("/:id", checkJwt, requireRole("hr", "hr-head"), validate(updateJobSchema), updateJob);
 
 module.exports = router;

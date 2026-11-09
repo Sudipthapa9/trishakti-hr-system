@@ -1,5 +1,5 @@
 /**
- * Collects job details and weighted skill settings, then creates a draft or published job in local state.
+ * Collects job details and weighted skill settings, then saves a draft through the jobs API.
  */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import {
   BriefcaseBusiness,
   FileText,
   Plus,
-  Send,
   Sparkles,
   X,
 } from "lucide-react";
@@ -102,57 +101,70 @@ function SkillEditor({
     </section>
   );
 }
-// Collects job details and weighted skill settings, then creates a draft or published job in local state.
+// Collects job details and weighted skill settings, then saves a draft through the jobs API.
 export function NewJobPage({
   onCreate,
+  initialJob,
 }: {
-  onCreate: (job: Omit<Job, "id" | "applicants">) => void;
+  initialJob?: Job;
+  onCreate: (job: Omit<Job, "id" | "applicants">) => Promise<void>;
 }) {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   // Keep required in component state; updates trigger a render.
-  const [required, setRequired] = useState<Skill[]>([
+  const [required, setRequired] = useState<Skill[]>(initialJob?.requiredSkills ?? [
     { name: "Python Development", weight: 5 },
     { name: "System Architecture", weight: 4 },
   ]);
   // Keep preferred in component state; updates trigger a render.
-  const [preferred, setPreferred] = useState<Skill[]>([
+  const [preferred, setPreferred] = useState<Skill[]>(initialJob?.preferredSkills ?? [
     { name: "Docker/Kubernetes", weight: 2 },
   ]);
-  // Read the job form and submit its draft/published status through the workspace callback.
-  function submit(e: FormEvent<HTMLFormElement>) {
+  // Await the saved draft before navigating; keep entered values on failure.
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isSubmitting) return;
     const d = new FormData(e.currentTarget);
-    const submitter = (e.nativeEvent as SubmitEvent)
-      .submitter as HTMLButtonElement | null;
-    onCreate({
-      title: String(d.get("title")).trim(),
-      department: String(d.get("department")),
-      location: String(d.get("location")).trim(),
-      employmentType: String(d.get("employmentType")),
-      closingDate: String(d.get("closingDate")),
-      description: String(d.get("description")),
-      responsibilities: String(d.get("responsibilities")),
-      requiredSkills: required,
-      preferredSkills: preferred,
-      vacancies: Number(d.get("vacancies")),
-      shortlistMultiplier: Number(d.get("shortlistMultiplier")),
-      status: submitter?.value === "publish" ? "Open" : "Draft",
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onCreate({
+        title: String(d.get("title") ?? "").trim(),
+        department: String(d.get("department") ?? ""),
+        location: String(d.get("location") ?? "").trim(),
+        employmentType: String(d.get("employmentType") ?? ""),
+        description: String(d.get("description") ?? ""),
+        closingDate: String(d.get("closingDate") ?? ""),
+        responsibilities: String(d.get("responsibilities") ?? ""),
+        requiredSkills: required,
+        preferredSkills: preferred,
+        vacancies: Number(d.get("vacancies")),
+        shortlistMultiplier: Number(d.get("shortlistMultiplier")),
+        status: "Draft",
     });
-    navigate("/jobs");
+      navigate("/jobs");
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not save the draft.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
   return (
     <div className="page-recruitment-new-job-page">
       <div className="page-stack">
         <div className="page-heading">
           <div>
-            <h1>Create New Job</h1>
+            <h1>{initialJob ? "Edit Job" : "Create New Job"}</h1>
             <p>
               Define the role parameters and configure AI screening criteria.
             </p>
           </div>
         </div>
         {/* Collect inputs; the submit handler controls validation and the resulting local action. */}
-        <form className="new-job-form" onSubmit={submit}>
+        <form className="new-job-form" onSubmit={submit} aria-busy={isSubmitting}>
+          {submitError && <p role="alert">{submitError}</p>}
+          <fieldset disabled={isSubmitting} className="contents">
           {/* Group related content and controls in this screen section. */}
           <section>
             <h2>
@@ -163,7 +175,7 @@ export function NewJobPage({
               <div className="form-field job-title">
                 <Label htmlFor="job-title">Job Title</Label>
                 <Input
-                  name="title"
+                  name="title" defaultValue={initialJob?.title ?? ""}
                   id="job-title"
                   placeholder="e.g. Senior Machine Learning Engineer"
                   required
@@ -175,13 +187,15 @@ export function NewJobPage({
                   id="job-department"
                   name="department"
                   className="form-select"
-                  defaultValue=""
+                  defaultValue={initialJob?.department ?? ""}
                   required
                 >
                   <option value="" disabled>
                     Select department
                   </option>
+                  {initialJob?.department && <option value={initialJob.department}>{initialJob.department}</option>}
                   {[
+                    "Human Resources",
                     "Manufacturing",
                     "Quality Assurance",
                     "Sales",
@@ -198,10 +212,11 @@ export function NewJobPage({
               <div className="form-field">
                 <Label htmlFor="job-type">Employment Type</Label>
                 <select
-                  name="employmentType"
+                  name="employmentType" defaultValue={initialJob?.employmentType ?? "Full-Time"}
                   id="job-type"
                   className="form-select"
                 >
+                  {initialJob?.employmentType && <option value={initialJob.employmentType}>{initialJob.employmentType}</option>}
                   <option>Full-Time</option>
                   <option>Part-Time</option>
                   <option>Contract</option>
@@ -211,7 +226,7 @@ export function NewJobPage({
               <div className="form-field">
                 <Label htmlFor="job-location">Location</Label>
                 <Input
-                  name="location"
+                  name="location" defaultValue={initialJob?.location ?? ""}
                   id="job-location"
                   placeholder="e.g. San Francisco, CA (or Remote)"
                   required
@@ -221,9 +236,8 @@ export function NewJobPage({
                 <Label htmlFor="job-closing">Closing Date</Label>
                 <Input
                   type="date"
-                  name="closingDate"
+                  name="closingDate" defaultValue={initialJob?.closingDate ?? ""}
                   id="job-closing"
-                  required
                 />
               </div>
             </div>
@@ -237,7 +251,7 @@ export function NewJobPage({
             <div className="form-field">
               <Label htmlFor="job-description">Job Description</Label>
               <Textarea
-                name="description"
+                name="description" defaultValue={initialJob?.description ?? ""}
                 id="job-description"
                 placeholder="Describe the overarching purpose of the role..."
                 className="job-description"
@@ -247,14 +261,14 @@ export function NewJobPage({
             <div className="form-field">
               <Label htmlFor="job-responsibilities">Key Responsibilities</Label>
               <Textarea
-                name="responsibilities"
+                name="responsibilities" defaultValue={initialJob?.responsibilities ?? ""}
                 id="job-responsibilities"
                 placeholder="Enter responsibilities as a bulleted list..."
                 className="job-description"
               />
             </div>
           </section>
-          {/* Group related content and controls in this screen section. */}
+          {/* Additional settings will be enabled when database persistence is available. */}
           <section className="job-ai-section">
             {/* Page or panel heading and contextual actions. */}
             <header className="job-ai-heading">
@@ -287,7 +301,8 @@ export function NewJobPage({
                   id="job-vacancies"
                   type="number"
                   min="1"
-                  defaultValue="2"
+                  max="10000"
+                  defaultValue={initialJob?.vacancies ?? 1}
                   required
                 />
                 <small>Number of open positions for this role.</small>
@@ -299,7 +314,8 @@ export function NewJobPage({
                   id="job-multiplier"
                   type="number"
                   min="1"
-                  defaultValue="5"
+                  max="100"
+                  defaultValue={initialJob?.shortlistMultiplier ?? 5}
                   required
                 />
                 <small>
@@ -311,16 +327,14 @@ export function NewJobPage({
           </section>
           <div className="form-actions">
             <Button type="submit" name="action" value="draft" variant="outline">
-              Save Draft
+              {isSubmitting ? "Saving…" : initialJob ? "Save Changes" : "Save Draft"}
             </Button>
-            <Button type="submit" name="action" value="publish">
-              <Send />
-              Publish Job
-            </Button>
+
           </div>
+          </fieldset>
         </form>
         <p className="demo-note">
-          Jobs and screening settings are saved in local React state only.
+          New jobs are saved as drafts. Publish them from the Jobs list when ready. Screening settings are stored for later use by the screening service.
         </p>
       </div>
     </div>
