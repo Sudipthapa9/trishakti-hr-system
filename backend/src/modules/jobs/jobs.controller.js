@@ -8,7 +8,8 @@ const jobColumns = `
   description, status, to_char(closing_date, 'YYYY-MM-DD') AS "closingDate",
   responsibilities, required_skills AS "requiredSkills",
   preferred_skills AS "preferredSkills", vacancies,
-  shortlist_multiplier AS "shortlistMultiplier"
+  shortlist_multiplier AS "shortlistMultiplier",
+  (SELECT count(*)::int FROM public.applications a WHERE a.job_id = jobs.id) AS applicants
 `;
 
 // Read jobs from PostgreSQL for authenticated HR users.

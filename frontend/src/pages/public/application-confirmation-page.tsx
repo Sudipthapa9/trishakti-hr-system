@@ -1,12 +1,12 @@
 /**
- * Renders the application confirmation design and optional navigation-state reference; no real submission is implied by the prototype.
+ * Renders the application confirmation design using the receipt returned after the saved submission.
  */
 import { PublicShell } from "@/components/Layout/public-shell";
 import { Button } from "@/components/ui/button";
-import { Check, ClipboardCheck, Mail, Phone } from "lucide-react";
+import { Check, ClipboardCheck, Phone } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import "./application-confirmation-page.css";
-// Renders the application confirmation design and optional navigation-state reference; no real submission is implied by the prototype.
+// Renders the application confirmation design using the receipt returned after the saved submission.
 export function ApplicationConfirmationPage() {
   const { state } = useLocation();
   const details = state as {
@@ -14,6 +14,19 @@ export function ApplicationConfirmationPage() {
     candidateName?: string;
     jobTitle?: string;
   } | null;
+  if (!details?.reference) {
+    return (
+      <PublicShell>
+        <main className="application-confirmation">
+          <section>
+            <h1>No application receipt available</h1>
+            <p>Return to the job board to submit an application.</p>
+            <Button asChild><Link to="/careers">Return to Job Board</Link></Button>
+          </section>
+        </main>
+      </PublicShell>
+    );
+  }
   return (
     <div className="page-public-application-confirmation-page">
       <PublicShell showHeader={false}>
@@ -32,20 +45,20 @@ export function ApplicationConfirmationPage() {
             </p>
             {details?.reference ? (
               <small className="confirmation-reference">
-                Demo reference: {details.reference}
+                Application reference: {details.reference}
               </small>
             ) : null}
             <div className="confirmation-next">
               <h2>What's Next?</h2>
               {[
                 [
-                  "Confirmation Email",
-                  "You will receive an email confirming receipt of your application.",
-                  Mail,
+                  "Keep Your Reference",
+                  "Save the application reference above for any follow-up with HR.",
+                  ClipboardCheck,
                 ],
                 [
                   "Initial Review",
-                  "Our team will review your profile within 3–5 business days.",
+                  "Our HR team will review your application and CV.",
                   ClipboardCheck,
                 ],
                 [
@@ -54,7 +67,7 @@ export function ApplicationConfirmationPage() {
                   Phone,
                 ],
               ].map(([title, text, Icon]) => {
-                const I = Icon as typeof Mail;
+                const I = Icon as typeof ClipboardCheck;
                 return (
                   <div key={String(title)}>
                     <I size={18} />
@@ -69,9 +82,7 @@ export function ApplicationConfirmationPage() {
             <Button asChild>
               <Link to="/careers">Return to Job Board</Link>
             </Button>
-            <small className="confirmation-demo">
-              Prototype confirmation: no application or email has been sent.
-            </small>
+
           </section>
         </main>
       </PublicShell>

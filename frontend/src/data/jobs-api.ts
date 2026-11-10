@@ -4,12 +4,13 @@ import type { Job } from "@/types/hr";
 type SavedJob = Omit<Job, "applicants" | "closingDate" | "description"> & {
   closingDate: string | null;
   description: string | null;
+  applicants?: number;
 };
 
 function toJob(record: SavedJob): Job {
   return {
     ...record,
-    applicants: 0,
+    applicants: record.applicants ?? 0,
     closingDate: record.closingDate ?? "",
     description: record.description ?? undefined,
   };
