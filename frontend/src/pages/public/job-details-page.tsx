@@ -1,5 +1,5 @@
 /**
- * Shows a published job, validates the selected CV file, and opens a prototype confirmation without uploading it.
+ * Shows a published job, validates the selected CV file, and submits the application and CV to the backend.
  */
 import { JobSummary, PublicShell } from "@/components/Layout/public-shell";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,11 @@ import {
   FileUp,
   Send,
 } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePublicJobs } from "./use-public-jobs";
 import "./job-details-page.css";
-// Shows a published job, validates the selected CV file, and opens a prototype confirmation without uploading it.
+// Shows a published job, validates the selected CV file, and submits the application and CV to the backend.
 export function JobDetailsPage() {
   const { jobId } = useParams();
   const result = usePublicJobs();
@@ -26,28 +26,43 @@ export function JobDetailsPage() {
   const [fileName, setFileName] = useState("");
   // Keep error in component state; updates trigger a render.
   const [error, setError] = useState("");
-  // Validate CV file metadata before navigating to a browser-local prototype confirmation.
-  function submit(e: FormEvent<HTMLFormElement>) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const busy = useRef(false);
+  const requestId = useRef<string | null>(null);
+  // Preserve the request identifier on a network retry to prevent duplicate submissions.
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    // Inspect the selected file metadata before the prototype confirmation is shown.
-    const file = d.get("resume") as File;
-    if (
-      !file ||
-      file.size > 10 * 1024 * 1024 ||
-      !/[.](pdf|docx)$/i.test(file.name)
-    ) {
+    if (busy.current || !jobId) return;
+    const data = new FormData(e.currentTarget);
+    const file = data.get("resume");
+    if (!(file instanceof File) || !file.size ||
+        file.size > 10 * 1024 * 1024 || !/[.](pdf|docx)$/i.test(file.name)) {
       setError("Choose a PDF or DOCX file up to 10MB.");
       return;
     }
-    navigate("/careers/" + jobId + "/application/confirmation", {
-      state: {
-        candidateName: d.get("fullName"),
-        jobTitle: job?.title,
-        reference:
-          "TSH-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
-      },
-    });
+    busy.current = true;
+    setIsSubmitting(true);
+    setError("");
+    requestId.current ??= crypto.randomUUID();
+    data.set("jobId", jobId);
+    data.set("requestId", requestId.current);
+    try {
+      const base = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const response = await fetch(base.replace(/\/$/, "") + "/api/applications", {
+        method: "POST",
+        body: data,
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not submit your application.");
+      navigate("/careers/" + jobId + "/application/confirmation", {
+        state: body.application,
+      });
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Could not submit your application. Please try again.");
+    } finally {
+      busy.current = false;
+      setIsSubmitting(false);
+    }
   }
   return (
     <div className="page-public-job-details-page">
@@ -87,13 +102,14 @@ export function JobDetailsPage() {
               <h2>Apply Now</h2>
               <p>Submit your application for the {job.title} position.</p>
               {/* Collect inputs; the submit handler controls validation and the resulting local action. */}
-              <form onSubmit={submit}>
+              <form onSubmit={submit} aria-busy={isSubmitting} onChange={() => { requestId.current = null; }}>
+                <fieldset disabled={isSubmitting} className="contents">
                 <div className="form-field">
                   <Label htmlFor="fullName">
                     Full Name <span>*</span>
                   </Label>
                   <Input
-                    name="fullName"
+                    name="fullName" maxLength={200}
                     id="fullName"
                     autoComplete="name"
                     required
@@ -105,7 +121,7 @@ export function JobDetailsPage() {
                   </Label>
                   <Input
                     type="email"
-                    name="email"
+                    name="email" maxLength={254}
                     id="email"
                     autoComplete="email"
                     required
@@ -117,7 +133,7 @@ export function JobDetailsPage() {
                   </Label>
                   <Input
                     type="tel"
-                    name="phone"
+                    name="phone" minLength={5} maxLength={50}
                     id="phone"
                     autoComplete="tel"
                     required
@@ -148,7 +164,7 @@ export function JobDetailsPage() {
                 </div>
                 <div className="form-field">
                   <Label htmlFor="cover-letter">Cover Letter (Optional)</Label>
-                  <Textarea name="coverLetter" id="cover-letter" />
+                  <Textarea name="coverLetter" id="cover-letter" maxLength={10000} />
                 </div>
                 {error ? (
                   <p id="resume-error" role="alert">
@@ -156,12 +172,10 @@ export function JobDetailsPage() {
                   </p>
                 ) : null}
                 <Button type="submit">
-                  Submit Application
+                  {isSubmitting ? "Submitting…" : "Submit Application"}
                   <Send size={14} />
                 </Button>
-                <p className="application-preview-note">
-                  Preview only. Applications are not submitted to HR yet.
-                </p>
+                </fieldset>
               </form>
             </aside>
           </main>

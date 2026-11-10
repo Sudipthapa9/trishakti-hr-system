@@ -23,6 +23,7 @@ import { EmployeeRecordPage } from "@/pages/employees/employee-record-page";
 import { ApplicationConfirmationPage } from "@/pages/public/application-confirmation-page";
 import { JobDetailsPage } from "@/pages/public/job-details-page";
 import { CareersPage } from "@/pages/public/careers-page";
+import { ApplicationsPage } from "@/pages/applications/applications-page";
 import { PublicNotFoundPage } from "@/pages/public/not-found-page";
 
 // Declares public and authenticated routes. Layout and authentication behavior live in their own modules.
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/jobs" element={<JobsRoute />} />
+            <Route path="/applications" element={<ApplicationsPage />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/jobs/new" element={<NewJobRoute />} />
             <Route path="/jobs/:jobId/edit" element={<EditJobRoute />} />

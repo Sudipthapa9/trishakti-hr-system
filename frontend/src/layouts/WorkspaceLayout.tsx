@@ -27,6 +27,7 @@ import type { CandidateStage, Job, JobStatus } from "@/types/hr";
 const navigationItems: NavItem[] = [
   { label: "Overview", icon: LayoutDashboard, to: "/dashboard" },
   { label: "Jobs", icon: BriefcaseBusiness, to: "/jobs" },
+  { label: "Applications", icon: FileText, to: "/applications" },
   { label: "Candidates", icon: Users, to: "/candidates" },
   { label: "AI screening", icon: ScanSearch, to: "/screening" },
   { label: "Interviews", icon: CalendarDays, to: "/interviews" },
