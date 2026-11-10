@@ -4,6 +4,8 @@ const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const pool = require("../src/config/db");
 const { listCandidates, getCandidate } = require("../src/modules/candidates/candidates.controller");
+const { updateApplicationStage } = require("../src/modules/applications/applications.controller");
+const { updateStageSchema } = require("../src/modules/applications/applications.schema");
 const requireRole = require("../src/middleware/rbac");
 const app = require("../src/app");
 
@@ -33,6 +35,17 @@ test("candidate list search, pagination, counts and access checks", {
       json(value) { body = value; return this; },
     };
     await getCandidate({ params: { id } }, response, (error) => { throw error; });
+    return { status, body };
+  }
+  async function changeStage(id, stage, expectedStage) {
+    let status = 200;
+    let body;
+    const response = {
+      status(value) { status = value; return this; },
+      json(value) { body = value; return this; },
+    };
+    await updateApplicationStage({ params: { id }, body: { stage, expectedStage } }, response,
+      (error) => { throw error; });
     return { status, body };
   }
   let server;
@@ -74,6 +87,30 @@ test("candidate list search, pagination, counts and access checks", {
     assert.equal(profile.body.candidate.applications[0].jobTitle, "Verification");
     assert.equal(profile.body.candidate.applications[0].hasResume, false);
     assert.equal("content" in profile.body.candidate.applications[0], false);
+    const applicationId = profile.body.candidate.applications[0].id;
+    const secondJob = (await client.query(`
+      INSERT INTO public.jobs(title,department,location,employment_type)
+      VALUES('Second verification job','HR','Hetauda','Full-time') RETURNING id
+    `)).rows[0];
+    await client.query(`
+      INSERT INTO public.applications(candidate_id,job_id,full_name,email,phone)
+      VALUES($1,$2,$3,$4,$5)
+    `, [selected.id, secondJob.id, selected.fullName, selected.email, selected.phone]);
+    assert.equal(updateStageSchema.safeParse({ stage: "Invalid", expectedStage: "Review" }).success, false);
+    assert.equal(updateStageSchema.safeParse({ stage: "Interview" }).success, false);
+    const changed = await changeStage(applicationId, "Interview", "Review");
+    assert.equal(changed.status, 200);
+    assert.equal(changed.body.application.stage, "Interview");
+    assert(changed.body.application.updatedAt);
+    const refreshed = (await detail(selected.id)).body.candidate;
+    assert.equal(refreshed.applications.find((entry) => entry.id === applicationId).stage, "Interview");
+    assert.equal(refreshed.applications.find((entry) => entry.jobId === secondJob.id).stage, "Review");
+    assert.equal((await changeStage(applicationId, "Interview", "Review")).status, 200);
+    const stale = await changeStage(applicationId, "Offer", "Review");
+    assert.equal(stale.status, 409);
+    assert.equal(stale.body.currentStage, "Interview");
+    assert.equal((await changeStage("invalid", "Offer", "Interview")).status, 400);
+    assert.equal((await changeStage("00000000-0000-4000-8000-000000000000", "Offer", "Interview")).status, 404);
     assert.equal((await detail("invalid")).status, 400);
     assert.equal((await detail("00000000-0000-4000-8000-000000000000")).status, 404);
     const injection = await call({ search: "' OR 1=1 -- " + prefix });
@@ -96,6 +133,12 @@ test("candidate list search, pagination, counts and access checks", {
     assert.equal(unauthenticated.headers.get("cache-control"), "no-store");
     const detailAccess = await fetch("http://127.0.0.1:" + server.address().port + "/api/candidates/" + selected.id);
     assert.equal(detailAccess.status, 401);
+    const stageAccess = await fetch("http://127.0.0.1:" + server.address().port + "/api/applications/" + applicationId + "/stage", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage: "Offer", expectedStage: "Interview" }),
+    });
+    assert.equal(stageAccess.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
     await client.query("ROLLBACK");

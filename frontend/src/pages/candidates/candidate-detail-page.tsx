@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { requestCandidate, type CandidateDetail } from "@/data/candidates-api";
+import { ApplicationStageControl } from "./application-stage-control";
 
 export function CandidateDetailPage() {
   const { candidateId } = useParams();
@@ -64,6 +65,13 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
                   <h3>{application.jobTitle}</h3>
                   <p>Job status: {application.jobStatus}</p>
                   <Badge variant="neutral">{application.stage}</Badge>
+                  <ApplicationStageControl id={application.id} stage={application.stage} onSaved={(stage) => {
+                    setCandidate((current) => current && ({
+                      ...current,
+                      applications: current.applications.map((record) =>
+                        record.id === application.id ? { ...record, stage } : record),
+                    }));
+                  }} />
                   <p>Submitted {new Date(application.createdAt).toLocaleString()}</p>
                   <p>Reference TSH-{application.id}</p>
                   <details className="my-3">

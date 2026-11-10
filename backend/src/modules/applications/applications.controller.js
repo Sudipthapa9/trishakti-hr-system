@@ -126,4 +126,28 @@ async function downloadResume(req, res, next) {
   }
 }
 
-module.exports = { submitApplication, listApplications, downloadResume };
+// Compare the stage the user saw before writing, so stale forms cannot silently overwrite it.
+async function updateApplicationStage(req, res, next) {
+  if (!z.string().uuid().safeParse(req.params.id).success) {
+    return res.status(400).json({ error: "Invalid application identifier." });
+  }
+  const { stage, expectedStage } = req.body;
+  try {
+    const result = await pool.query(`
+      UPDATE public.applications SET stage = $1, updated_at = now()
+      WHERE id = $2 AND (stage = $3 OR stage = $1)
+      RETURNING id, stage, updated_at AS "updatedAt"
+    `, [stage, req.params.id, expectedStage]);
+    if (result.rows.length) return res.json({ application: result.rows[0] });
+    const existing = await pool.query("SELECT stage FROM public.applications WHERE id = $1", [req.params.id]);
+    if (!existing.rows.length) return res.status(404).json({ error: "Application not found." });
+    return res.status(409).json({
+      error: "The stage changed elsewhere. Review the current stage and save again.",
+      currentStage: existing.rows[0].stage,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { submitApplication, listApplications, downloadResume, updateApplicationStage };

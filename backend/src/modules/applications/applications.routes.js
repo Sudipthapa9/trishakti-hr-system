@@ -3,7 +3,9 @@ const multer = require("multer");
 const { rateLimit } = require("express-rate-limit");
 const checkJwt = require("../../middleware/auth");
 const requireRole = require("../../middleware/rbac");
-const { submitApplication, listApplications, downloadResume } = require("./applications.controller");
+const { submitApplication, listApplications, downloadResume, updateApplicationStage } = require("./applications.controller");
+const validate = require("../../middleware/validate");
+const { updateStageSchema } = require("./applications.schema");
 
 const router = express.Router();
 router.use((req, res, next) => {
@@ -35,5 +37,6 @@ router.post("/", rateLimit({
 
 router.get("/", checkJwt, requireRole("hr", "hr-head"), listApplications);
 router.get("/:id/resume", checkJwt, requireRole("hr", "hr-head"), downloadResume);
+router.patch("/:id/stage", checkJwt, requireRole("hr", "hr-head"), validate(updateStageSchema), updateApplicationStage);
 
 module.exports = router;
