@@ -37,4 +37,34 @@ async function listCandidates(req, res, next) {
   }
 }
 
-module.exports = { listCandidates };
+async function getCandidate(req, res, next) {
+  if (!z.string().uuid().safeParse(req.params.id).success) {
+    return res.status(400).json({ error: "Invalid candidate identifier." });
+  }
+  try {
+    const result = await pool.query(`
+      SELECT c.id, c.full_name AS "fullName", c.email, c.phone,
+        c.created_at AS "createdAt",
+        COALESCE((
+          SELECT jsonb_agg(jsonb_build_object(
+            'id', a.id, 'jobId', a.job_id, 'jobTitle', j.title,
+            'jobStatus', j.status, 'stage', a.stage,
+            'fullName', a.full_name, 'email', a.email, 'phone', a.phone,
+            'coverLetter', a.cover_letter, 'createdAt', a.created_at,
+            'hasResume', EXISTS (
+              SELECT 1 FROM public.application_resumes r WHERE r.application_id = a.id
+            )
+          ) ORDER BY a.created_at DESC, a.id DESC)
+          FROM public.applications a JOIN public.jobs j ON j.id = a.job_id
+          WHERE a.candidate_id = c.id
+        ), '[]'::jsonb) AS applications
+      FROM public.candidates c WHERE c.id = $1
+    `, [req.params.id]);
+    if (!result.rows.length) return res.status(404).json({ error: "Candidate not found." });
+    res.json({ candidate: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { listCandidates, getCandidate };

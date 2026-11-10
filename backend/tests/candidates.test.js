@@ -3,7 +3,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const pool = require("../src/config/db");
-const { listCandidates } = require("../src/modules/candidates/candidates.controller");
+const { listCandidates, getCandidate } = require("../src/modules/candidates/candidates.controller");
 const requireRole = require("../src/middleware/rbac");
 const app = require("../src/app");
 
@@ -25,6 +25,16 @@ test("candidate list search, pagination, counts and access checks", {
     await listCandidates({ query }, response, (error) => { throw error; });
     return { status, body };
   }
+  async function detail(id) {
+    let status = 200;
+    let body;
+    const response = {
+      status(value) { status = value; return this; },
+      json(value) { body = value; return this; },
+    };
+    await getCandidate({ params: { id } }, response, (error) => { throw error; });
+    return { status, body };
+  }
   let server;
   try {
     await client.query("BEGIN");
@@ -44,6 +54,7 @@ test("candidate list search, pagination, counts and access checks", {
     assert(!first.body.candidates.some((candidate) => candidate.id === second.body.candidates[0].id));
     const selected = first.body.candidates[0];
     assert.equal(selected.applicationCount, 0);
+    assert.deepEqual((await detail(selected.id)).body.candidate.applications, []);
     const job = (await client.query(`
       INSERT INTO public.jobs(title,department,location,employment_type)
       VALUES('Verification','HR','Hetauda','Full-time') RETURNING id
@@ -55,6 +66,16 @@ test("candidate list search, pagination, counts and access checks", {
     const exact = await call({ search: selected.email.toUpperCase() });
     assert.equal(exact.body.candidates.length, 1);
     assert.equal(exact.body.candidates[0].applicationCount, 1);
+    const profile = await detail(selected.id);
+    assert.equal(profile.status, 200);
+    assert.equal(profile.body.candidate.id, selected.id);
+    assert.equal(profile.body.candidate.applications.length, 1);
+    assert.equal(profile.body.candidate.applications[0].stage, "Review");
+    assert.equal(profile.body.candidate.applications[0].jobTitle, "Verification");
+    assert.equal(profile.body.candidate.applications[0].hasResume, false);
+    assert.equal("content" in profile.body.candidate.applications[0], false);
+    assert.equal((await detail("invalid")).status, 400);
+    assert.equal((await detail("00000000-0000-4000-8000-000000000000")).status, 404);
     const injection = await call({ search: "' OR 1=1 -- " + prefix });
     assert.equal(injection.body.candidates.length, 0);
     assert.equal((await call({ page: "0" })).status, 400);
@@ -73,6 +94,8 @@ test("candidate list search, pagination, counts and access checks", {
     const unauthenticated = await fetch("http://127.0.0.1:" + server.address().port + "/api/candidates");
     assert.equal(unauthenticated.status, 401);
     assert.equal(unauthenticated.headers.get("cache-control"), "no-store");
+    const detailAccess = await fetch("http://127.0.0.1:" + server.address().port + "/api/candidates/" + selected.id);
+    assert.equal(detailAccess.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
     await client.query("ROLLBACK");
