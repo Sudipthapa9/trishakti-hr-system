@@ -62,3 +62,42 @@ async function candidateRequest(path: string, signal: AbortSignal) {
   if (!response.ok) throw new Error("Could not load candidates. Please try again.");
   return response.json();
 }
+
+export type CandidateProfile = Pick<CandidateRecord, "id" | "fullName" | "email" | "phone">;
+
+export class ProfileConflictError extends Error {
+  candidate: CandidateProfile;
+  constructor(message: string, candidate: CandidateProfile) {
+    super(message);
+    this.candidate = candidate;
+  }
+}
+
+export async function saveCandidateProfile(
+  candidate: CandidateProfile,
+  fullName: string,
+  phone: string,
+): Promise<{ candidate: CandidateProfile }> {
+  if (!keycloak.authenticated) throw new Error("Please sign in again.");
+  await keycloak.updateToken(30);
+  const base = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const response = await fetch(base.replace(/\/$/, "") + "/api/candidates/" + encodeURIComponent(candidate.id), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${keycloak.token}`,
+    },
+    body: JSON.stringify({
+      fullName, phone,
+      expectedFullName: candidate.fullName,
+      expectedPhone: candidate.phone,
+    }),
+  });
+  if (response.status === 401) throw new Error("Please sign in again.");
+  if (response.status === 403) throw new Error("An HR role is required to edit profiles.");
+  const data = await response.json();
+  if (response.status === 409) throw new ProfileConflictError(data.error, data.candidate);
+  if (response.status === 400) throw new Error("Enter a valid name and phone number.");
+  if (!response.ok) throw new Error(data.error || "Could not save this profile.");
+  return data;
+}

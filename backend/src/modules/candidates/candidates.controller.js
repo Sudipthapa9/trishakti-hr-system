@@ -67,4 +67,31 @@ async function getCandidate(req, res, next) {
   }
 }
 
-module.exports = { listCandidates, getCandidate };
+async function updateCandidate(req, res, next) {
+  if (!z.string().uuid().safeParse(req.params.id).success) {
+    return res.status(400).json({ error: "Invalid candidate identifier." });
+  }
+  const { fullName, phone, expectedFullName, expectedPhone } = req.body;
+  try {
+    const result = await pool.query(`
+      UPDATE public.candidates SET full_name = $1, phone = $2, updated_at = now()
+      WHERE id = $3 AND (
+        (full_name = $4 AND phone = $5) OR (full_name = $1 AND phone = $2)
+      )
+      RETURNING id, full_name AS "fullName", email, phone, updated_at AS "updatedAt"
+    `, [fullName, phone, req.params.id, expectedFullName, expectedPhone]);
+    if (result.rows.length) return res.json({ candidate: result.rows[0] });
+    const current = await pool.query(`
+      SELECT id, full_name AS "fullName", email, phone FROM public.candidates WHERE id = $1
+    `, [req.params.id]);
+    if (!current.rows.length) return res.status(404).json({ error: "Candidate not found." });
+    return res.status(409).json({
+      error: "This profile changed elsewhere. Review the current details and save again.",
+      candidate: current.rows[0],
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { listCandidates, getCandidate, updateCandidate };

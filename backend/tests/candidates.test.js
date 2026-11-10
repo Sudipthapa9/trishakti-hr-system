@@ -3,7 +3,8 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const pool = require("../src/config/db");
-const { listCandidates, getCandidate } = require("../src/modules/candidates/candidates.controller");
+const { listCandidates, getCandidate, updateCandidate } = require("../src/modules/candidates/candidates.controller");
+const { updateCandidateSchema } = require("../src/modules/candidates/candidates.schema");
 const { updateApplicationStage } = require("../src/modules/applications/applications.controller");
 const { updateStageSchema } = require("../src/modules/applications/applications.schema");
 const requireRole = require("../src/middleware/rbac");
@@ -47,6 +48,16 @@ test("candidate list search, pagination, counts and access checks", {
     await updateApplicationStage({ params: { id }, body: { stage, expectedStage } }, response,
       (error) => { throw error; });
     return { status, body };
+  }
+  async function saveProfile(id, body) {
+    let status = 200;
+    let data;
+    const response = {
+      status(value) { status = value; return this; },
+      json(value) { data = value; return this; },
+    };
+    await updateCandidate({ params: { id }, body }, response, (error) => { throw error; });
+    return { status, body: data };
   }
   let server;
   try {
@@ -111,6 +122,31 @@ test("candidate list search, pagination, counts and access checks", {
     assert.equal(stale.body.currentStage, "Interview");
     assert.equal((await changeStage("invalid", "Offer", "Interview")).status, 400);
     assert.equal((await changeStage("00000000-0000-4000-8000-000000000000", "Offer", "Interview")).status, 404);
+    const profileChanges = {
+      fullName: "Edited verification name",
+      phone: "+977 1111111111",
+      expectedFullName: selected.fullName,
+      expectedPhone: selected.phone,
+    };
+    assert.equal(updateCandidateSchema.safeParse({ ...profileChanges, fullName: "  " }).success, false);
+    assert.equal(updateCandidateSchema.safeParse({ ...profileChanges, phone: "invalid" }).success, false);
+    assert.equal(updateCandidateSchema.safeParse({ ...profileChanges, email: "changed@example.invalid" }).success, false);
+    const savedProfile = await saveProfile(selected.id, profileChanges);
+    assert.equal(savedProfile.status, 200);
+    assert.equal(savedProfile.body.candidate.fullName, profileChanges.fullName);
+    assert.equal(savedProfile.body.candidate.email, selected.email);
+    assert.equal((await saveProfile(selected.id, profileChanges)).status, 200);
+    const afterEdit = (await detail(selected.id)).body.candidate;
+    assert.equal(afterEdit.phone, profileChanges.phone);
+    for (const application of afterEdit.applications) {
+      assert.equal(application.fullName, selected.fullName);
+      assert.equal(application.phone, selected.phone);
+    }
+    const staleProfile = await saveProfile(selected.id, { ...profileChanges, fullName: "Stale edit" });
+    assert.equal(staleProfile.status, 409);
+    assert.equal(staleProfile.body.candidate.fullName, profileChanges.fullName);
+    assert.equal((await saveProfile("invalid", profileChanges)).status, 400);
+    assert.equal((await saveProfile("00000000-0000-4000-8000-000000000000", profileChanges)).status, 404);
     assert.equal((await detail("invalid")).status, 400);
     assert.equal((await detail("00000000-0000-4000-8000-000000000000")).status, 404);
     const injection = await call({ search: "' OR 1=1 -- " + prefix });
@@ -139,6 +175,11 @@ test("candidate list search, pagination, counts and access checks", {
       body: JSON.stringify({ stage: "Offer", expectedStage: "Interview" }),
     });
     assert.equal(stageAccess.status, 401);
+    const profileAccess = await fetch("http://127.0.0.1:" + server.address().port + "/api/candidates/" + selected.id, {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profileChanges),
+    });
+    assert.equal(profileAccess.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
     await client.query("ROLLBACK");

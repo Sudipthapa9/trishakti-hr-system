@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { requestCandidate, type CandidateDetail } from "@/data/candidates-api";
 import { ApplicationStageControl } from "./application-stage-control";
+import { CandidateProfileEditor } from "./candidate-profile-editor";
 
 export function CandidateDetailPage() {
   const { candidateId } = useParams();
@@ -57,6 +58,9 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
               <p>{candidate.email} · {candidate.phone}</p>
             </div>
           </header>
+          <CandidateProfileEditor candidate={candidate} onSaved={(profile) => {
+            setCandidate((current) => current && ({ ...current, ...profile }));
+          }} />
           <h2>Applications ({candidate.applications.length})</h2>
           {!candidate.applications.length ? <p>This candidate has no applications.</p> : (
             <div className="grid gap-4">
