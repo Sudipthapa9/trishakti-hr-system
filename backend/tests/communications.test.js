@@ -71,7 +71,8 @@ test("saved communication and duplicate-safe send states", {
     assert.equal((await call(handlers.sendMessage, { expectedVersion: 1 }, placeholder.id)).status, 400);
     assert.equal(handlers.createDraftSchema.safeParse({ ...payload, subject: "Bad\r\nheader" }).success, false);
     assert.equal(handlers.sendSchema.safeParse({}).success, false);
-    assert.equal((await call(handlers.listMessages)).body.messages.length, 4);
+    const history = (await call(handlers.listMessages)).body.messages;
+    assert.equal(history.filter((record) => record.applicationId === application.id).length, 4);
     server = app.listen(0, "127.0.0.1");
     await new Promise((resolve) => server.once("listening", resolve));
     const base = "http://127.0.0.1:" + server.address().port + "/api/communications";

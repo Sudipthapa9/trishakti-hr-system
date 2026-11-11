@@ -1,4 +1,5 @@
 import "./communication-page.css";
+import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,7 +130,7 @@ export function CommunicationPage() {
       busy.current = false; setIsSaving(false);
     }
   }
-  const editable = !current || current.status === "Draft" || current.status === "Failed";
+  const editable = !current || (!current.offerId && (current.status === "Draft" || current.status === "Failed"));
 
   return (
     <div className="page-recruitment-communication-page">
@@ -175,6 +176,7 @@ export function CommunicationPage() {
                 </div>
               </fieldset>
             </form>
+            {current?.offerId && <Link className="underline" to={"/offers/" + current.offerId}>Manage this message from its saved offer</Link>}
             {current?.lastError && <p>{current.lastError}</p>}
             {current?.status === "Sending" && <p>Send is in progress or needs confirmation. Check Brevo logs before creating another message.</p>}
             {current?.status === "Unknown" && <p>The send outcome is uncertain. Check Brevo logs before creating another message.</p>}

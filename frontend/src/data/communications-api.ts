@@ -2,6 +2,7 @@ import keycloak from "@/keycloak";
 
 export type MessageRecord = {
   id: string; applicationId: string; recipientEmail: string; recipientName: string;
+  offerId?: string | null;
   subject: string; body: string;
   status: "Draft" | "Sending" | "Accepted" | "Failed" | "Unknown";
   version: number; providerMessageId: string | null; lastError: string | null;
