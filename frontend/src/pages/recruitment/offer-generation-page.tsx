@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { listOffers, getOffer, offerRecipients, saveOffer, type OfferRecord, type OfferFields, type OfferRecipient } from "@/data/offers-api";
+import { listOffers, getOffer, offerRecipients, saveOffer, sendOffer, OfferRequestError, type OfferRecord, type OfferFields, type OfferRecipient } from "@/data/offers-api";
 
 export function OfferGenerationPage() {
   const { offerId } = useParams();
@@ -72,10 +72,10 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
         }}>Try again</Button></div>}
         {loading && !hasLoaded ? <p role="status">Loading offers…</p> : hasLoaded && (
           <OfferEditor key={selected ? selected.id + ":" + selected.version : "new"} saved={selected} recipients={recipients} onBusy={setBusy}
-            onSaved={(record) => {
+            onSaved={(record, notice) => {
               setSelected((current) => current ? { ...current, ...record } : record);
               setOffers((current) => current.map((offer) => offer.id === record.id ? { ...offer, ...record } : offer));
-              setSavedNotice("Offer draft saved.");
+              setSavedNotice(notice ?? "Offer draft saved.");
             }} />
         )}
         {!offerId && <div className="flex gap-3">
@@ -104,7 +104,7 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
 }
 
 function OfferEditor({ saved, recipients, onBusy, onSaved }: {
-  saved: OfferRecord | null; recipients: OfferRecipient[]; onBusy: (busy: boolean) => void; onSaved: (offer: OfferRecord) => void;
+  saved: OfferRecord | null; recipients: OfferRecipient[]; onBusy: (busy: boolean) => void; onSaved: (offer: OfferRecord, notice?: string) => void;
 }) {
   const navigate = useNavigate();
   const [applicationId, setApplicationId] = useState(saved?.applicationId ?? "");
@@ -117,9 +117,10 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
   const [chosenApplicant, setChosenApplicant] = useState<OfferRecipient | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
+  const [sendUncertain, setSendUncertain] = useState(false);
   const lock = useRef(false);
   const id = useRef(saved?.id ?? crypto.randomUUID());
-  const editable = !saved || saved.status === "Draft";
+  const editable = !sendUncertain && (!saved || (saved.status === "Draft" && ["NotSent", "Failed"].includes(saved.sendStatus)));
   const applicant = chosenApplicant ?? recipients.find((entry) => entry.id === applicationId);
   const dirty = !saved || Object.entries(fields).some(([name, value]) => value !== saved[name as keyof OfferFields]);
   function change(name: keyof OfferFields, value: string) {
@@ -143,6 +144,28 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
       setNotice("Offer draft saved.");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Could not save offer.");
+    } finally {
+      lock.current = false; setIsSaving(false); onBusy(false);
+    }
+  }
+  async function sendSavedOffer() {
+    if (!saved || dirty || !editable || lock.current) return;
+    lock.current = true; setIsSaving(true); onBusy(true); setError(null);
+    try {
+      const result = await sendOffer(saved.id, saved.version);
+      onSaved(result.offer, "Offer accepted by Brevo. Delivery confirmation is pending.");
+    } catch (error) {
+      if (error instanceof OfferRequestError && error.offer) {
+        onSaved(error.offer, "Review the saved send status before continuing.");
+      } else {
+        try {
+          const refreshed = await getOffer(saved.id, new AbortController().signal);
+          onSaved(refreshed.offer, "Review the current offer and communication history before sending again.");
+        } catch {
+          setSendUncertain(true);
+        }
+      }
+      setError(error instanceof Error ? error.message : "Could not confirm the send outcome.");
     } finally {
       lock.current = false; setIsSaving(false); onBusy(false);
     }
@@ -195,7 +218,20 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
             <Button type="submit">{isSaving ? "Saving…" : "Save draft"}</Button>
           </fieldset>
         </form>
-        <p>Sending this offer will be available in the next step.</p>
+        {saved && (
+          <div className="mt-4 grid gap-3">
+            <p>Send status: {saved.sendStatus}</p>
+            <p>Recipient: {saved.candidateName} · {saved.candidateEmail}</p>
+            {saved.delivery?.lastError && <p role="alert">{saved.delivery.lastError}</p>}
+            {saved.sendStatus === "Accepted" && <p>Accepted by Brevo. Delivery confirmation is pending.</p>}
+            {["Sending", "Unknown"].includes(saved.sendStatus) && <p>Check Brevo logs and communication history before sending another offer.</p>}
+            <Button type="button" disabled={isSaving || dirty || !editable} onClick={() => void sendSavedOffer()}>
+              {isSaving ? "Working…" : saved.sendStatus === "Failed" ? "Retry sending saved offer" : "Send saved offer"}
+            </Button>
+            <Button type="button" variant="outline" disabled={isSaving} onClick={() => window.location.reload()}>Reload saved offer</Button>
+          </div>
+        )}
+        {sendUncertain && <p role="alert">The send outcome could not be checked. Reload the saved offer before continuing.</p>}
       </div>
       <section className="offer-preview">
         <header><span>{dirty ? "Unsaved preview" : "Saved offer preview"}</span>

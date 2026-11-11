@@ -8,8 +8,18 @@ export type OfferRecord = OfferFields & {
   id: string; applicationId: string; status: string; version: number;
   candidateName?: string; candidateEmail?: string; jobTitle?: string;
   createdAt: string; updatedAt: string;
+  sendStatus: "NotSent" | "Sending" | "Accepted" | "Failed" | "Unknown";
+  delivery: { id: string; status: string; lastError: string | null; providerMessageId: string | null } | null;
 };
 export type OfferRecipient = { id: string; fullName: string; email: string; jobTitle: string };
+
+export class OfferRequestError extends Error {
+  offer?: OfferRecord;
+  constructor(message: string, offer?: OfferRecord) {
+    super(message);
+    this.offer = offer;
+  }
+}
 
 async function request(path: string, options: RequestInit = {}) {
   if (!keycloak.authenticated) throw new Error("Please sign in again.");
@@ -23,8 +33,14 @@ async function request(path: string, options: RequestInit = {}) {
   if (response.status === 403) throw new Error("An HR role is required to manage offers.");
   const data = await response.json();
   if (response.status === 400) throw new Error("Check amounts, currency and dates. Expiry must be on or before joining.");
-  if (!response.ok) throw new Error(data.error || "Could not complete the offer request.");
+  if (!response.ok) throw new OfferRequestError(data.error || "Could not complete the offer request.", data.offer);
   return data;
+}
+
+export async function sendOffer(id: string, expectedVersion: number): Promise<{ offer: OfferRecord }> {
+  return request("offers/" + encodeURIComponent(id) + "/send", {
+    method: "POST", body: JSON.stringify({ expectedVersion }),
+  });
 }
 
 export async function listOffers(page: number, signal: AbortSignal): Promise<{ offers: OfferRecord[]; hasMore: boolean }> {

@@ -5,6 +5,7 @@ const requireRole = require("../../middleware/rbac");
 const validate = require("../../middleware/validate");
 const handlers = require("./offers.controller");
 const { createOfferSchema, updateOfferSchema } = require("./offers.schema");
+const { sendSchema } = require("../communications/communications.controller");
 const router = express.Router();
 router.use(checkJwt, requireRole("hr", "hr-head"), (req, res, next) => {
   res.set("Cache-Control", "no-store");
@@ -18,4 +19,5 @@ router.get("/", handlers.listOffers);
 router.get("/:id", handlers.getOffer);
 router.post("/", validate(createOfferSchema), handlers.createOffer);
 router.patch("/:id", validate(updateOfferSchema), handlers.updateOffer);
+router.post("/:id/send", validate(sendSchema), handlers.sendOffer);
 module.exports = router;
