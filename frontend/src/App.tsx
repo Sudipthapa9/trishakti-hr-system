@@ -84,6 +84,7 @@ export default function App() {
             <Route path="/communication" element={<CommunicationRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/offers/new" element={<OfferGenerationRoute />} />
+            <Route path="/offers/:offerId" element={<OfferGenerationRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route
               path="/onboarding"

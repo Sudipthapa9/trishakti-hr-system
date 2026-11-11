@@ -56,8 +56,7 @@ export function CommunicationRoute() {
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function OfferGenerationRoute() {
-  const { candidates } = useWorkspace();
-  return <OfferGenerationPage candidates={candidates} />;
+  return <OfferGenerationPage />;
 }
 
 
