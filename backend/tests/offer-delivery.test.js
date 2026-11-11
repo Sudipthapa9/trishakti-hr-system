@@ -5,6 +5,7 @@ const { randomUUID } = require("node:crypto");
 const pool = require("../src/config/db");
 const brevo = require("../src/services/brevo");
 const offers = require("../src/modules/offers/offers.controller");
+const { offerResponseSchema } = require("../src/modules/offers/offers.schema");
 const messages = require("../src/modules/communications/communications.controller");
 const app = require("../src/app");
 
@@ -69,6 +70,59 @@ test("offer delivery snapshots, retries and uncertain outcomes", {
     assert.equal(history.offerId,offer.id);
     assert(history.body.includes("Submitted person"));
     assert.equal(history.recipientName,"Submitted person");
+    const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kathmandu" }).format(new Date());
+    const responsePayload = { outcome: "Accepted", responseDate: today, notes: "Confirmed by phone", expectedVersion: saved.version };
+    assert.equal(offerResponseSchema.safeParse({ ...responsePayload, outcome: "Invalid" }).success, false);
+    assert.equal(offerResponseSchema.safeParse({ ...responsePayload, responseDate: "2030-02-30" }).success, false);
+    assert.equal((await call(offers.recordOfferResponse, { ...responsePayload, expectedVersion: 999 }, offer.id)).status, 409);
+    assert.equal((await call(offers.recordOfferResponse, { ...responsePayload, responseDate: "2099-01-01" }, offer.id)).status, 400);
+    assert.equal((await call(offers.recordOfferResponse, { ...responsePayload, responseDate: "2000-01-01" }, offer.id)).status, 400);
+    const decision = await call(offers.recordOfferResponse, responsePayload, offer.id);
+    assert.equal(decision.status, 200);
+    assert.equal(decision.body.offer.status, "Accepted");
+    assert.equal(decision.body.offer.responseDate, today);
+    assert.equal(decision.body.offer.responseAudit.recordedBy, "verification-hr");
+    assert.equal((await call(offers.recordOfferResponse, responsePayload, offer.id)).status, 200);
+    assert.equal((await pool.query("SELECT count(*)::int AS count FROM public.offer_responses WHERE offer_id=$1", [offer.id])).rows[0].count, 1);
+    assert.equal((await call(offers.recordOfferResponse, { ...responsePayload, outcome: "Declined", expectedVersion: decision.body.offer.version }, offer.id)).status, 409);
+    assert.equal((await call(offers.sendOffer,{expectedVersion:1},offer.id)).body.offer.status, "Accepted");
+    assert.equal(calls, 1);
+    for (const outcome of ["Declined", "Withdrawn"]) {
+      const pending = await create();
+      const sent = await call(offers.sendOffer, { expectedVersion: 1 }, pending.id);
+      const recorded = await call(offers.recordOfferResponse, { outcome, responseDate: today, notes: "", expectedVersion: sent.body.offer.version }, pending.id);
+      assert.equal(recorded.body.offer.status, outcome);
+    }
+    const unsent = await create();
+    assert.equal((await call(offers.recordOfferResponse, { ...responsePayload, expectedVersion: 1 }, unsent.id)).status, 409);
+    assert.equal((await call(offers.recordOfferResponse, responsePayload, randomUUID())).status, 404);
+    const atomic = await create();
+    const atomicSent = await call(offers.sendOffer, { expectedVersion: 1 }, atomic.id);
+    const originalConnect = pool.connect;
+    pool.connect = async function() {
+      const client = await originalConnect.call(pool);
+      return {
+        query(sql, values) {
+          if (typeof sql === "string" && sql.includes("UPDATE public.offers SET status=$1,response_date")) {
+            return Promise.reject(new Error("Intentional response-write failure"));
+          }
+          return client.query(sql, values);
+        },
+        release() { client.release(); },
+      };
+    };
+    try {
+      await assert.rejects(() => call(offers.recordOfferResponse, { ...responsePayload, expectedVersion: atomicSent.body.offer.version }, atomic.id), /Intentional/);
+    } finally {
+      pool.connect = originalConnect;
+    }
+    assert.equal((await pool.query("SELECT id FROM public.offer_responses WHERE offer_id=$1", [atomic.id])).rows.length, 0);
+    assert.equal((await call(offers.getOffer, {}, atomic.id)).body.offer.status, "Sent");
+    const stages = await pool.query(`
+      SELECT a.stage FROM public.applications a
+      JOIN public.offers o ON o.application_id=a.id WHERE o.id=$1
+    `, [offer.id]);
+    assert.equal(stages.rows[0].stage, "Review");
 
     const expired=await create({expiryDate:"2000-01-01",joiningDate:"2000-02-01"});
     assert.equal((await call(offers.sendOffer,{expectedVersion:1},expired.id)).status,409);
@@ -110,10 +164,13 @@ test("offer delivery snapshots, retries and uncertain outcomes", {
     await new Promise(resolve=>server.once("listening",resolve));
     const access=await fetch("http://127.0.0.1:"+server.address().port+"/api/offers/"+offer.id+"/send",{method:"POST"});
     assert.equal(access.status,401);
+    const responseAccess = await fetch("http://127.0.0.1:"+server.address().port+"/api/offers/"+offer.id+"/response", { method: "POST" });
+    assert.equal(responseAccess.status,401);
   } finally {
     pool.query=originalQuery;
     brevo.sendTransactionalEmail=originalSend;
     if(server)await new Promise(resolve=>server.close(resolve));
+    await pool.query("DELETE FROM public.offer_responses WHERE offer_id=ANY($1::uuid[])",[offerIds]);
     await pool.query("DELETE FROM public.communications WHERE offer_id=ANY($1::uuid[])",[offerIds]);
     await pool.query("DELETE FROM public.offers WHERE id=ANY($1::uuid[])",[offerIds]);
     await pool.query("DELETE FROM public.applications WHERE job_id=ANY($1::uuid[])",[jobs]);

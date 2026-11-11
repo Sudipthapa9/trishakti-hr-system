@@ -20,4 +20,11 @@ const updateOfferSchema = z.object({
   ...fields, expectedVersion: z.number().int().min(1),
 }).strict().refine(validDates, dateError);
 
-module.exports = { createOfferSchema, updateOfferSchema };
+const offerResponseSchema = z.object({
+  outcome: z.enum(["Accepted", "Declined", "Withdrawn"]),
+  responseDate: z.string().date(),
+  notes: z.string().trim().max(5000).optional().default(""),
+  expectedVersion: z.number().int().min(1),
+}).strict();
+
+module.exports = { createOfferSchema, updateOfferSchema, offerResponseSchema };
