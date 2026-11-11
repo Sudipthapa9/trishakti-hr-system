@@ -9,4 +9,14 @@ const applicationSchema = z.object({
   coverLetter: z.string().trim().max(10000).optional().default(""),
 }).strict();
 
-module.exports = { applicationSchema };
+const applicationStageSchema = z.enum([
+  "Review", "Screening", "Shortlisted", "Interview", "Offer",
+  "Hired", "Rejected", "Withdrawn",
+]);
+
+const updateStageSchema = z.object({
+  stage: applicationStageSchema,
+  expectedStage: applicationStageSchema,
+}).strict();
+
+module.exports = { applicationSchema, updateStageSchema };

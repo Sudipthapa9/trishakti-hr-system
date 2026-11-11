@@ -34,13 +34,7 @@ export function NewJobRoute() {
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function CandidatesRoute() {
-  const { candidates, updateCandidateStage } = useWorkspace();
-  return (
-    <CandidatesPage
-      candidates={candidates}
-      onStageChange={updateCandidateStage}
-    />
-  );
+  return <CandidatesPage />;
 }
 
 // Read the required workspace values and pass them to the corresponding page component.
@@ -57,8 +51,7 @@ export function ScreeningRankingRoute() {
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function CommunicationRoute() {
-  const { candidates } = useWorkspace();
-  return <CommunicationPage candidates={candidates} />;
+  return <CommunicationPage />;
 }
 
 // Read the required workspace values and pass them to the corresponding page component.

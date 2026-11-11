@@ -23,6 +23,7 @@ import { EmployeeRecordPage } from "@/pages/employees/employee-record-page";
 import { ApplicationConfirmationPage } from "@/pages/public/application-confirmation-page";
 import { JobDetailsPage } from "@/pages/public/job-details-page";
 import { CareersPage } from "@/pages/public/careers-page";
+import { CandidateDetailPage } from "@/pages/candidates/candidate-detail-page";
 import { ApplicationsPage } from "@/pages/applications/applications-page";
 import { PublicNotFoundPage } from "@/pages/public/not-found-page";
 
@@ -69,6 +70,7 @@ export default function App() {
             <Route path="/jobs/:jobId/edit" element={<EditJobRoute />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/candidates" element={<CandidatesRoute />} />
+            <Route path="/candidates/:candidateId" element={<CandidateDetailPage />} />
             {/* Declare this URL match or nested layout boundary. */}
             <Route path="/screening" element={<ScreeningRankingRoute />} />
             {/* Declare this URL match or nested layout boundary. */}

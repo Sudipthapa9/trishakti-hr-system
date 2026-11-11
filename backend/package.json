@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "nodemon src/server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "email:check": "node scripts/check-brevo.js"
   },
   "keywords": [],
   "author": "",
