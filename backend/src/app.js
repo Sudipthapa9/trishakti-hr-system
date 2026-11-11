@@ -1,6 +1,7 @@
 const jobsRoutes = require("./modules/jobs/jobs.routes");
 const applicationsRoutes = require("./modules/applications/applications.routes");
 const candidatesRoutes = require("./modules/candidates/candidates.routes");
+const communicationsRoutes = require("./modules/communications/communications.routes");
 /**
  * Creates the Express pipeline: request middleware, protected test routes, then the final error handler.
  */
@@ -22,6 +23,7 @@ app.use("/api/test", testRoutes);
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/applications", applicationsRoutes);
 app.use("/api/candidates", candidatesRoutes);
+app.use("/api/communications", communicationsRoutes);
 // Register error handling last so upstream middleware errors reach it.
 app.use(errorHandler);
 

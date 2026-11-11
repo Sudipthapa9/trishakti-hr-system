@@ -57,4 +57,51 @@ async function checkBrevoConnection() {
   return { connected: true, senderVerified: true };
 }
 
-module.exports = { checkBrevoConnection };
+class BrevoSendError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.deliveryStatus = status;
+  }
+}
+
+async function sendTransactionalEmail({ email, name, subject, body }) {
+  const parsed = configSchema.safeParse(process.env);
+  if (!parsed.success) throw new BrevoSendError("Email sender settings are incomplete.", "Failed");
+  const config = parsed.data;
+  const escaped = body.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]).replace(/\r?\n/g, "<br>");
+  let response;
+  try {
+    response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": config.BREVO_API_KEY, "Content-Type": "application/json", accept: "application/json" },
+      body: JSON.stringify({
+        sender: { email: config.BREVO_SENDER_EMAIL, name: config.BREVO_SENDER_NAME },
+        to: [{ email, name }],
+        subject,
+        htmlContent: "<html><body>" + escaped + "</body></html>",
+      }),
+      signal: AbortSignal.timeout(15000),
+      redirect: "error",
+    });
+  } catch {
+    throw new BrevoSendError("Email outcome is uncertain. Check Brevo logs before sending again.", "Unknown");
+  }
+  if (!response.ok) {
+    if (response.status >= 400 && response.status < 500 && response.status !== 408) {
+      throw new BrevoSendError("Brevo rejected this send. Check sender settings, recipient and account limits.", "Failed");
+    }
+    throw new BrevoSendError("Email outcome is uncertain. Check Brevo logs before sending again.", "Unknown");
+  }
+  let data;
+  try { data = await response.json(); } catch {
+    throw new BrevoSendError("Email outcome is uncertain. Check Brevo logs before sending again.", "Unknown");
+  }
+  if (typeof data.messageId !== "string" || !data.messageId) {
+    throw new BrevoSendError("Email outcome is uncertain. Check Brevo logs before sending again.", "Unknown");
+  }
+  return data.messageId;
+}
+
+module.exports = { checkBrevoConnection, sendTransactionalEmail, BrevoSendError };

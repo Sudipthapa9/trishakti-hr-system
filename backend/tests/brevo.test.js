@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { checkBrevoConnection } = require("../src/services/brevo");
+const { checkBrevoConnection, sendTransactionalEmail, BrevoSendError } = require("../src/services/brevo");
 
 test("Brevo configuration and read-only connection checks", async () => {
   const originalFetch = global.fetch;
@@ -43,6 +43,24 @@ test("Brevo configuration and read-only connection checks", async () => {
     await assert.rejects(checkBrevoConnection, /verify/);
     global.fetch = async () => ({ ok: true, status: 200, json: async () => ({ relay: { enabled: false } }) });
     await assert.rejects(checkBrevoConnection, /Enable transactional/);
+    global.fetch = async (url, options) => {
+      assert.equal(url, "https://api.brevo.com/v3/smtp/email");
+      assert.equal(options.method, "POST");
+      const payload = JSON.parse(options.body);
+      assert.equal(payload.to[0].email, "recipient@example.invalid");
+      assert(payload.htmlContent.includes("&lt;script&gt;"));
+      assert(!payload.htmlContent.includes("<script>"));
+      return { ok: true, status: 201, json: async () => ({ messageId: "verification-id" }) };
+    };
+    const message = { email: "recipient@example.invalid", name: "Verification", subject: "Test", body: "<script>\nTest" };
+    assert.equal(await sendTransactionalEmail(message), "verification-id");
+    for (const status of [400, 401, 429, 500, 408]) {
+      global.fetch = async () => ({ ok: false, status });
+      await assert.rejects(() => sendTransactionalEmail(message), (error) =>
+        error instanceof BrevoSendError && error.deliveryStatus === (status >= 500 || status === 408 ? "Unknown" : "Failed"));
+    }
+    global.fetch = async () => { throw new Error("Network failure"); };
+    await assert.rejects(() => sendTransactionalEmail(message), (error) => error.deliveryStatus === "Unknown");
   } finally {
     global.fetch = originalFetch;
     for (const name of names) {
