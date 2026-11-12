@@ -8,14 +8,12 @@ export type AuthState = "loading" | "signed-out" | "signed-in";
 // Define AuthSession so callers and implementations agree on the required data shape.
 export type AuthSession = {
   authState: AuthState;
-  showWelcome: boolean;
   username: string;
   roleLabel: string;
   authError: string | null;
   roles: string[];
   canAccessWorkspace: boolean;
   refreshAccess: () => Promise<void>;
-  continueToWorkspace: () => void;
   logout: () => void;
 };
 // Use null as the missing-provider sentinel; the companion hook reports incorrect usage.

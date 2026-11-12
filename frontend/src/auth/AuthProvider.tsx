@@ -36,7 +36,6 @@ function readIdentity() {
 }
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("loading");
-  const [showWelcome, setShowWelcome] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [identity, setIdentity] = useState({
     username: "User",
@@ -48,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     function signedOut() {
       if (!active) return;
       setAuthState("signed-out");
-      setShowWelcome(false);
       setIdentity({ username: "User", roles: [] });
     }
     function synchronize() {
@@ -72,7 +70,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((authenticated) => {
         if (!active) return;
         synchronize();
-        setShowWelcome(authenticated);
         if (authenticated) {
           const returnTo = sessionStorage.getItem(returnKey);
           sessionStorage.removeItem(returnKey);
@@ -106,14 +103,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         authState,
-        showWelcome,
         authError,
         ...identity,
         roleLabel: identity.roles.length
           ? identity.roles.join(", ")
           : "Access pending",
         canAccessWorkspace: hasWorkspaceAccess(identity.roles),
-        continueToWorkspace: () => setShowWelcome(false),
         refreshAccess: async () => {
           if (!keycloak.authenticated) throw new Error("Please sign in again.");
           await keycloak.updateToken(-1);
@@ -125,7 +120,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .catch(() => {
               keycloak.clearToken();
               setAuthState("signed-out");
-              setShowWelcome(false);
               setIdentity({ username: "User", roles: [] });
               setAuthError(
                 "Signed out of this page, but Keycloak could not be reached. Your single sign-on session may still be active.",
