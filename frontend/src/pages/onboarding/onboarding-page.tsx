@@ -1,258 +1,62 @@
-/**
- * Tracks local onboarding checks and document names; completion enables navigation to a prototype employee record.
- */
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-  CalendarDays,
-  Check,
-  Clock3,
-  Eye,
-  FileText,
-  Plus,
-  Sparkles,
-  Upload,
-} from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { getOnboarding, listOnboarding, saveChecklist, type OnboardingRecord } from "@/data/onboarding-api";
 import "./onboarding-page.css";
-// Provide the fixed prototype records or display configuration consumed by this module.
-const initial = [
-  { name: "Offer Letter", detail: "Signed Jul 15, 2024", done: true },
-  {
-    name: "Employment Contract",
-    detail: "Countersigned Jul 16, 2024",
-    done: true,
-  },
-  {
-    name: "Government ID Verification",
-    detail: "Verification completed in this demo",
-    done: true,
-  },
-  {
-    name: "Bank & Payroll Setup",
-    detail: "Details submitted and routed",
-    done: true,
-  },
-  {
-    name: "HR Head Final Approval",
-    detail: "Pending your review",
-    done: false,
-  },
-];
-// Tracks local onboarding checks and document names; completion enables navigation to a prototype employee record.
+const labels = { documents: "Documents verified", payroll: "Bank and payroll setup", accounts: "Work accounts prepared", orientation: "Orientation completed" };
 export function OnboardingPage() {
-  // Keep items in component state; updates trigger a render.
-  const [items, setItems] = useState(initial);
-  // Keep notice in component state; updates trigger a render.
-  const [notice, setNotice] = useState("");
-  // Keep documents in component state; updates trigger a render.
-  const [documents, setDocuments] = useState(["Emergency Contacts.pdf"]);
-  const completed = items.filter((i) => i.done).length;
-  return (
-    <div className="page-onboarding-onboarding-page">
-      <div className="page-stack">
-        {/* Page or panel heading and contextual actions. */}
-        <header className="onboarding-heading">
-          <div>
-            <h1>Onboarding: Eleanor Shellstrop</h1>
-            <p>
-              <Badge variant="success">In Progress ({completed * 20}%)</Badge>
-              <CalendarDays size={13} />
-              Target Completion: Jul 28, 2024
-            </p>
-          </div>
-          <div>
-            <Button
-              variant="outline"
-              onClick={() =>
-                setNotice(
-                  "Rejection review is not connected in this prototype.",
-                )
-              }
-            >
-              Reject Candidate
-            </Button>
-            <Button
-              disabled={completed < items.length}
-              asChild={completed === items.length}
-            >
-              {completed === items.length ? (
-                <Link to="/employees/eleanor-shellstrop">
-                  Approve & Create Record
-                </Link>
-              ) : (
-                "Approve & Create Record"
-              )}
-            </Button>
-          </div>
-        </header>
-        {notice ? (
-          <p role="status" className="prototype-feedback">
-            {notice}
-          </p>
-        ) : null}
-        <div className="onboarding-layout">
-          {/* Supporting profile, navigation, or filter content beside the main panel. */}
-          <aside>
-            {/* Group related content and controls in this screen section. */}
-            <section className="onboarding-profile">
-              <div className="onboarding-person">
-                <img src="/design/profile-23-2.png" alt="" />
-                <div>
-                  <h2>Eleanor Shellstrop</h2>
-                  <p>Senior Product Designer</p>
-                </div>
-              </div>
-              <dl>
-                {[
-                  ["Department", "Product"],
-                  ["Joining Date", "August 1, 2024"],
-                  ["Location", "Remote (AZ)"],
-                  ["Manager", "Michael Realman"],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="reused-data">
-                <Sparkles size={18} />
-                Recruitment data has been pre-filled for this record to
-                streamline onboarding.
-              </p>
-            </section>
-            {/* Group related content and controls in this screen section. */}
-            <section className="onboarding-progress">
-              <h2>Onboarding Progress</h2>
-              <div>
-                <strong>
-                  {completed}/{items.length}
-                </strong>
-                <dl>
-                  <div>
-                    <dt>Documentation</dt>
-                    <dd>100%</dd>
-                  </div>
-                  <div>
-                    <dt>Approvals</dt>
-                    <dd>{items[4].done ? "100%" : "0%"}</dd>
-                  </div>
-                  <div>
-                    <dt>IT Setup</dt>
-                    <dd>Pending</dd>
-                  </div>
-                </dl>
-              </div>
-            </section>
-          </aside>
-          <div className="onboarding-details">
-            {/* Group related content and controls in this screen section. */}
-            <section className="onboarding-checklist">
-              {/* Page or panel heading and contextual actions. */}
-              <header>
-                <h2>Required Actions Checklist</h2>
-                <span>
-                  {completed} of {items.length} Completed
-                </span>
-              </header>
-              {items.map((item, i) => (
-                <div className="onboarding-task" key={item.name}>
-                  <span
-                    className={item.done ? "task-complete" : "task-pending"}
-                  >
-                    {item.done ? <Check size={18} /> : <Clock3 size={18} />}
-                  </span>
-                  <div>
-                    <strong>{item.name}</strong>
-                    <p>
-                      {item.done
-                        ? item.detail
-                        : i === 4
-                          ? "Pending your review"
-                          : "Awaiting review"}
-                    </p>
-                  </div>
-                  <Button
-                    size={item.done ? "icon-sm" : "sm"}
-                    variant={item.done ? "ghost" : "default"}
-                    aria-label={item.done ? "Review " + item.name : undefined}
-                    onClick={() => {
-                      setItems((v) =>
-                        v.map((x, n) =>
-                          i === n ? { ...x, done: !x.done } : x,
-                        ),
-                      );
-                      setNotice("Checklist updated locally.");
-                    }}
-                  >
-                    {item.done ? <Eye size={17} /> : "Review Now"}
-                  </Button>
-                </div>
-              ))}
-            </section>
-            {/* Group related content and controls in this screen section. */}
-            <section className="onboarding-documents">
-              {/* Page or panel heading and contextual actions. */}
-              <header>
-                <h2>Additional Documentation</h2>
-                <label className="upload-action">
-                  <Upload size={14} />
-                  Upload File
-                  <input
-                    type="file"
-                    accept=".pdf,.docx"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setDocuments((v) => [...v, file.name]);
-                        setNotice(
-                          "File name added locally. No document was uploaded to a server.",
-                        );
-                      }
-                    }}
-                  />
-                </label>
-              </header>
-              <div>
-                {documents.map((name, i) => (
-                  <button
-                    key={i}
-                    onClick={() =>
-                      setNotice(
-                        "Document preview is not connected in this prototype.",
-                      )
-                    }
-                  >
-                    <FileText size={22} />
-                    <span>
-                      {name}
-                      <small>Local document record</small>
-                    </span>
-                  </button>
-                ))}
-                <label className="tax-document">
-                  <Plus size={21} />
-                  Add Tax Forms
-                  <input
-                    type="file"
-                    accept=".pdf,.docx"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) setDocuments((v) => [...v, file.name]);
-                    }}
-                  />
-                </label>
-              </div>
-            </section>
-          </div>
-        </div>
-        <p className="demo-note">
-          Prototype checklist and document names only. No employment record is
-          stored.
-        </p>
-      </div>
-    </div>
-  );
+  const { onboardingId } = useParams();
+  return <OnboardingContent key={onboardingId || "list"} id={onboardingId} />;
+}
+function OnboardingContent({ id }: { id?: string }) {
+  const [records, setRecords] = useState<OnboardingRecord[]>([]);
+  const [record, setRecord] = useState<OnboardingRecord | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [uncertain, setUncertain] = useState(false);
+  const busy = useRef(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    async function load() {
+      setLoading(true); setError("");
+      try {
+        if (id) { const result = await getOnboarding(id, controller.signal); if (!controller.signal.aborted) setRecord(result.record); }
+        else { const result = await listOnboarding(page, controller.signal); if (!controller.signal.aborted) { setRecords(result.records); setHasMore(result.hasMore); } }
+      } catch (error) { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Could not load onboarding."); }
+      finally { if (!controller.signal.aborted) setLoading(false); }
+    }
+    void load(); return () => controller.abort();
+  }, [id, page]);
+  async function toggle(key: keyof typeof labels) {
+    if (!record || busy.current || uncertain) return;
+    busy.current = true; setSaving(true); setError("");
+    try { const result = await saveChecklist(record, { ...record.checklist, [key]: !record.checklist[key] }); setRecord(result.record); }
+    catch (error) { setError(error instanceof Error ? error.message : "Could not save checklist."); setUncertain(true); }
+    finally { busy.current = false; setSaving(false); }
+  }
+  const completed = record ? Object.values(record.checklist).filter(Boolean).length : 0;
+  return <div className="page-onboarding-onboarding-page"><div className="page-stack">
+    <h1>{record ? "Onboarding: " + record.candidateName : "Onboarding"}</h1>
+    {loading && <p role="status">Loading onboarding…</p>}
+    {error && <p role="alert">{error}</p>}
+    <Button variant="outline" onClick={() => window.location.reload()}>Reload saved records</Button>
+    {!loading && !id && !error && <>
+      {!records.length && <p>No onboarding records yet. Start from an accepted offer.</p>}
+      {records.map((item) => <section className="rounded-lg border bg-white p-4" key={item.id}><Link to={"/onboarding/" + item.id}>{item.candidateName} · {item.position}</Link><p>Joining: {item.joiningDate}</p></section>)}
+      <div className="flex gap-3"><Button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button><span>Page {page}</span><Button disabled={!hasMore} onClick={() => setPage(page + 1)}>Next</Button></div>
+    </>}
+    {!loading && record && <>
+      <Link to="/onboarding">All onboarding records</Link>
+      <section className="rounded-lg border bg-white p-5"><h2>{record.position}</h2><p>{record.email}</p><p>{record.department} · {record.location} · Joining {record.joiningDate}</p><Link to={"/offers/" + record.offerId}>View accepted offer</Link></section>
+      <section className="rounded-lg border bg-white p-5"><h2>Required actions ({completed}/4)</h2><p>HR records completion after verifying each action.</p>
+        <fieldset disabled={saving || uncertain} className="grid gap-4" aria-busy={saving}>{(Object.keys(labels) as (keyof typeof labels)[]).map((key) => <label key={key} className="flex gap-3"><input type="checkbox" checked={record.checklist[key]} onChange={() => void toggle(key)} />{labels[key]}</label>)}</fieldset>
+        {saving && <p role="status">Saving checklist…</p>}
+        {uncertain && <p>Reload the saved record before making more changes.</p>}
+      </section>
+      <p>Checklist progress is saved. Employee creation will be connected in the next step.</p>
+    </>}
+  </div></div>;
 }

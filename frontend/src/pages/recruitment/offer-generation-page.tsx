@@ -1,5 +1,6 @@
 import "./offer-generation-page.css";
 import { OfferResponseForm } from "./offer-response-form";
+import { StartOnboardingButton } from "@/pages/onboarding/start-onboarding-button";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -236,6 +237,7 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
         {saved?.status === "Sent" && saved.sendStatus === "Accepted" && (
           <OfferResponseForm offer={saved} onBusy={onBusy} onRecorded={(record) => onSaved(record, "Offer response recorded.")} />
         )}
+        {saved?.status === "Accepted" && <StartOnboardingButton offerId={saved.id} />}
         {saved?.responseDate && (
           <section className="mt-4 rounded-lg border bg-white p-4">
             <h2>Recorded outcome: {saved.status}</h2>
