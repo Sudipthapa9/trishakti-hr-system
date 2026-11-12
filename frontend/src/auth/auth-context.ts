@@ -11,6 +11,10 @@ export type AuthSession = {
   showWelcome: boolean;
   username: string;
   roleLabel: string;
+  authError: string | null;
+  roles: string[];
+  canAccessWorkspace: boolean;
+  refreshAccess: () => Promise<void>;
   continueToWorkspace: () => void;
   logout: () => void;
 };

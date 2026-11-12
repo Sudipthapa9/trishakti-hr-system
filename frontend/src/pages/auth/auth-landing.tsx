@@ -6,6 +6,7 @@ import { BrandMark } from "@/pages/auth/brand-mark";
 import "./auth-landing.css";
 
 import keycloak from "../../keycloak";
+import { useAuth } from "@/auth/auth-context";
 
 // Return the application entry URL used after Keycloak finishes an authentication action.
 function getAuthRedirectUri() {
@@ -14,6 +15,7 @@ function getAuthRedirectUri() {
 
 // Presents authentication entry actions; Keycloak owns credential entry, registration, and recovery.
 export function AuthLanding() {
+  const { authError } = useAuth();
   return (
     <div className="page-auth-auth-landing">
       {/* Main screen content; shared navigation is composed separately. */}
@@ -61,6 +63,7 @@ export function AuthLanding() {
               Use your organization account to continue.
             </p>
             <div className="mt-8 space-y-3">
+              {authError && <p role="alert">{authError}</p>}
               <Button
                 className="w-full"
                 onClick={() =>
@@ -89,6 +92,7 @@ export function AuthLanding() {
               </button>
             </div>
             <p className="mt-8 text-center text-xs leading-6 text-[var(--color-text-secondary)]">
+              New accounts need an assigned HR role before they can access the workspace.{' '}
               Password recovery is handled securely by Keycloak. Select the
               forgot password link on the sign-in screen.
             </p>

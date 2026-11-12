@@ -5,7 +5,9 @@
 function requireRole(...allowedRoles) {
   return (req, res, next) => {
     // Read realm roles only from the payload already validated by JWT middleware.
-    const roles = req.auth?.realm_access?.roles || [];
+    if (!req.auth) return res.status(401).json({ error: "Invalid or missing token" });
+    const claim = req.auth.realm_access?.roles;
+    const roles = Array.isArray(claim) ? claim.filter(role => typeof role === "string") : [];
     const hasRole = allowedRoles.some((r) => roles.includes(r));
     // A valid identity without an allowed role receives 403, not 401.
     if (!hasRole) {
