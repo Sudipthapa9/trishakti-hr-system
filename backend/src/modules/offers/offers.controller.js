@@ -8,6 +8,12 @@ const columns = `o.id, o.application_id AS "applicationId", o.position, o.curren
   to_char(o.joining_date, 'YYYY-MM-DD') AS "joiningDate",
   to_char(o.expiry_date, 'YYYY-MM-DD') AS "expiryDate",
   o.benefits, o.status, o.version, o.send_status AS "sendStatus",
+  to_char(o.response_date, 'YYYY-MM-DD') AS "responseDate",
+  o.response_notes AS "responseNotes",
+  (SELECT jsonb_build_object(
+    'recordedBy', r.recorded_by, 'recordedName', r.recorded_name,
+    'recordedAt', r.recorded_at
+  ) FROM public.offer_responses r WHERE r.offer_id=o.id) AS "responseAudit",
   (SELECT jsonb_build_object('id', m.id, 'status', m.status,
     'lastError', m.last_error, 'providerMessageId', m.provider_message_id)
    FROM public.communications m WHERE m.offer_id=o.id) AS delivery, o.created_at AS "createdAt", o.updated_at AS "updatedAt"`;
@@ -79,8 +85,8 @@ async function updateOffer(req, res, next) {
   } catch (error) { next(error); }
 }
 
-async function readOffer(id) {
-  const result = await pool.query(`
+async function readOffer(id, connection = pool) {
+  const result = await connection.query(`
     SELECT ${details} FROM public.offers o
     JOIN public.applications a ON a.id=o.application_id JOIN public.jobs j ON j.id=a.job_id
     WHERE o.id=$1
@@ -111,7 +117,7 @@ async function sendOffer(req, res, next) {
         WHERE id=$1 AND (send_status<>'Accepted' OR status='Draft')
       `, [offer.id]);
       await client.query("COMMIT");
-      return res.json({ offer: await readOffer(offer.id) });
+      return res.json({ offer: await readOffer(offer.id, client) });
     }
     if (offer.sendStatus === "Sending" && offer.delivery?.status === "Failed") {
       await client.query("UPDATE public.offers SET send_status='Failed',version=version+1,updated_at=now() WHERE id=$1", [offer.id]);
@@ -189,4 +195,54 @@ async function sendOffer(req, res, next) {
   }
 }
 
-module.exports = { listOffers, getOffer, createOffer, updateOffer, sendOffer };
+async function recordOfferResponse(req, res, next) {
+  const { outcome, responseDate, notes, expectedVersion } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(`
+      SELECT ${columns},
+        to_char(now() AT TIME ZONE 'Asia/Kathmandu', 'YYYY-MM-DD') AS today,
+        (SELECT to_char(m.updated_at AT TIME ZONE 'Asia/Kathmandu', 'YYYY-MM-DD')
+          FROM public.communications m WHERE m.offer_id=o.id AND m.status='Accepted') AS "sentOn"
+      FROM public.offers o WHERE o.id=$1 FOR UPDATE OF o
+    `, [req.params.id]);
+    const offer = result.rows[0];
+    if (!offer) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Offer not found." });
+    }
+    if (offer.status === outcome && offer.responseDate === responseDate && offer.responseNotes === notes) {
+      await client.query("COMMIT");
+      return res.json({ offer: await readOffer(offer.id, client) });
+    }
+    if (offer.status !== "Sent" || offer.sendStatus !== "Accepted" ||
+        offer.version !== expectedVersion || !offer.sentOn) {
+      await client.query("ROLLBACK");
+      return res.status(409).json({ error: "Offer changed, has a final response, or has not been sent. Reload before continuing." });
+    }
+    if (responseDate > offer.today || responseDate < offer.sentOn ||
+        (outcome === "Accepted" && responseDate > offer.expiryDate)) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "Response date must be between sending and today. Acceptance must be within the offer expiry date." });
+    }
+    await client.query(`
+      INSERT INTO public.offer_responses (
+        offer_id,outcome,response_date,notes,recorded_by,recorded_name
+      ) VALUES($1,$2,$3,$4,$5,$6)
+    `, [offer.id,outcome,responseDate,notes,req.auth.sub,req.auth.preferred_username || req.auth.sub]);
+    await client.query(`
+      UPDATE public.offers SET status=$1,response_date=$2,response_notes=$3,
+        version=version+1,updated_at=now() WHERE id=$4
+    `, [outcome,responseDate,notes,offer.id]);
+    await client.query("COMMIT");
+    return res.json({ offer: await readOffer(offer.id, client) });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    next(error);
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { listOffers, getOffer, createOffer, updateOffer, sendOffer, recordOfferResponse };

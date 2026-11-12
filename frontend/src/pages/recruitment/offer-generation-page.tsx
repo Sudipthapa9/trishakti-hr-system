@@ -1,4 +1,5 @@
 import "./offer-generation-page.css";
+import { OfferResponseForm } from "./offer-response-form";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -232,6 +233,17 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
           </div>
         )}
         {sendUncertain && <p role="alert">The send outcome could not be checked. Reload the saved offer before continuing.</p>}
+        {saved?.status === "Sent" && saved.sendStatus === "Accepted" && (
+          <OfferResponseForm offer={saved} onBusy={onBusy} onRecorded={(record) => onSaved(record, "Offer response recorded.")} />
+        )}
+        {saved?.responseDate && (
+          <section className="mt-4 rounded-lg border bg-white p-4">
+            <h2>Recorded outcome: {saved.status}</h2>
+            <p>Response date: {saved.responseDate}</p>
+            <p className="whitespace-pre-line">{saved.responseNotes || "No notes provided."}</p>
+            {saved.responseAudit && <p>Recorded by {saved.responseAudit.recordedName} on {new Date(saved.responseAudit.recordedAt).toLocaleString()}</p>}
+          </section>
+        )}
       </div>
       <section className="offer-preview">
         <header><span>{dirty ? "Unsaved preview" : "Saved offer preview"}</span>
