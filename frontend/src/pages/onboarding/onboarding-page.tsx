@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { completeOnboarding, getOnboarding, listOnboarding, saveChecklist, type OnboardingRecord } from "@/data/onboarding-api";
 import "./onboarding-page.css";
+import { OnboardingDocuments } from "./onboarding-documents";
 const labels = { documents: "Documents verified", payroll: "Bank and payroll setup", accounts: "Work accounts prepared", orientation: "Orientation completed" };
 export function OnboardingPage() {
   const { onboardingId } = useParams();
@@ -63,6 +64,7 @@ function OnboardingContent({ id }: { id?: string }) {
     {!loading && record && <>
       <Link to="/onboarding">All onboarding records</Link>
       <section className="rounded-lg border bg-white p-5"><h2>{record.position}</h2><p>{record.email}</p><p>{record.department} · {record.location} · Joining {record.joiningDate}</p><Link to={"/offers/" + record.offerId}>View accepted offer</Link></section>
+      <OnboardingDocuments onboardingId={record.id} />
       <section className="rounded-lg border bg-white p-5"><h2>Required actions ({completed}/4)</h2><p>HR records completion after verifying each action.</p>
         <fieldset disabled={saving || uncertain || Boolean(record.completedAt)} className="grid gap-4" aria-busy={saving}>{(Object.keys(labels) as (keyof typeof labels)[]).map((key) => <label key={key} className="flex gap-3"><input type="checkbox" checked={record.checklist[key]} onChange={() => void toggle(key)} />{labels[key]}</label>)}</fieldset>
         {saving && <p role="status">Saving checklist…</p>}

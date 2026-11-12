@@ -3,6 +3,8 @@ export type EmployeeRecord = {
   id: string; onboardingId: string; candidateId: string; applicationId: string;
   fullName: string; email: string; phone: string; position: string;
   department: string; location: string; joiningDate: string; createdAt: string; createdBy: string;
+  version: number; updatedAt: string; updatedBy: string | null;
+  emergencyName: string; emergencyRelationship: string; emergencyPhone: string;
 };
 async function request(path: string, signal: AbortSignal) {
   if (!keycloak.authenticated) throw new Error("Please sign in again.");

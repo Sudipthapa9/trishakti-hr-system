@@ -104,4 +104,21 @@ async function sendTransactionalEmail({ email, name, subject, body }) {
   return data.messageId;
 }
 
-module.exports = { checkBrevoConnection, sendTransactionalEmail, BrevoSendError };
+// Read provider events only: checking delivery never resends an email.
+async function getDeliveryEvent(messageId, email) {
+  const key = process.env.BREVO_API_KEY?.trim();
+  if (!key) throw new Error("Configure the Brevo API key before checking delivery.");
+  const query = new URLSearchParams({ messageId, email, days: "90", limit: "5000", sort: "desc" });
+  const data = await brevoGet("/smtp/statistics/events?" + query, key);
+  if (data.events !== undefined && !Array.isArray(data.events)) throw new Error("Brevo returned an unexpected event list.");
+  const names = new Map([
+    ["delivered","Delivered"], ["hardBounces","Hard bounce"], ["hard_bounce","Hard bounce"],
+    ["softBounces","Soft bounce"], ["soft_bounce","Soft bounce"], ["blocked","Blocked"],
+    ["invalid","Invalid recipient"], ["error","Error"], ["deferred","Deferred"],
+  ]);
+  const events = (data.events || []).filter(event => event.messageId === messageId &&
+    event.email?.toLowerCase() === email.toLowerCase() && names.has(event.event) && Number.isFinite(Date.parse(event.date)))
+    .sort((a,b) => Date.parse(b.date)-Date.parse(a.date));
+  return events.length ? { event: names.get(events[0].event), date: events[0].date } : null;
+}
+module.exports = { checkBrevoConnection, sendTransactionalEmail, BrevoSendError, getDeliveryEvent };

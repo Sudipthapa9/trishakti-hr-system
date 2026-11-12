@@ -64,7 +64,7 @@ async function editDraft(req, res, next) {
     const result = await pool.query(`
       UPDATE public.communications SET subject=$1, body=$2, status='Draft',
         version=version+1, last_error=NULL, updated_at=now()
-      WHERE id=$3 AND version=$4 AND status IN ('Draft','Failed') AND offer_id IS NULL
+      WHERE id=$3 AND version=$4 AND status IN ('Draft','Failed') AND offer_id IS NULL AND interview_id IS NULL
       RETURNING ${columns}
     `, [subject, body, req.params.id, expectedVersion]);
     if (!result.rows.length) return res.status(409).json({ error: "Draft changed or has already been submitted. Reload it before editing." });
@@ -81,4 +81,20 @@ async function sendMessage(req, res, next) {
   }
 }
 
-module.exports = { listMessages, getMessage, createDraft, editDraft, sendMessage, createDraftSchema, editDraftSchema, sendSchema };
+async function checkDelivery(req,res,next) {
+  try {
+    const result = await pool.query(`SELECT ${columns} FROM public.communications WHERE id=$1`,[req.params.id]);
+    const saved = result.rows[0];
+    if (!saved) return res.status(404).json({error:"Message not found."});
+    if (!saved.providerMessageId || saved.status!=="Accepted") return res.status(409).json({error:"Delivery can only be checked for a message accepted by Brevo."});
+    let event;
+    try { event=await require("../../services/brevo").getDeliveryEvent(saved.providerMessageId,saved.recipientEmail); }
+    catch { return res.status(502).json({error:"Could not read Brevo delivery events. Check settings and try again."}); }
+    const updated=await pool.query(`UPDATE public.communications SET
+      delivery_event=CASE WHEN $2::timestamptz IS NOT NULL AND (delivery_event_at IS NULL OR $2::timestamptz>=delivery_event_at) THEN $3 ELSE delivery_event END,
+      delivery_event_at=CASE WHEN $2::timestamptz IS NOT NULL AND (delivery_event_at IS NULL OR $2::timestamptz>=delivery_event_at) THEN $2::timestamptz ELSE delivery_event_at END,
+      delivery_checked_at=now() WHERE id=$1 RETURNING ${columns}`,[saved.id,event?.date||null,event?.event||null]);
+    res.json({message:updated.rows[0]});
+  }catch(error){next(error);}
+}
+module.exports = { listMessages, getMessage, createDraft, editDraft, sendMessage, checkDelivery, createDraftSchema, editDraftSchema, sendSchema };

@@ -1,350 +1,426 @@
-/**
- * Combines a date selector, interview filters, and local scheduling; no calendar invitations are transmitted.
- */
-import { Person } from "@/components/HR/workflow-ui";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { hrRequest } from "@/data/hr-api";
 import "./interviews-page.css";
-// Provide the fixed prototype records or display configuration consumed by this module.
-const seed = [
-  {
-    id: 1,
-    name: "Jane Doe",
-    email: "jane.d@example.com",
-    role: "Senior Frontend Dev",
-    time: "09:00 AM - 10:00 AM",
-    interviewer: "Alex Smith",
-    title: "Tech Lead",
-    status: "Scheduled",
-    date: "2023-10-12",
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    email: "m.chen@email.com",
-    role: "Product Manager",
-    time: "11:30 AM - 12:30 PM",
-    interviewer: "Sarah Connor",
-    title: "Director of Product",
-    status: "Scheduled",
-    date: "2023-10-12",
-  },
-  {
-    id: 3,
-    name: "Emily Rose",
-    email: "erose@domain.com",
-    role: "UX Designer",
-    time: "02:00 PM - 03:00 PM",
-    interviewer: "David Kim",
-    title: "Design Lead",
-    status: "Completed",
-    date: "2023-10-12",
-  },
-  {
-    id: 4,
-    name: "Nina Patel",
-    email: "nina.p@example.com",
-    role: "Backend Engineer",
-    time: "03:30 PM - 04:30 PM",
-    interviewer: "Priya Shah",
-    title: "Engineering Manager",
-    status: "Scheduled",
-    date: "2023-10-12",
-  },
-  {
-    id: 5,
-    name: "Omar Hassan",
-    email: "omar.h@example.com",
-    role: "Data Analyst",
-    time: "04:00 PM - 05:00 PM",
-    interviewer: "Maya Gupta",
-    title: "Analytics Lead",
-    status: "Completed",
-    date: "2023-10-12",
-  },
-  {
-    id: 6,
-    name: "Sofia Lee",
-    email: "sofia.l@example.com",
-    role: "Customer Support",
-    time: "05:30 PM - 06:30 PM",
-    interviewer: "Chris Nguyen",
-    title: "Support Manager",
-    status: "Scheduled",
-    date: "2023-10-12",
-  },
-];
-// Combines a date selector, interview filters, and local scheduling; no calendar invitations are transmitted.
+
+type Interview = {
+  id: string;
+  applicationId: string;
+  candidateName: string;
+  email: string;
+  jobTitle: string;
+  startsAt: string;
+  endsAt: string;
+  interviewer: string;
+  meetingUrl: string;
+  location: string;
+  notes: string;
+  status: string;
+  version: number;
+};
+type Application = {
+  id: string;
+  fullName: string;
+  jobTitle: string;
+  stage: string;
+};
+const localTime = (value: string) =>
+  new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Kathmandu",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  })
+    .format(new Date(value))
+    .replace(" ", "T");
+const displayTime = (value: string) =>
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kathmandu",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+
 export function InterviewsPage() {
-  // Keep interviews in component state; updates trigger a render.
-  const [interviews, setInterviews] = useState(seed);
-  // Keep filter in component state; updates trigger a render.
-  const [filter, setFilter] = useState("All");
-  // Keep search in component state; updates trigger a render.
-  const [search, setSearch] = useState("");
-  // Keep showForm in component state; updates trigger a render.
+  const navigate = useNavigate();
+  const [interviews, setInterviews] = useState<Interview[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationPage, setApplicationPage] = useState(1);
+  const [moreApplications, setMoreApplications] = useState(false);
+  const [page, setPage] = useState(1);
+  const [more, setMore] = useState(false);
+  const [date, setDate] = useState("");
+  const [revision, setRevision] = useState(0);
+  const [editing, setEditing] = useState<Interview | null>(null);
   const [showForm, setShowForm] = useState(false);
-  // Keep notice in component state; updates trigger a render.
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  // Keep date in component state; updates trigger a render.
-  const [date, setDate] = useState("2023-10-12");
-  // Keep month in component state; updates trigger a render.
-  const [month, setMonth] = useState(new Date(2023, 9, 1));
-  const count = new Date(
-    month.getFullYear(),
-    month.getMonth() + 1,
-    0,
-  ).getDate();
-  const offset = month.getDay();
-  const visible = interviews.filter(
-    (i) =>
-      (filter === "All" || i.status === filter) &&
-      i.date === date &&
-      (i.name + " " + i.role + " " + i.interviewer)
-        .toLowerCase()
-        .includes(search.toLowerCase()),
-  );
-  // Read the schedule form, add the interview locally, and select its date without sending invitations.
-  function add(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    const day = String(d.get("date"));
-    setInterviews((v) => [
-      {
-        id: Date.now(),
-        name: String(d.get("name")),
-        email: "",
-        role: String(d.get("role")),
-        time: String(d.get("time")),
-        interviewer: String(d.get("interviewer")),
-        title: "Interviewer",
-        status: "Scheduled",
-        date: day,
-      },
-      ...v,
-    ]);
-    setDate(day);
-    const selected = new Date(day + "T00:00:00");
-    setMonth(new Date(selected.getFullYear(), selected.getMonth(), 1));
-    setShowForm(false);
-    setNotice(
-      "Interview added locally. Invitations are not sent in this prototype.",
-    );
+  const busy = useRef(false);
+  const createId = useRef(crypto.randomUUID());
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    void Promise.all([
+      hrRequest(`interviews?page=${page}${date ? "&date=" + date : ""}`, {
+        signal: controller.signal,
+      }),
+      hrRequest("applications?page=" + applicationPage, {
+        signal: controller.signal,
+      }),
+    ])
+      .then(([schedule, applicants]) => {
+        if (!controller.signal.aborted) {
+          setInterviews(schedule.interviews);
+          setMore(schedule.hasMore);
+          setApplications(applicants.applications);
+          setMoreApplications(applicants.hasMore);
+          setError("");
+        }
+      })
+      .catch((error) => {
+        if (!controller.signal.aborted) setError(error.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [page, date, revision, applicationPage]);
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy.current) return;
+    const data = new FormData(event.currentTarget);
+    const fields = {
+      startsAt: new Date(data.get("startsAt") + ":00+05:45").toISOString(),
+      endsAt: new Date(data.get("endsAt") + ":00+05:45").toISOString(),
+      interviewer: data.get("interviewer"),
+      meetingUrl: data.get("meetingUrl"),
+      location: data.get("location"),
+      notes: data.get("notes"),
+    };
+    busy.current = true;
+    setSaving(true);
+    setError("");
+    try {
+      await hrRequest("interviews" + (editing ? "/" + editing.id : ""), {
+        method: editing ? "PATCH" : "POST",
+        body: JSON.stringify(
+          editing
+            ? { ...fields, expectedVersion: editing.version }
+            : {
+                ...fields,
+                id: createId.current,
+                applicationId: data.get("applicationId"),
+              },
+        ),
+      });
+      createId.current = crypto.randomUUID();
+      setShowForm(false);
+      setEditing(null);
+      setRevision((v) => v + 1);
+      setNotice(
+        "Interview saved. Prepare a notification to inform the candidate.",
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Could not save interview.",
+      );
+    } finally {
+      busy.current = false;
+      setSaving(false);
+    }
+  }
+  async function action(record: Interview, action: string) {
+    if (busy.current) return;
+    busy.current = true;
+    setSaving(true);
+    setError("");
+    try {
+      const result = await hrRequest(
+        `interviews/${record.id}/${action === "notification" ? action : "status"}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            expectedVersion: record.version,
+            ...(action === "notification" ? {} : { status: action }),
+          }),
+        },
+      );
+      if (action === "notification")
+        navigate("/communication?message=" + result.messageId);
+      else {
+        setRevision((v) => v + 1);
+        setNotice(
+          "Status saved. Cancellation notifications must be prepared and sent separately.",
+        );
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Could not update interview.",
+      );
+    } finally {
+      busy.current = false;
+      setSaving(false);
+    }
   }
   return (
     <div className="page-interviews-interviews-page">
       <div className="page-stack">
-        <div className="page-heading">
+        <header className="page-heading">
           <div>
             <h1>Interview Management</h1>
-            <p>Manage and track candidate interviews across all positions.</p>
+            <p>
+              Schedule in Nepal time (Asia/Kathmandu). Paste a meeting link or
+              enter a physical location.
+            </p>
           </div>
-          <Button onClick={() => setShowForm((v) => !v)}>
-            <Plus />
-            Schedule Interview
+          <Button
+            disabled={saving}
+            onClick={() => {
+              setEditing(null);
+              setShowForm(true);
+              createId.current = crypto.randomUUID();
+            }}
+          >
+            Schedule interview
           </Button>
-        </div>
-        {notice ? <p role="status">{notice}</p> : null}
-        {showForm ? (
-          <form className="interview-schedule" onSubmit={add}>
-            <h2>Schedule Interview</h2>
-            {[
-              ["name", "Candidate", "text"],
-              ["role", "Position", "text"],
-              ["date", "Date", "date"],
-              ["time", "Time", "time"],
-              ["interviewer", "Interviewer", "text"],
-            ].map(([name, label, type]) => (
-              <div className="form-field" key={name}>
-                <Label htmlFor={"schedule-" + name}>{label}</Label>
-                <Input
-                  id={"schedule-" + name}
-                  name={name}
-                  type={type}
-                  required
-                />
-              </div>
-            ))}
-            <div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowForm(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit">Confirm Schedule</Button>
-            </div>
-          </form>
-        ) : null}
-        <div className="interview-layout">
-          {/* Supporting profile, navigation, or filter content beside the main panel. */}
-          <aside>
-            <div className="interview-calendar">
-              {/* Page or panel heading and contextual actions. */}
-              <header>
-                <strong>
-                  {month.toLocaleString("en", { month: "long" })}
-                  <br />
-                  {month.getFullYear()}
-                </strong>
-                <div>
-                  <Button
-                    size="icon-xs"
-                    variant="ghost"
-                    aria-label="Previous month"
-                    onClick={() =>
-                      setMonth(
-                        new Date(month.getFullYear(), month.getMonth() - 1, 1),
-                      )
-                    }
+        </header>
+        {error && <p role="alert">{error}</p>}
+        {notice && <p role="status">{notice}</p>}
+        {showForm && (
+          <form
+            key={editing?.id || "new"}
+            className="interview-schedule"
+            onSubmit={save}
+          >
+            <fieldset disabled={saving} className="grid gap-3">
+              <h2>
+                {editing ? "Edit / reschedule interview" : "New interview"}
+              </h2>
+              {!editing && (
+                <>
+                  <label htmlFor="interview-application">Application</label>
+                  <select
+                    className="form-select"
+                    id="interview-application"
+                    name="applicationId"
+                    required
+                    defaultValue=""
                   >
-                    <ChevronLeft />
-                  </Button>
-                  <Button
-                    size="icon-xs"
-                    variant="ghost"
-                    aria-label="Next month"
-                    onClick={() =>
-                      setMonth(
-                        new Date(month.getFullYear(), month.getMonth() + 1, 1),
+                    <option value="">Select application</option>
+                    {applications
+                      .filter(
+                        (a) =>
+                          !["Hired", "Rejected", "Withdrawn"].includes(a.stage),
                       )
-                    }
-                  >
-                    <ChevronRight />
-                  </Button>
-                </div>
-              </header>
-              <div className="calendar-days">
-                {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-                  <small key={i}>{d}</small>
-                ))}
-                {Array.from({ length: offset }, (_, i) => (
-                  <span key={"blank" + i} />
-                ))}
-                {Array.from({ length: count }, (_, i) => {
-                  const day =
-                    month.getFullYear() +
-                    "-" +
-                    String(month.getMonth() + 1).padStart(2, "0") +
-                    "-" +
-                    String(i + 1).padStart(2, "0");
-                  return (
-                    <button
-                      key={day}
-                      aria-pressed={date === day}
-                      onClick={() => setDate(day)}
+                      .map((a) => (
+                        <option value={a.id} key={a.id}>
+                          {a.fullName} · {a.jobTitle}
+                        </option>
+                      ))}
+                  </select>
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={applicationPage === 1 || loading}
+                      onClick={() => setApplicationPage((p) => p - 1)}
                     >
-                      {i + 1}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="interview-filters">
-              <h2>Quick Filters</h2>
-              {["All", "Scheduled", "Completed", "Rescheduled"].map((v) => (
-                <label key={v}>
-                  <input
-                    type="radio"
-                    name="interview-status"
-                    checked={filter === v}
-                    onChange={() => setFilter(v)}
+                      Previous applicants
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={!moreApplications || loading}
+                      onClick={() => setApplicationPage((p) => p + 1)}
+                    >
+                      More applicants
+                    </Button>
+                  </div>
+                </>
+              )}
+              {(
+                [
+                  [
+                    "startsAt",
+                    "Start (Nepal time)",
+                    "datetime-local",
+                    editing ? localTime(editing.startsAt) : "",
+                  ],
+                  [
+                    "endsAt",
+                    "End (Nepal time)",
+                    "datetime-local",
+                    editing ? localTime(editing.endsAt) : "",
+                  ],
+                  [
+                    "interviewer",
+                    "Interviewer",
+                    "text",
+                    editing?.interviewer || "",
+                  ],
+                  [
+                    "meetingUrl",
+                    "HTTPS meeting link",
+                    "url",
+                    editing?.meetingUrl || "",
+                  ],
+                  [
+                    "location",
+                    "Physical location",
+                    "text",
+                    editing?.location || "",
+                  ],
+                ] as const
+              ).map(([name, label, type, value]) => (
+                <label key={name}>
+                  {label}
+                  <Input
+                    name={name}
+                    type={type}
+                    defaultValue={value}
+                    required={["startsAt", "endsAt", "interviewer"].includes(
+                      name,
+                    )}
+                    maxLength={name === "meetingUrl" ? 2000 : 500}
                   />
-                  {v}
                 </label>
               ))}
-            </div>
-          </aside>
-          {/* Group related content and controls in this screen section. */}
-          <section className="interview-table">
-            {/* Page or panel heading and contextual actions. */}
-            <header>
-              <h2>
-                Upcoming Interviews (
-                {new Date(date + "T00:00:00").toLocaleDateString("en", {
-                  month: "short",
-                  day: "numeric",
-                })}
-                )
-              </h2>
               <label>
-                <Search size={15} />
-                <Input
-                  aria-label="Search interviews"
-                  placeholder="Search interviews"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                Internal notes (not included in candidate notifications)
+                <Textarea
+                  name="notes"
+                  defaultValue={editing?.notes}
+                  maxLength={5000}
                 />
               </label>
-            </header>
-            <div className="table-scroll">
-              {/* Use semantic rows and columns for the tabular records. */}
-              <table>
-                <thead>
-                  <tr>
-                    {[
-                      "Candidate",
-                      "Position",
-                      "Time",
-                      "Interviewer",
-                      "Status",
-                    ].map((h) => (
-                      <th key={h}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {visible.map((i) => (
-                    <tr key={i.id}>
-                      <td>
-                        <Person name={i.name} detail={i.email} />
-                      </td>
-                      <td>{i.role}</td>
-                      <td>{i.time}</td>
-                      <td>
-                        {i.interviewer}
-                        <small>{i.title}</small>
-                      </td>
-                      <td>
-                        <Badge
-                          variant={
-                            i.status === "Completed" ? "success" : "neutral"
-                          }
-                        >
-                          {i.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {!visible.length ? (
-                <p className="empty-message">
-                  No interviews match this date and filter.
-                </p>
-              ) : null}
-            </div>
-            {/* Supporting links, pagination, or secondary screen actions. */}
-            <footer className="table-pagination">
-              <span>
-                Showing {visible.length ? 1 : 0} to {visible.length} of{" "}
-                {visible.length} entries
-              </span>
-              <div>
-                <Button size="xs" variant="outline" disabled>
-                  Prev
+              <div className="flex gap-3">
+                <Button type="submit">
+                  {saving ? "Saving…" : "Save schedule"}
                 </Button>
-                <Button size="xs" variant="outline" disabled>
-                  Next
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                >
+                  Close
                 </Button>
               </div>
-            </footer>
-          </section>
+            </fieldset>
+          </form>
+        )}
+        <div className="flex gap-3">
+          <label>
+            Filter by Nepal date
+            <Input
+              type="date"
+              value={date}
+              onChange={(event) => {
+                setDate(event.target.value);
+                setPage(1);
+              }}
+            />
+          </label>
+          <Button
+            variant="outline"
+            disabled={loading || saving}
+            onClick={() => setRevision((v) => v + 1)}
+          >
+            Reload
+          </Button>
+        </div>
+        {loading ? (
+          <p role="status">Loading interviews…</p>
+        ) : !interviews.length ? (
+          <p>No interviews found.</p>
+        ) : (
+          interviews.map((record) => (
+            <section className="rounded-lg border bg-white p-5" key={record.id}>
+              <h2>
+                {record.candidateName} · {record.jobTitle}
+              </h2>
+              <p>
+                {record.status} · {displayTime(record.startsAt)} —{" "}
+                {displayTime(record.endsAt)} (Nepal)
+              </p>
+              <p>Interviewer: {record.interviewer}</p>
+              {record.meetingUrl && (
+                <a
+                  className="underline"
+                  href={record.meetingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open meeting link
+                </a>
+              )}
+              <p>{record.location}</p>
+              <p className="whitespace-pre-line">{record.notes}</p>
+              <div className="flex flex-wrap gap-3">
+                {record.status === "Scheduled" && (
+                  <>
+                    <Button
+                      disabled={saving}
+                      variant="outline"
+                      onClick={() => {
+                        setEditing(record);
+                        setShowForm(true);
+                      }}
+                    >
+                      Edit / reschedule
+                    </Button>
+                    <Button
+                      disabled={saving}
+                      variant="outline"
+                      onClick={() => void action(record, "Completed")}
+                    >
+                      Mark completed
+                    </Button>
+                    <Button
+                      disabled={saving}
+                      variant="outline"
+                      onClick={() => void action(record, "Cancelled")}
+                    >
+                      Cancel interview
+                    </Button>
+                  </>
+                )}
+                {record.status !== "Completed" && (
+                  <Button
+                    disabled={saving}
+                    onClick={() => void action(record, "notification")}
+                  >
+                    Prepare{" "}
+                    {record.status === "Cancelled"
+                      ? "cancellation"
+                      : "schedule"}{" "}
+                    email
+                  </Button>
+                )}
+              </div>
+            </section>
+          ))
+        )}
+        <div className="flex gap-3">
+          <Button
+            disabled={loading || page === 1}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            Previous
+          </Button>
+          <span>Page {page}</span>
+          <Button
+            disabled={loading || !more}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>

@@ -12,4 +12,6 @@ router.param("id", (req, res, next, id) => {
 });
 router.get("/", handlers.list);
 router.get("/:id", handlers.get);
+router.get("/:id/history", handlers.history);
+router.patch("/:id", require("../../middleware/validate")(require("./employees.schema").employeeSchema), handlers.update);
 module.exports = router;

@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { getEmployee, listEmployees, type EmployeeRecord } from "@/data/employees-api";
 import "./employee-record-page.css";
+import { EmployeeEditor } from "./employee-editor";
+import { OnboardingDocuments } from "@/pages/onboarding/onboarding-documents";
 
 export function EmployeeRecordPage() {
   const { employeeId } = useParams();
@@ -48,6 +50,9 @@ function EmployeeContent({ id }: { id?: string }) {
       <section className="employee-personal"><h2>Employment details</h2><dl className="grid gap-3">
         {[["Employee ID", employee.id], ["Position", employee.position], ["Department", employee.department], ["Location", employee.location], ["Joining date", employee.joiningDate], ["Email", employee.email], ["Phone", employee.phone]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
       </dl></section>
+      <EmployeeEditor key={employee.version} employee={employee} onSaved={setEmployee} />
+      <OnboardingDocuments onboardingId={employee.onboardingId} />
+      <p>Emergency contact: {employee.emergencyName ? `${employee.emergencyName} · ${employee.emergencyRelationship} · ${employee.emergencyPhone}` : "Not provided"}</p>
       <p>Created from the accepted offer and submitted application on {new Date(employee.createdAt).toLocaleString()}. Joining date is recorded separately from onboarding completion.</p>
       <div className="flex gap-4"><Link to={"/onboarding/" + employee.onboardingId}>Completed onboarding</Link><Link to={"/candidates/" + employee.candidateId}>Source candidate</Link></div>
     </>}

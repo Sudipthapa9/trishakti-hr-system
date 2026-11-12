@@ -225,6 +225,7 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
             <p>Send status: {saved.sendStatus}</p>
             <p>Recipient: {saved.candidateName} · {saved.candidateEmail}</p>
             {saved.delivery?.lastError && <p role="alert">{saved.delivery.lastError}</p>}
+            {saved.delivery && <Link className="underline" to={"/communication?message=" + saved.delivery.id}>View email history and check delivery</Link>}
             {saved.sendStatus === "Accepted" && <p>Accepted by Brevo. Delivery confirmation is pending.</p>}
             {["Sending", "Unknown"].includes(saved.sendStatus) && <p>Check Brevo logs and communication history before sending another offer.</p>}
             <Button type="button" disabled={isSaving || dirty || !editable} onClick={() => void sendSavedOffer()}>

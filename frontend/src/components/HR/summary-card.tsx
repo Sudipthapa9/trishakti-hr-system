@@ -13,6 +13,7 @@ type SummaryCardProps = {
   badgeLabel?: string;
   badgeTone?: "default" | "success" | "warning" | "neutral" | "danger";
   icon?: LucideIcon;
+  showTrend?: boolean;
 };
 
 // Displays one dashboard metric with optional status feedback and an illustrative miniature trend graphic.
@@ -23,6 +24,7 @@ export function SummaryCard({
   badgeLabel,
   badgeTone = "default",
   icon: Icon,
+  showTrend = true,
 }: SummaryCardProps) {
   return (
     <Card className="summary-card rounded-2xl p-0">
@@ -41,7 +43,7 @@ export function SummaryCard({
         </div>
         <div className="summary-value">
           <strong>{value}</strong>
-          <svg
+          {showTrend && <svg
             viewBox="0 0 70 34"
             className="summary-sparkline"
             aria-hidden="true"
@@ -52,7 +54,7 @@ export function SummaryCard({
               stroke="currentColor"
               strokeWidth="1.8"
             />
-          </svg>
+          </svg>}
         </div>
         {change ? (
           <div className="mt-2 text-sm text-[var(--color-text-secondary)]">
