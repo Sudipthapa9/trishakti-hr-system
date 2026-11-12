@@ -1,5 +1,6 @@
 import "./offer-generation-page.css";
 import { OfferResponseForm } from "./offer-response-form";
+import { StartOnboardingButton } from "@/pages/onboarding/start-onboarding-button";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -224,6 +225,7 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
             <p>Send status: {saved.sendStatus}</p>
             <p>Recipient: {saved.candidateName} · {saved.candidateEmail}</p>
             {saved.delivery?.lastError && <p role="alert">{saved.delivery.lastError}</p>}
+            {saved.delivery && <Link className="underline" to={"/communication?message=" + saved.delivery.id}>View email history and check delivery</Link>}
             {saved.sendStatus === "Accepted" && <p>Accepted by Brevo. Delivery confirmation is pending.</p>}
             {["Sending", "Unknown"].includes(saved.sendStatus) && <p>Check Brevo logs and communication history before sending another offer.</p>}
             <Button type="button" disabled={isSaving || dirty || !editable} onClick={() => void sendSavedOffer()}>
@@ -236,6 +238,7 @@ function OfferEditor({ saved, recipients, onBusy, onSaved }: {
         {saved?.status === "Sent" && saved.sendStatus === "Accepted" && (
           <OfferResponseForm offer={saved} onBusy={onBusy} onRecorded={(record) => onSaved(record, "Offer response recorded.")} />
         )}
+        {saved?.status === "Accepted" && <StartOnboardingButton offerId={saved.id} />}
         {saved?.responseDate && (
           <section className="mt-4 rounded-lg border bg-white p-4">
             <h2>Recorded outcome: {saved.status}</h2>

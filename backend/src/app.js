@@ -26,6 +26,11 @@ app.use("/api/applications", applicationsRoutes);
 app.use("/api/candidates", candidatesRoutes);
 app.use("/api/communications", communicationsRoutes);
 app.use("/api/offers", offersRoutes);
+app.use("/api/onboarding", require("./modules/onboarding/onboarding.routes"));
+app.use("/api/employees", require("./modules/employees/employees.routes"));
+app.use("/api/interviews", require("./modules/interviews/interviews.routes"));
+app.use("/api/dashboard", require("./modules/dashboard/dashboard.routes"));
+app.use("/api/onboarding/:id/documents", require("./modules/documents/documents.routes"));
 // Register error handling last so upstream middleware errors reach it.
 app.use(errorHandler);
 

@@ -18,4 +18,5 @@ router.get("/:id", handlers.getMessage);
 router.post("/", validate(handlers.createDraftSchema), handlers.createDraft);
 router.patch("/:id", validate(handlers.editDraftSchema), handlers.editDraft);
 router.post("/:id/send", validate(handlers.sendSchema), handlers.sendMessage);
+router.post("/:id/delivery", handlers.checkDelivery);
 module.exports = router;

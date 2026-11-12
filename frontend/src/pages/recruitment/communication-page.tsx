@@ -1,5 +1,5 @@
 import "./communication-page.css";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ const templates = {
 };
 
 export function CommunicationPage() {
+  const [searchParams] = useSearchParams();
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [recipientPage, setRecipientPage] = useState(1);
   const [moreRecipients, setMoreRecipients] = useState(false);
@@ -33,7 +34,8 @@ export function CommunicationPage() {
   const [isSaving, setIsSaving] = useState(false);
   const busy = useRef(false);
   const draftId = useRef<string | null>(null);
-  const openedId = useRef<string | null>(null);
+  const openedId = useRef<string | null>(searchParams.get("message"));
+  const initialMessageLoaded = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,7 +56,12 @@ export function CommunicationPage() {
         if (id) {
           const saved = await communicationRequest("communications/" + id, { signal: controller.signal });
           if (!controller.signal.aborted && openedId.current === id) {
+            if (!initialMessageLoaded.current && searchParams.get("message") === id) {
+              setSubject(saved.message.subject); setBody(saved.message.body); setApplicationId(saved.message.applicationId);
+              initialMessageLoaded.current = true;
+            }
             setCurrent((previous) => {
+              if (!previous && openedId.current === id) return saved.message;
               if (!previous || previous.id !== id) return previous;
               // Keep the original edit version until HR explicitly reloads an editable draft.
               if (previous.status === "Sending" || previous.status === "Unknown" ||
@@ -71,7 +78,7 @@ export function CommunicationPage() {
     }
     void load();
     return () => controller.abort();
-  }, [recipientPage, historyPage, revision]);
+  }, [recipientPage, historyPage, revision, searchParams]);
 
   function refresh() { setLoading(true); setRevision((value) => value + 1); }
   function newMessage() {
@@ -130,7 +137,14 @@ export function CommunicationPage() {
       busy.current = false; setIsSaving(false);
     }
   }
-  const editable = !current || (!current.offerId && (current.status === "Draft" || current.status === "Failed"));
+  const editable = !current || (!current.offerId && !current.interviewId && (current.status === "Draft" || current.status === "Failed"));
+  async function checkDelivery() {
+    if (!current || busy.current) return;
+    busy.current = true; setIsSaving(true); setError(null);
+    try { const result = await communicationRequest(`communications/${current.id}/delivery`, { method: "POST" }); setCurrent(result.message); setNotice(result.message.deliveryEvent ? "Delivery events refreshed." : "No delivery or bounce event found in the last 90 days."); refresh(); }
+    catch (error) { setError(error instanceof Error ? error.message : "Could not check delivery."); }
+    finally { busy.current = false; setIsSaving(false); }
+  }
 
   return (
     <div className="page-recruitment-communication-page">
@@ -177,6 +191,8 @@ export function CommunicationPage() {
               </fieldset>
             </form>
             {current?.offerId && <Link className="underline" to={"/offers/" + current.offerId}>Manage this message from its saved offer</Link>}
+            {current?.interviewId && <div className="grid gap-3"><Link to="/interviews">View saved interview</Link><p>This notification uses the saved schedule. Rescheduled or cancelled interviews require a new notification.</p>{["Draft", "Failed"].includes(current.status) && <Button disabled={isSaving} onClick={() => void save(true)}>Send saved interview notification</Button>}</div>}
+            {current?.status === "Accepted" && <section className="mt-4"><p>Delivery: {current.deliveryEvent || "Not confirmed"}{current.deliveryEventAt && " · " + new Date(current.deliveryEventAt).toLocaleString()}</p><Button variant="outline" disabled={isSaving} onClick={() => void checkDelivery()}>Check delivery with Brevo</Button><p>Checks the last 90 days; absence of an event does not mean delivery failed.</p></section>}
             {current?.lastError && <p>{current.lastError}</p>}
             {current?.status === "Sending" && <p>Send is in progress or needs confirmation. Check Brevo logs before creating another message.</p>}
             {current?.status === "Unknown" && <p>The send outcome is uncertain. Check Brevo logs before creating another message.</p>}
@@ -186,7 +202,7 @@ export function CommunicationPage() {
             {loading ? <p role="status">Loading messages…</p> : loadError ? null : !messages.length ? <p>No messages saved yet.</p> :
               messages.map((record) => <article className="border-b py-3" key={record.id}>
                 <h3>{record.subject}</h3><p>{record.recipientName} · {record.recipientEmail}</p>
-                <p>{record.status} · {new Date(record.updatedAt).toLocaleString()}</p>
+                <p>{record.status}{record.deliveryEvent ? " · " + record.deliveryEvent : ""} · {new Date(record.updatedAt).toLocaleString()}</p>
                 <Button variant="outline" disabled={isSaving} onClick={() => open(record)}>Open message</Button>
               </article>)}
             <div className="mt-4 flex gap-3">

@@ -1,207 +1,60 @@
-/**
- * Displays and locally edits a fictional employee profile, with a browser-generated text export.
- */
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  ArrowRight,
-  Download,
-  FileText,
-  History,
-  Pencil,
-  UserRound,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { getEmployee, listEmployees, type EmployeeRecord } from "@/data/employees-api";
 import "./employee-record-page.css";
-// Provide the fixed prototype records or display configuration consumed by this module.
-const initial = {
-  name: "Eleanor Shellstrop",
-  birth: "May 14, 1990",
-  email: "eleanor.s@trikshati.com",
-  phone: "+1 (555) 019-2834",
-  contact: "Chidi Anagonye",
-  relationship: "Spouse",
-  contactPhone: "+1 (555) 837-9921",
-};
-// Displays and locally edits a fictional employee profile, with a browser-generated text export.
+import { EmployeeEditor } from "./employee-editor";
+import { OnboardingDocuments } from "@/pages/onboarding/onboarding-documents";
+
 export function EmployeeRecordPage() {
-  // Keep employee in component state; updates trigger a render.
-  const [employee, setEmployee] = useState(initial);
-  // Keep draft in component state; updates trigger a render.
-  const [draft, setDraft] = useState(initial);
-  // Keep editing in component state; updates trigger a render.
-  const [editing, setEditing] = useState(false);
-  // Keep notice in component state; updates trigger a render.
-  const [notice, setNotice] = useState("");
-  const field = (key: keyof typeof initial, label: string) => (
-    <div>
-      <label htmlFor={"employee-" + key}>{label}</label>
-      {editing ? (
-        <Input
-          id={"employee-" + key}
-          value={draft[key]}
-          onChange={(e) => setDraft((v) => ({ ...v, [key]: e.target.value }))}
-        />
-      ) : (
-        <p>{employee[key]}</p>
-      )}
-    </div>
-  );
-  return (
-    <div className="page-employees-employee-record-page">
-      <div className="page-stack">
-        {/* Page or panel heading and contextual actions. */}
-        <header className="employee-heading">
-          <div>
-            <small>Employee Record</small>
-            <h1>{employee.name}</h1>
-          </div>
-          <div>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const text = Object.entries(employee)
-                  .map(([k, v]) => k + ": " + v)
-                  .join("\n");
-                const url = URL.createObjectURL(
-                  new Blob([text], { type: "text/plain" }),
-                );
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "employee-profile.txt";
-                a.click();
-                URL.revokeObjectURL(url);
-                setNotice("Local profile exported.");
-              }}
-            >
-              <Download />
-              Export Profile
-            </Button>
-            <Button
-              onClick={() => {
-                if (editing) {
-                  setDraft(employee);
-                  setEditing(false);
-                } else setEditing(true);
-              }}
-            >
-              <Pencil />
-              {editing ? "Cancel Edit" : "Edit Record"}
-            </Button>
-          </div>
-        </header>
-        {notice ? (
-          <p role="status" className="prototype-feedback">
-            {notice}
-          </p>
-        ) : null}
-        <div className="employee-layout">
-          {/* Supporting profile, navigation, or filter content beside the main panel. */}
-          <aside className="employee-profile">
-            <img src="/design/profile-24-2.png" alt="" />
-            <h2>{employee.name}</h2>
-            <p>Senior Product Designer</p>
-            <Badge variant="success">• Active</Badge>
-            <dl>
-              {[
-                ["Employee ID", "TPP-2024-089"],
-                ["Department", "Product"],
-                ["Reporting Manager", "Sarah Connor"],
-                ["Joining Date", "Oct 12, 2024"],
-              ].map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
-          <div className="employee-details">
-            {/* Group related content and controls in this screen section. */}
-            <section className="employee-personal">
-              <h2>
-                <UserRound size={20} />
-                Personal Details
-              </h2>
-              <div className="employee-fields">
-                {field("name", "Full Name")}
-                {field("birth", "Date of Birth")}
-                {field("email", "Email Address (Work)")}
-                {field("phone", "Phone Number")}
-              </div>
-              <h2>
-                <Users size={20} />
-                Emergency Contact
-              </h2>
-              <div className="employee-fields emergency-fields">
-                {field("contact", "Name")}
-                {field("relationship", "Relationship")}
-                {field("contactPhone", "Phone")}
-              </div>
-              {editing ? (
-                <Button
-                  onClick={() => {
-                    setEmployee(draft);
-                    setEditing(false);
-                    setNotice(
-                      "Employee details saved locally. No API update was sent.",
-                    );
-                  }}
-                >
-                  Save Changes
-                </Button>
-              ) : null}
-            </section>
-            <div className="employee-bottom">
-              {/* Group related content and controls in this screen section. */}
-              <section className="employee-documents">
-                <h2>
-                  <FileText size={20} />
-                  Documents
-                </h2>
-                {[
-                  "Signed Offer Letter",
-                  "Government ID (Passport)",
-                  "Employment Contract",
-                ].map((name) => (
-                  <button
-                    key={name}
-                    onClick={() =>
-                      setNotice(
-                        name + " preview is not connected in this prototype.",
-                      )
-                    }
-                  >
-                    <FileText size={18} />
-                    <span>{name}</span>
-                    <Download size={15} />
-                  </button>
-                ))}
-              </section>
-              {/* Group related content and controls in this screen section. */}
-              <section className="employee-journey">
-                <h2>
-                  <History size={20} />
-                  Recruitment Journey
-                </h2>
-                <p>
-                  View the screening, interview notes, and AI match scores that
-                  led to this hire.
-                </p>
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/screening/eleanor-shellstrop">
-                    Source Candidate Profile
-                    <ArrowRight />
-                  </Link>
-                </Button>
-              </section>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const { employeeId } = useParams();
+  return <EmployeeContent key={employeeId || "list"} id={employeeId} />;
+}
+function EmployeeContent({ id }: { id?: string }) {
+  const [employee, setEmployee] = useState<EmployeeRecord | null>(null);
+  const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    const controller = new AbortController();
+    async function load() {
+      setLoading(true); setError("");
+      try {
+        if (id) {
+          const result = await getEmployee(id, controller.signal);
+          if (!controller.signal.aborted) setEmployee(result.employee);
+        } else {
+          const result = await listEmployees(page, controller.signal);
+          if (!controller.signal.aborted) { setEmployees(result.employees); setHasMore(result.hasMore); }
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Could not load employees.");
+      } finally { if (!controller.signal.aborted) setLoading(false); }
+    }
+    void load(); return () => controller.abort();
+  }, [id, page]);
+  return <div className="page-employees-employee-record-page"><div className="page-stack">
+    <h1>{employee ? employee.fullName : "Employee records"}</h1>
+    {loading && <p role="status">Loading employee records…</p>}
+    {error && <p role="alert">{error}</p>}
+    <Button variant="outline" onClick={() => window.location.reload()}>Reload saved records</Button>
+    {!id && !loading && !error && <>
+      {!employees.length && <p>No employee records yet. Complete an onboarding checklist to create one.</p>}
+      {employees.map(record => <section className="rounded-lg border bg-white p-4" key={record.id}><Link to={"/employees/" + record.id}>{record.fullName} · {record.position}</Link><p>Joining: {record.joiningDate}</p></section>)}
+      <div className="flex gap-3"><Button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button><span>Page {page}</span><Button disabled={!hasMore} onClick={() => setPage(page + 1)}>Next</Button></div>
+    </>}
+    {employee && !loading && <>
+      <Link to="/employees">All employee records</Link>
+      <section className="employee-personal"><h2>Employment details</h2><dl className="grid gap-3">
+        {[["Employee ID", employee.id], ["Position", employee.position], ["Department", employee.department], ["Location", employee.location], ["Joining date", employee.joiningDate], ["Email", employee.email], ["Phone", employee.phone]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+      </dl></section>
+      <EmployeeEditor key={employee.version} employee={employee} onSaved={setEmployee} />
+      <OnboardingDocuments onboardingId={employee.onboardingId} />
+      <p>Emergency contact: {employee.emergencyName ? `${employee.emergencyName} · ${employee.emergencyRelationship} · ${employee.emergencyPhone}` : "Not provided"}</p>
+      <p>Created from the accepted offer and submitted application on {new Date(employee.createdAt).toLocaleString()}. Joining date is recorded separately from onboarding completion.</p>
+      <div className="flex gap-4"><Link to={"/onboarding/" + employee.onboardingId}>Completed onboarding</Link><Link to={"/candidates/" + employee.candidateId}>Source candidate</Link></div>
+    </>}
+  </div></div>;
 }

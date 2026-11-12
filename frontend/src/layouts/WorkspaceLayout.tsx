@@ -36,9 +36,9 @@ const navigationItems: NavItem[] = [
   {
     label: "Onboarding",
     icon: UserRoundCheck,
-    to: "/onboarding/eleanor-shellstrop",
+    to: "/onboarding",
   },
-  { label: "Employees", icon: UserRound, to: "/employees/eleanor-shellstrop" },
+  { label: "Employees", icon: UserRound, to: "/employees" },
 ];
 
 // Combines shared navigation with database jobs and sample candidate state; Outlet renders the selected workspace page.

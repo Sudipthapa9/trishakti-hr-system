@@ -14,8 +14,7 @@ import { OfferGenerationPage } from "@/pages/recruitment/offer-generation-page";
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function DashboardRoute() {
-  const { jobs, candidates } = useWorkspace();
-  return <DashboardPage jobs={jobs} candidates={candidates} />;
+  return <DashboardPage />;
 }
 
 // Read the required workspace values and pass them to the corresponding page component.
