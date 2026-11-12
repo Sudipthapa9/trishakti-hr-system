@@ -16,4 +16,5 @@ router.get("/", handlers.list);
 router.post("/", validate(startSchema), handlers.start);
 router.get("/:id", handlers.get);
 router.patch("/:id", validate(checklistSchema), handlers.update);
+router.post("/:id/complete", validate(z.object({ expectedVersion: z.number().int().positive() }).strict()), handlers.complete);
 module.exports = router;

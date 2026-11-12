@@ -247,7 +247,7 @@ export function DashboardPage({ jobs, candidates }: DashboardPageProps) {
                   })}
                 </div>
                 <Button asChild>
-                  <Link to="/onboarding/eleanor-shellstrop">
+                  <Link to="/onboarding">
                     <ArrowRight size={14} />
                     Continue Onboarding (5)
                   </Link>

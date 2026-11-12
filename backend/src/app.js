@@ -27,6 +27,7 @@ app.use("/api/candidates", candidatesRoutes);
 app.use("/api/communications", communicationsRoutes);
 app.use("/api/offers", offersRoutes);
 app.use("/api/onboarding", require("./modules/onboarding/onboarding.routes"));
+app.use("/api/employees", require("./modules/employees/employees.routes"));
 // Register error handling last so upstream middleware errors reach it.
 app.use(errorHandler);
 

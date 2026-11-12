@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getOnboarding, listOnboarding, saveChecklist, type OnboardingRecord } from "@/data/onboarding-api";
+import { completeOnboarding, getOnboarding, listOnboarding, saveChecklist, type OnboardingRecord } from "@/data/onboarding-api";
 import "./onboarding-page.css";
 const labels = { documents: "Documents verified", payroll: "Bank and payroll setup", accounts: "Work accounts prepared", orientation: "Orientation completed" };
 export function OnboardingPage() {
@@ -9,6 +9,7 @@ export function OnboardingPage() {
   return <OnboardingContent key={onboardingId || "list"} id={onboardingId} />;
 }
 function OnboardingContent({ id }: { id?: string }) {
+  const navigate = useNavigate();
   const [records, setRecords] = useState<OnboardingRecord[]>([]);
   const [record, setRecord] = useState<OnboardingRecord | null>(null);
   const [page, setPage] = useState(1);
@@ -31,13 +32,24 @@ function OnboardingContent({ id }: { id?: string }) {
     void load(); return () => controller.abort();
   }, [id, page]);
   async function toggle(key: keyof typeof labels) {
-    if (!record || busy.current || uncertain) return;
+    if (!record || busy.current || uncertain || record.completedAt) return;
     busy.current = true; setSaving(true); setError("");
     try { const result = await saveChecklist(record, { ...record.checklist, [key]: !record.checklist[key] }); setRecord(result.record); }
     catch (error) { setError(error instanceof Error ? error.message : "Could not save checklist."); setUncertain(true); }
     finally { busy.current = false; setSaving(false); }
   }
   const completed = record ? Object.values(record.checklist).filter(Boolean).length : 0;
+  async function finish() {
+    if (!record || busy.current || uncertain || completed !== 4) return;
+    busy.current = true; setSaving(true); setError("");
+    try {
+      const result = await completeOnboarding(record);
+      navigate("/employees/" + result.employeeId);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Could not complete onboarding.");
+      setUncertain(true);
+    } finally { busy.current = false; setSaving(false); }
+  }
   return <div className="page-onboarding-onboarding-page"><div className="page-stack">
     <h1>{record ? "Onboarding: " + record.candidateName : "Onboarding"}</h1>
     {loading && <p role="status">Loading onboarding…</p>}
@@ -52,11 +64,11 @@ function OnboardingContent({ id }: { id?: string }) {
       <Link to="/onboarding">All onboarding records</Link>
       <section className="rounded-lg border bg-white p-5"><h2>{record.position}</h2><p>{record.email}</p><p>{record.department} · {record.location} · Joining {record.joiningDate}</p><Link to={"/offers/" + record.offerId}>View accepted offer</Link></section>
       <section className="rounded-lg border bg-white p-5"><h2>Required actions ({completed}/4)</h2><p>HR records completion after verifying each action.</p>
-        <fieldset disabled={saving || uncertain} className="grid gap-4" aria-busy={saving}>{(Object.keys(labels) as (keyof typeof labels)[]).map((key) => <label key={key} className="flex gap-3"><input type="checkbox" checked={record.checklist[key]} onChange={() => void toggle(key)} />{labels[key]}</label>)}</fieldset>
+        <fieldset disabled={saving || uncertain || Boolean(record.completedAt)} className="grid gap-4" aria-busy={saving}>{(Object.keys(labels) as (keyof typeof labels)[]).map((key) => <label key={key} className="flex gap-3"><input type="checkbox" checked={record.checklist[key]} onChange={() => void toggle(key)} />{labels[key]}</label>)}</fieldset>
         {saving && <p role="status">Saving checklist…</p>}
         {uncertain && <p>Reload the saved record before making more changes.</p>}
       </section>
-      <p>Checklist progress is saved. Employee creation will be connected in the next step.</p>
+      {record.completedAt && record.employeeId ? <section><p>Completed on {new Date(record.completedAt).toLocaleString()} by {record.completedBy}.</p><Button asChild><Link to={"/employees/" + record.employeeId}>View employee record</Link></Button></section> : <section><p>Completion locks this checklist, creates the employee record and marks this application Hired.</p><Button disabled={saving || uncertain || completed !== 4} onClick={() => void finish()}>{saving ? "Saving…" : "Complete onboarding & create employee"}</Button></section>}
     </>}
   </div></div>;
 }

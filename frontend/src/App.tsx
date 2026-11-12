@@ -98,7 +98,7 @@ export default function App() {
             {/* Declare this URL match or nested layout boundary. */}
             <Route
               path="/employees"
-              element={<Navigate to="/employees/eleanor-shellstrop" replace />}
+              element={<EmployeeRecordPage />}
             />
             {/* Declare this URL match or nested layout boundary. */}
             <Route
