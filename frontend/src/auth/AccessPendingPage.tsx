@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "@/components/HR/feedback-message";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ export function AccessPendingPage() {
           If your role was just updated, refresh access or sign out and sign
           back in.
         </p>
-        {error && <p role="alert">{error}</p>}
+        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
         <Button disabled={busy} onClick={() => void refresh()}>
           {busy ? "Checking access…" : "Refresh access"}
         </Button>

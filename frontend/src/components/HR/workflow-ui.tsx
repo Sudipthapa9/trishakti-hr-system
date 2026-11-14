@@ -1,12 +1,9 @@
 /**
- * Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
+ * Provides shared person presentation and the deferred screening score helper.
  */
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { UserRound } from "lucide-react";
-import { type ReactNode } from "react";
 
-// Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
+// Provides shared person presentation and the deferred screening score helper.
 export function Person({
   name,
   detail,
@@ -21,13 +18,14 @@ export function Person({
   const fallback =
     initials ??
     name
-      .split(" ")
+      .trim()
+      .split(/\s+/)
       .map((part) => part[0])
       .slice(0, 2)
       .join("");
   return (
     <div className={`flex min-w-0 items-center gap-3 ${className}`}>
-      <Avatar className="size-10 shrink-0">
+      <Avatar aria-hidden="true" className="size-10 shrink-0">
         <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
           {fallback}
         </AvatarFallback>
@@ -42,61 +40,7 @@ export function Person({
   );
 }
 
-// Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
-export function Metric({
-  label,
-  value,
-  caption,
-  icon: Icon,
-}: {
-  label: string;
-  value: string;
-  caption: string;
-  icon: typeof UserRound;
-}) {
-  return (
-    <Card>
-      {/* Render the panel body using the shared spacing convention. */}
-      <CardContent className="flex items-start justify-between gap-3 p-5">
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{caption}</p>
-        </div>
-        <span className="rounded-lg bg-accent p-2 text-accent-foreground">
-          <Icon aria-hidden="true" className="size-5" />
-        </span>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
-export function PanelTitle({
-  eyebrow,
-  title,
-  action,
-}: {
-  eyebrow?: string;
-  title: string;
-  action?: ReactNode;
-}) {
-  return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <div>
-        {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-            {eyebrow}
-          </p>
-        ) : null}
-        <h2 className="mt-1 text-lg font-semibold">{title}</h2>
-      </div>
-      {action}
-    </div>
-  );
-}
-
-// Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
+// Provides shared person presentation and the deferred screening score helper.
 export function Score({
   value,
   large = false,
@@ -111,15 +55,5 @@ export function Score({
       {value}%
       {large ? <span className="text-xs font-medium">MATCH</span> : null}
     </span>
-  );
-}
-
-// Provides reusable profile, metric, title, score, and prototype-notice presentation helpers.
-export function DemoNotice() {
-  return (
-    <p className="text-xs text-muted-foreground">
-      Sample data for this prototype. Updates are kept in memory and are not
-      sent to the HR API.
-    </p>
   );
 }

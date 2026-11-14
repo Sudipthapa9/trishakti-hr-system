@@ -1,3 +1,6 @@
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { FeedbackMessage } from "@/components/HR/feedback-message";
 /**
  * Displays and filters open jobs from the public jobs API.
  */
@@ -63,7 +66,7 @@ export function CareersPage() {
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              <label>
+              <Label>
                 <Search size={17} />
                 <Input
                   aria-label="Search jobs"
@@ -74,10 +77,10 @@ export function CareersPage() {
                     setCount(3);
                   }}
                 />
-              </label>
-              <label>
+              </Label>
+              <Label>
                 <MapPin size={17} />
-                <select
+                <NativeSelect
                   aria-label="Location"
                   value={location}
                   onChange={(e) => {
@@ -88,14 +91,15 @@ export function CareersPage() {
                   <option>All Locations</option>
                   {[
                     ...new Set(
-                      (result.status === "success" ? result.jobs : [])
-                        .map((j) => j.location),
+                      (result.status === "success" ? result.jobs : []).map(
+                        (j) => j.location,
+                      ),
                     ),
                   ].map((l) => (
                     <option key={l}>{l}</option>
                   ))}
-                </select>
-              </label>
+                </NativeSelect>
+              </Label>
               <Button type="submit">Search Jobs</Button>
             </form>
           </section>
@@ -226,10 +230,12 @@ export function CareersPage() {
             <header>
               <div>
                 <h2>Open Positions</h2>
-                {result.status === "success" && <p>
-                  Showing {Math.min(count, open.length)} of {open.length} open
-                  roles
-                </p>}
+                {result.status === "success" && (
+                  <p>
+                    Showing {Math.min(count, open.length)} of {open.length} open
+                    roles
+                  </p>
+                )}
               </div>
               <span>All Departments</span>
             </header>
@@ -265,12 +271,18 @@ export function CareersPage() {
               ))}
             </div>
             {result.status === "loading" ? (
-              <p className="empty-message" role="status">Loading jobs…</p>
+              <FeedbackMessage className="empty-message" role="status">
+                Loading jobs…
+              </FeedbackMessage>
             ) : result.status === "error" ? (
-              <p className="empty-message" role="alert">Could not load jobs.</p>
+              <FeedbackMessage className="empty-message" role="alert">
+                Could not load jobs.
+              </FeedbackMessage>
             ) : !open.length ? (
               <p className="empty-message">
-                {result.jobs.length ? "No positions match your search." : "No open positions."}
+                {result.jobs.length
+                  ? "No positions match your search."
+                  : "No open positions."}
               </p>
             ) : null}
             {count < open.length ? (

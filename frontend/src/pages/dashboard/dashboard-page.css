@@ -413,3 +413,18 @@
     gap: 8px;
   }
 }
+.dashboard-applications-table th {
+  background: #f3eee5;
+  color: #6b7475;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dashboard-applications-table th,
+.dashboard-applications-table td {
+  padding: 14px 20px;
+}
+
+.dashboard-applications-table td {
+  font-size: 13px;
+}

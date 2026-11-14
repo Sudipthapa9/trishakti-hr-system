@@ -1,3 +1,5 @@
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 /**
  * Displays candidate rows and optional stage controls; parent callbacks own updates to shared state.
  */
@@ -76,10 +78,10 @@ export function CandidateTable({
             </TableCell>
             {onStageChange ? (
               <TableCell>
-                <label className="sr-only" htmlFor={`stage-${candidate.id}`}>
+                <Label className="sr-only" htmlFor={`stage-${candidate.id}`}>
                   Update stage for {candidate.name}
-                </label>
-                <select
+                </Label>
+                <NativeSelect
                   id={`stage-${candidate.id}`}
                   className="form-select"
                   value={candidate.stage}
@@ -101,7 +103,7 @@ export function CandidateTable({
                   <option>Shortlisted</option>
                   <option>Interview</option>
                   <option>Offer</option>
-                </select>
+                </NativeSelect>
               </TableCell>
             ) : null}
           </TableRow>

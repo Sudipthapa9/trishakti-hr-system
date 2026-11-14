@@ -1,3 +1,8 @@
+import { Card } from "@/components/ui/card";
+import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FileUploadField } from "@/components/HR/file-upload-field";
+import { DocumentRow } from "@/components/HR/document-row";
+import { PaginationControls } from "@/components/HR/pagination-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { hrRequest } from "@/data/hr-api";
@@ -91,82 +96,77 @@ export function OnboardingDocuments({
     }
   }
   return (
-    <section className="rounded-lg border bg-white p-5">
-      <h2>Private onboarding documents</h2>
-      <p>
-        PDF or DOCX, up to 10MB per file. Uploading does not automatically mark
-        documents verified.
-      </p>
-      {error && <p role="alert">{error}</p>}
-      <form onSubmit={upload} className="my-4 flex flex-wrap gap-3">
-        <input
-          aria-label="Onboarding document"
-          type="file"
-          name="document"
-          accept=".pdf,.docx"
-          required
-          disabled={saving}
-          onChange={() => {
-            uploadId.current = crypto.randomUUID();
-          }}
-        />
-        <Button type="submit" disabled={saving}>
-          {saving ? "Working…" : "Upload document"}
-        </Button>
-      </form>
-      {loading ? (
-        <p role="status">Loading documents…</p>
-      ) : !documents.length ? (
-        <p>No documents uploaded.</p>
-      ) : (
-        documents.map((document) => (
-          <div
-            key={document.id}
-            className="flex justify-between gap-3 border-b py-3"
+    <Card asChild className="gap-4 py-0 ring-0">
+      <section className="rounded-lg border bg-white p-5">
+        <h2>Private onboarding documents</h2>
+        <p>
+          PDF or DOCX, up to 10MB per file. Uploading does not automatically
+          mark documents verified.
+        </p>
+        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+        <form onSubmit={upload} className="my-4 flex flex-wrap gap-3">
+          <FileUploadField
+            aria-label="Onboarding document"
+
+            name="document"
+            accept=".pdf,.docx"
+            required
+            disabled={saving}
+            onChange={() => {
+              uploadId.current = crypto.randomUUID();
+            }}
+          />
+          <Button type="submit" disabled={saving}>
+            {saving ? "Working…" : "Upload document"}
+          </Button>
+        </form>
+        {loading ? (
+          <FeedbackMessage role="status">Loading documents…</FeedbackMessage>
+        ) : !documents.length ? (
+          <p>No documents uploaded.</p>
+        ) : (
+          documents.map((document) => (
+            <DocumentRow
+              key={document.id}
+              name={document.name}
+              metadata={Math.ceil(document.size / 1024) + " KB"}
+              action={
+                <Button
+                  variant="outline"
+                  disabled={saving}
+                  onClick={() => void download(document)}
+                >
+                  Download
+                </Button>
+              }
+            />
+          ))
+        )}
+        <div className="mt-3 flex gap-3">
+          <PaginationControls
+            previousDisabled={loading || page === 1}
+            onPrevious={() => {
+              setLoading(true);
+              setPage((p) => p - 1);
+            }}
+            nextDisabled={loading || !more}
+            onNext={() => {
+              setLoading(true);
+              setPage((p) => p + 1);
+            }}
+          />
+          <Button
+            variant="outline"
+            disabled={loading}
+            onClick={() => {
+              setLoading(true);
+              setRevision((v) => v + 1);
+            }}
           >
-            <span>
-              {document.name} · {Math.ceil(document.size / 1024)} KB
-            </span>
-            <Button
-              variant="outline"
-              disabled={saving}
-              onClick={() => void download(document)}
-            >
-              Download
-            </Button>
-          </div>
-        ))
-      )}
-      <div className="mt-3 flex gap-3">
-        <Button
-          disabled={loading || page === 1}
-          onClick={() => {
-            setLoading(true);
-            setPage((p) => p - 1);
-          }}
-        >
-          Previous
-        </Button>
-        <Button
-          disabled={loading || !more}
-          onClick={() => {
-            setLoading(true);
-            setPage((p) => p + 1);
-          }}
-        >
-          Next
-        </Button>
-        <Button
-          variant="outline"
-          disabled={loading}
-          onClick={() => {
-            setLoading(true);
-            setRevision((v) => v + 1);
-          }}
-        >
-          Reload documents
-        </Button>
-      </div>
-    </section>
+            Reload documents
+          </Button>
+        </div>
+      </section>
+    </Card>
   );
 }

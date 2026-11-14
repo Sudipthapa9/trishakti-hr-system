@@ -8,8 +8,8 @@ import { cn } from "../../lib/utils";
 // Define PageHeaderProps so callers and implementations agree on the required data shape.
 type PageHeaderProps = {
   eyebrow?: string;
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   action?: ReactNode;
   className?: string;
 };
@@ -23,9 +23,9 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div
+    <header
       className={cn(
-        "flex flex-col gap-4 md:flex-row md:items-center md:justify-between",
+        "page-heading flex flex-wrap items-center justify-between gap-4",
         className,
       )}
     >
@@ -35,17 +35,11 @@ export function PageHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-2 text-3xl font-bold tracking-[-0.05em] text-[var(--color-text-primary)] md:text-4xl">
-          {title}
-        </h1>
-        {description ? (
-          <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-            {description}
-          </p>
-        ) : null}
+        <h1>{title}</h1>
+        {description ? <p>{description}</p> : null}
       </div>
 
       {action ? <div>{action}</div> : null}
-    </div>
+    </header>
   );
 }

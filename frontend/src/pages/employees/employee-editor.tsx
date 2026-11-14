@@ -1,3 +1,7 @@
+import { Card } from "@/components/ui/card";
+import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { Label } from "@/components/ui/label";
+import { PaginationControls } from "@/components/HR/pagination-controls";
 import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,96 +92,93 @@ export function EmployeeEditor({
     }
   }
   return (
-    <section className="rounded-lg border bg-white p-5">
-      <h2>Manage employee details</h2>
-      <div className="flex gap-3">
-        <Button
-          disabled={saving}
-          variant="outline"
-          onClick={() => setEditing((v) => !v)}
-        >
-          {editing ? "Cancel edit" : "Edit record"}
-        </Button>
-        <Button
-          disabled={saving}
-          variant="outline"
-          onClick={() => void loadHistory(1)}
-        >
-          View edit history
-        </Button>
-      </div>
-      {error && <p role="alert">{error}</p>}
-      {editing && (
-        <form onSubmit={save}>
-          <fieldset disabled={saving} className="mt-4 grid gap-3">
-            {(Object.keys(labels) as (keyof typeof labels)[]).map((key) => (
-              <label key={key}>
-                {labels[key]}
-                <Input
-                  name={key}
-                  type={key === "email" ? "email" : "text"}
-                  defaultValue={employee[key]}
-                  required={!key.startsWith("emergency")}
-                  maxLength={
-                    key === "email"
-                      ? 254
-                      : key === "phone" || key === "emergencyPhone"
-                        ? 50
-                        : key === "department" ||
-                            key === "emergencyRelationship"
-                          ? 100
-                          : 200
-                  }
-                />
-              </label>
-            ))}
-            <p>
-              Fill all emergency contact fields or leave them all empty. Edits
-              are recorded in history.
-            </p>
-            <Button type="submit">
-              {saving ? "Saving…" : "Save employee"}
-            </Button>
-          </fieldset>
-        </form>
-      )}
-      {showHistory && (
-        <div className="mt-4 grid gap-3">
-          {!history.length && <p>No employee edits yet.</p>}
-          {history.map((change) => (
-            <article key={change.id}>
-              <h3>
-                {new Date(change.changedAt).toLocaleString()} ·{" "}
-                {change.changedBy}
-              </h3>
-              {(Object.keys(labels) as (keyof typeof labels)[])
-                .filter(
-                  (key) => change.previousValues[key] !== change.newValues[key],
-                )
-                .map((key) => (
-                  <p key={key}>
-                    {labels[key]}: {String(change.previousValues[key] || "—")} →{" "}
-                    {String(change.newValues[key] || "—")}
-                  </p>
-                ))}
-            </article>
-          ))}
-          <div className="flex gap-3">
-            <Button
-              disabled={saving || page === 1}
-              onClick={() => void loadHistory(page - 1)}
-            >
-              Previous
-            </Button>
-            <Button
-              disabled={saving || !more}
-              onClick={() => void loadHistory(page + 1)}
-            >
-              Next
-            </Button>
-          </div>
+    <Card asChild className="gap-4 py-0 ring-0">
+      <section className="rounded-lg border bg-white p-5">
+        <h2>Manage employee details</h2>
+        <div className="flex gap-3">
+          <Button
+            disabled={saving}
+            variant="outline"
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? "Cancel edit" : "Edit record"}
+          </Button>
+          <Button
+            disabled={saving}
+            variant="outline"
+            onClick={() => void loadHistory(1)}
+          >
+            View edit history
+          </Button>
         </div>
-      )}
-    </section>
+        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+        {editing && (
+          <form onSubmit={save}>
+            <fieldset disabled={saving} className="mt-4 grid gap-3">
+              {(Object.keys(labels) as (keyof typeof labels)[]).map((key) => (
+                <Label key={key}>
+                  {labels[key]}
+                  <Input
+                    name={key}
+                    type={key === "email" ? "email" : "text"}
+                    defaultValue={employee[key]}
+                    required={!key.startsWith("emergency")}
+                    maxLength={
+                      key === "email"
+                        ? 254
+                        : key === "phone" || key === "emergencyPhone"
+                          ? 50
+                          : key === "department" ||
+                              key === "emergencyRelationship"
+                            ? 100
+                            : 200
+                    }
+                  />
+                </Label>
+              ))}
+              <p>
+                Fill all emergency contact fields or leave them all empty. Edits
+                are recorded in history.
+              </p>
+              <Button type="submit">
+                {saving ? "Saving…" : "Save employee"}
+              </Button>
+            </fieldset>
+          </form>
+        )}
+        {showHistory && (
+          <div className="mt-4 grid gap-3">
+            {!history.length && <p>No employee edits yet.</p>}
+            {history.map((change) => (
+              <article key={change.id}>
+                <h3>
+                  {new Date(change.changedAt).toLocaleString()} ·{" "}
+                  {change.changedBy}
+                </h3>
+                {(Object.keys(labels) as (keyof typeof labels)[])
+                  .filter(
+                    (key) =>
+                      change.previousValues[key] !== change.newValues[key],
+                  )
+                  .map((key) => (
+                    <p key={key}>
+                      {labels[key]}: {String(change.previousValues[key] || "—")}{" "}
+                      → {String(change.newValues[key] || "—")}
+                    </p>
+                  ))}
+              </article>
+            ))}
+            <div className="flex gap-3">
+              <PaginationControls
+                previousDisabled={saving || page === 1}
+                nextDisabled={saving || !more}
+                onPrevious={() => void loadHistory(page - 1)}
+                onNext={() => void loadHistory(page + 1)}
+              ></PaginationControls>
+            </div>
+          </div>
+        )}
+      </section>
+    </Card>
   );
 }

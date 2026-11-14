@@ -1,3 +1,9 @@
+import { PageHeader } from "@/components/Layout/page-header";
+import { Card } from "@/components/ui/card";
+import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { PaginationControls } from "@/components/HR/pagination-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -172,27 +178,32 @@ export function InterviewsPage() {
   return (
     <div className="page-interviews-interviews-page">
       <div className="page-stack">
-        <header className="page-heading">
-          <div>
-            <h1>Interview Management</h1>
-            <p>
+        <PageHeader
+          className="page-heading"
+          title={<>Interview Management</>}
+          description={
+            <>
               Schedule in Nepal time (Asia/Kathmandu). Paste a meeting link or
               enter a physical location.
-            </p>
-          </div>
-          <Button
-            disabled={saving}
-            onClick={() => {
-              setEditing(null);
-              setShowForm(true);
-              createId.current = crypto.randomUUID();
-            }}
-          >
-            Schedule interview
-          </Button>
-        </header>
-        {error && <p role="alert">{error}</p>}
-        {notice && <p role="status">{notice}</p>}
+            </>
+          }
+          action={
+            <>
+              <Button
+                disabled={saving}
+                onClick={() => {
+                  setEditing(null);
+                  setShowForm(true);
+                  createId.current = crypto.randomUUID();
+                }}
+              >
+                Schedule interview
+              </Button>
+            </>
+          }
+        />
+        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+        {notice && <FeedbackMessage role="status">{notice}</FeedbackMessage>}
         {showForm && (
           <form
             key={editing?.id || "new"}
@@ -205,8 +216,8 @@ export function InterviewsPage() {
               </h2>
               {!editing && (
                 <>
-                  <label htmlFor="interview-application">Application</label>
-                  <select
+                  <Label htmlFor="interview-application">Application</Label>
+                  <NativeSelect
                     className="form-select"
                     id="interview-application"
                     name="applicationId"
@@ -224,24 +235,17 @@ export function InterviewsPage() {
                           {a.fullName} · {a.jobTitle}
                         </option>
                       ))}
-                  </select>
+                  </NativeSelect>
                   <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={applicationPage === 1 || loading}
-                      onClick={() => setApplicationPage((p) => p - 1)}
-                    >
-                      Previous applicants
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={!moreApplications || loading}
-                      onClick={() => setApplicationPage((p) => p + 1)}
-                    >
-                      More applicants
-                    </Button>
+                    <PaginationControls
+                      label="Interview application selection pages"
+                      previousLabel="Previous applicants"
+                      nextLabel="More applicants"
+                      previousDisabled={applicationPage === 1 || loading}
+                      nextDisabled={!moreApplications || loading}
+                      onPrevious={() => setApplicationPage((p) => p - 1)}
+                      onNext={() => setApplicationPage((p) => p + 1)}
+                    />
                   </div>
                 </>
               )}
@@ -279,7 +283,7 @@ export function InterviewsPage() {
                   ],
                 ] as const
               ).map(([name, label, type, value]) => (
-                <label key={name}>
+                <Label key={name}>
                   {label}
                   <Input
                     name={name}
@@ -290,16 +294,16 @@ export function InterviewsPage() {
                     )}
                     maxLength={name === "meetingUrl" ? 2000 : 500}
                   />
-                </label>
+                </Label>
               ))}
-              <label>
+              <Label>
                 Internal notes (not included in candidate notifications)
                 <Textarea
                   name="notes"
                   defaultValue={editing?.notes}
                   maxLength={5000}
                 />
-              </label>
+              </Label>
               <div className="flex gap-3">
                 <Button type="submit">
                   {saving ? "Saving…" : "Save schedule"}
@@ -316,7 +320,7 @@ export function InterviewsPage() {
           </form>
         )}
         <div className="flex gap-3">
-          <label>
+          <Label>
             Filter by Nepal date
             <Input
               type="date"
@@ -326,7 +330,7 @@ export function InterviewsPage() {
                 setPage(1);
               }}
             />
-          </label>
+          </Label>
           <Button
             variant="outline"
             disabled={loading || saving}
@@ -336,91 +340,91 @@ export function InterviewsPage() {
           </Button>
         </div>
         {loading ? (
-          <p role="status">Loading interviews…</p>
+          <FeedbackMessage role="status">Loading interviews…</FeedbackMessage>
         ) : !interviews.length ? (
           <p>No interviews found.</p>
         ) : (
           interviews.map((record) => (
-            <section className="rounded-lg border bg-white p-5" key={record.id}>
-              <h2>
-                {record.candidateName} · {record.jobTitle}
-              </h2>
-              <p>
-                {record.status} · {displayTime(record.startsAt)} —{" "}
-                {displayTime(record.endsAt)} (Nepal)
-              </p>
-              <p>Interviewer: {record.interviewer}</p>
-              {record.meetingUrl && (
-                <a
-                  className="underline"
-                  href={record.meetingUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open meeting link
-                </a>
-              )}
-              <p>{record.location}</p>
-              <p className="whitespace-pre-line">{record.notes}</p>
-              <div className="flex flex-wrap gap-3">
-                {record.status === "Scheduled" && (
-                  <>
-                    <Button
-                      disabled={saving}
-                      variant="outline"
-                      onClick={() => {
-                        setEditing(record);
-                        setShowForm(true);
-                      }}
-                    >
-                      Edit / reschedule
-                    </Button>
-                    <Button
-                      disabled={saving}
-                      variant="outline"
-                      onClick={() => void action(record, "Completed")}
-                    >
-                      Mark completed
-                    </Button>
-                    <Button
-                      disabled={saving}
-                      variant="outline"
-                      onClick={() => void action(record, "Cancelled")}
-                    >
-                      Cancel interview
-                    </Button>
-                  </>
-                )}
-                {record.status !== "Completed" && (
-                  <Button
-                    disabled={saving}
-                    onClick={() => void action(record, "notification")}
+            <Card asChild className="gap-4 py-0 ring-0" key={record.id}>
+              <section
+                className="rounded-lg border bg-white p-5"
+                key={record.id}
+              >
+                <h2>
+                  {record.candidateName} · {record.jobTitle}
+                </h2>
+                <p>
+                  {record.status} · {displayTime(record.startsAt)} —{" "}
+                  {displayTime(record.endsAt)} (Nepal)
+                </p>
+                <p>Interviewer: {record.interviewer}</p>
+                {record.meetingUrl && (
+                  <a
+                    className="underline"
+                    href={record.meetingUrl}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    Prepare{" "}
-                    {record.status === "Cancelled"
-                      ? "cancellation"
-                      : "schedule"}{" "}
-                    email
-                  </Button>
+                    Open meeting link
+                  </a>
                 )}
-              </div>
-            </section>
+                <p>{record.location}</p>
+                <p className="whitespace-pre-line">{record.notes}</p>
+                <div className="flex flex-wrap gap-3">
+                  {record.status === "Scheduled" && (
+                    <>
+                      <Button
+                        disabled={saving}
+                        variant="outline"
+                        onClick={() => {
+                          setEditing(record);
+                          setShowForm(true);
+                        }}
+                      >
+                        Edit / reschedule
+                      </Button>
+                      <Button
+                        disabled={saving}
+                        variant="outline"
+                        onClick={() => void action(record, "Completed")}
+                      >
+                        Mark completed
+                      </Button>
+                      <Button
+                        disabled={saving}
+                        variant="outline"
+                        onClick={() => void action(record, "Cancelled")}
+                      >
+                        Cancel interview
+                      </Button>
+                    </>
+                  )}
+                  {record.status !== "Completed" && (
+                    <Button
+                      disabled={saving}
+                      onClick={() => void action(record, "notification")}
+                    >
+                      Prepare{" "}
+                      {record.status === "Cancelled"
+                        ? "cancellation"
+                        : "schedule"}{" "}
+                      email
+                    </Button>
+                  )}
+                </div>
+              </section>
+            </Card>
           ))
         )}
         <div className="flex gap-3">
-          <Button
-            disabled={loading || page === 1}
-            onClick={() => setPage((p) => p - 1)}
+          <PaginationControls
+            previousDisabled={loading || page === 1}
+            nextDisabled={loading || !more}
+            onPrevious={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
           >
-            Previous
-          </Button>
-          <span>Page {page}</span>
-          <Button
-            disabled={loading || !more}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
+            <span>Page {page}</span>
+          </PaginationControls>
         </div>
       </div>
     </div>

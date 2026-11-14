@@ -2,16 +2,22 @@
  * Provides composable card regions so pages can reuse one surface and spacing convention.
  */
 import * as React from "react";
+import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 // Render the card region while forwarding supported props and caller styling.
 function Card({
   className,
   size = "default",
+  asChild = false,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm";
+  asChild?: boolean;
+}) {
+  const Comp = asChild ? Slot.Root : "div";
   return (
-    <div
+    <Comp
       data-slot="card"
       data-size={size}
       className={cn(

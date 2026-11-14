@@ -1,9 +1,18 @@
+import { Label } from "@/components/ui/label";
+import { FeedbackMessage } from "@/components/HR/feedback-message";
 import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { saveCandidateProfile, ProfileConflictError, type CandidateProfile } from "@/data/candidates-api";
+import {
+  saveCandidateProfile,
+  ProfileConflictError,
+  type CandidateProfile,
+} from "@/data/candidates-api";
 
-export function CandidateProfileEditor({ candidate, onSaved }: {
+export function CandidateProfileEditor({
+  candidate,
+  onSaved,
+}: {
   candidate: CandidateProfile;
   onSaved: (profile: CandidateProfile) => void;
 }) {
@@ -22,15 +31,19 @@ export function CandidateProfileEditor({ candidate, onSaved }: {
     setError(null);
     setSaved(false);
     try {
-      const response = await saveCandidateProfile(candidate,
+      const response = await saveCandidateProfile(
+        candidate,
         String(values.get("fullName") ?? "").trim(),
-        String(values.get("phone") ?? "").trim());
+        String(values.get("phone") ?? "").trim(),
+      );
       onSaved(response.candidate);
       setEditing(false);
       setSaved(true);
     } catch (error) {
       if (error instanceof ProfileConflictError) onSaved(error.candidate);
-      setError(error instanceof Error ? error.message : "Could not save this profile.");
+      setError(
+        error instanceof Error ? error.message : "Could not save this profile.",
+      );
     } finally {
       busy.current = false;
       setIsSaving(false);
@@ -42,21 +55,54 @@ export function CandidateProfileEditor({ candidate, onSaved }: {
       {editing ? (
         <form onSubmit={submit} aria-busy={isSaving}>
           <fieldset disabled={isSaving} className="grid max-w-lg gap-3">
-            <label htmlFor="profile-name">Full name</label>
-            <Input id="profile-name" name="fullName" defaultValue={candidate.fullName} required maxLength={200} />
-            <label htmlFor="profile-phone">Phone</label>
-            <Input id="profile-phone" name="phone" type="tel" defaultValue={candidate.phone} required minLength={5} maxLength={50} />
+            <Label htmlFor="profile-name">Full name</Label>
+            <Input
+              id="profile-name"
+              name="fullName"
+              defaultValue={candidate.fullName}
+              required
+              maxLength={200}
+            />
+            <Label htmlFor="profile-phone">Phone</Label>
+            <Input
+              id="profile-phone"
+              name="phone"
+              type="tel"
+              defaultValue={candidate.phone}
+              required
+              minLength={5}
+              maxLength={50}
+            />
             <div className="flex gap-3">
-              <Button type="submit">{isSaving ? "Saving…" : "Save profile"}</Button>
-              <Button type="button" variant="outline" onClick={() => { setEditing(false); setError(null); }}>Cancel</Button>
+              <Button type="submit">
+                {isSaving ? "Saving…" : "Save profile"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setEditing(false);
+                  setError(null);
+                }}
+              >
+                Cancel
+              </Button>
             </div>
           </fieldset>
         </form>
       ) : (
-        <Button variant="outline" onClick={() => { setEditing(true); setSaved(false); }}>Edit profile</Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditing(true);
+            setSaved(false);
+          }}
+        >
+          Edit profile
+        </Button>
       )}
-      {error && <p role="alert">{error}</p>}
-      {saved && <p role="status">Profile saved.</p>}
+      {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+      {saved && <FeedbackMessage role="status">Profile saved.</FeedbackMessage>}
     </section>
   );
 }

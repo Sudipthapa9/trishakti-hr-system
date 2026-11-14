@@ -74,6 +74,7 @@
 }
 /* apply the intended surface or text colors. */
 .jobs-table td:first-child {
+  white-space: normal;
   max-width: 240px;
   color: #323c2b;
 }
@@ -96,6 +97,7 @@
 }
 /* set spacing between this region and its content; apply the intended surface or text colors. */
 .jobs-table .job-expanded td {
+  white-space: normal;
   background: #faf7ee;
   padding: 24px;
 }
