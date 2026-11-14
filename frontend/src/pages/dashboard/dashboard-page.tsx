@@ -1,12 +1,12 @@
 import { lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Person } from "@/components/HR/workflow-ui";
-import { StatusBadge } from "@/components/HR/status-badge";
-import { PaginationControls } from "@/components/HR/pagination-controls";
-import { DataState } from "@/components/HR/data-state";
+import { Person } from "@/components/shared/data-display/person";
+import { StatusBadge } from "@/components/shared/data-display/status-badge";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
+import { DataState } from "@/components/shared/feedback/data-state";
 import { PageHeader } from "@/components/Layout/page-header";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";

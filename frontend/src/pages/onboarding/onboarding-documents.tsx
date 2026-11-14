@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
-import { FileUploadField } from "@/components/HR/file-upload-field";
-import { DocumentRow } from "@/components/HR/document-row";
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
+import { FileUploadField } from "@/components/shared/forms/file-upload-field";
+import { DocumentRow } from "@/components/shared/data-display/document-row";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { hrRequest } from "@/data/hr-api";

@@ -1,4 +1,4 @@
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";

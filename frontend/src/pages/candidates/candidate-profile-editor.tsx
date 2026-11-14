@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

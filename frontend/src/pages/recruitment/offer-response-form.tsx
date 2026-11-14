@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useRef, useState, type FormEvent } from "react";

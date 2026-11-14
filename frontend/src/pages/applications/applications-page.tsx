@@ -1,8 +1,8 @@
 import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
-import { PaginationControls } from "@/components/HR/pagination-controls";
-import { DocumentRow } from "@/components/HR/document-row";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
+import { DocumentRow } from "@/components/shared/data-display/document-row";
 import { useEffect, useState } from "react";
 import keycloak from "@/keycloak";
 import { Button } from "@/components/ui/button";

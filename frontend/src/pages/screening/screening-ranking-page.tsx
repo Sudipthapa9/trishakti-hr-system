@@ -1,7 +1,7 @@
 /**
  * Displays illustrative CV rankings, match filters, and links to candidate analysis; these scores are not live model output.
  */
-import { Person } from "@/components/HR/workflow-ui";
+import { Person } from "@/components/shared/data-display/person";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Candidate, CandidateStage, Job } from "@/types/hr";

@@ -1,7 +1,7 @@
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import "./communication-page.css";

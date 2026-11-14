@@ -1,11 +1,11 @@
 import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import "./candidates-page.css";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/HR/status-badge";
+import { StatusBadge } from "@/components/shared/data-display/status-badge";
 import { requestCandidate, type CandidateDetail } from "@/data/candidates-api";
 import { ApplicationStageControl } from "./application-stage-control";
 import { CandidateProfileEditor } from "./candidate-profile-editor";

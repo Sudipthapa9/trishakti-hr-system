@@ -1,4 +1,4 @@
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
  * Presents authentication entry actions; Keycloak owns credential entry, registration, and recovery.
  */

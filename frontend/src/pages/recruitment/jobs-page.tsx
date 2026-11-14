@@ -1,7 +1,7 @@
-import { FilterToolbar } from "@/components/HR/filter-toolbar";
-import { StatusBadge } from "@/components/HR/status-badge";
+import { FilterToolbar } from "@/components/shared/forms/filter-toolbar";
+import { StatusBadge } from "@/components/shared/data-display/status-badge";
 import { PageHeader } from "@/components/Layout/page-header";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import {
@@ -13,7 +13,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 /**
  * Lists database jobs and saves edits and status changes through the workspace.
  */

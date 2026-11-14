@@ -1,8 +1,8 @@
-import { ProfileSummary } from "@/components/HR/profile-summary";
-import { DetailList } from "@/components/HR/detail-list";
+import { ProfileSummary } from "@/components/shared/data-display/profile-summary";
+import { DetailList } from "@/components/shared/data-display/detail-list";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
  * Connects shared workspace data to page props, keeping route declarations separate from data wiring.
  */

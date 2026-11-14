@@ -1,6 +1,6 @@
-import { FormField } from "@/components/HR/form-field";
-import { FileUploadField } from "@/components/HR/file-upload-field";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FormField } from "@/components/shared/forms/form-field";
+import { FileUploadField } from "@/components/shared/forms/file-upload-field";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
  * Shows a published job, validates the selected CV file, and submits the application and CV to the backend.
  */

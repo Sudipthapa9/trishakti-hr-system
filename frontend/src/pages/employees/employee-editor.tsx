@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -1,8 +1,8 @@
 import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { NativeSelect } from "@/components/ui/native-select";
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import "./offer-generation-page.css";
 import { OfferResponseForm } from "./offer-response-form";
 import { StartOnboardingButton } from "@/pages/onboarding/start-onboarding-button";

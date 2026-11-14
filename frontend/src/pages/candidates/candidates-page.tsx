@@ -1,9 +1,9 @@
-import { Person } from "@/components/HR/workflow-ui";
-import { FilterToolbar } from "@/components/HR/filter-toolbar";
-import { DataState } from "@/components/HR/data-state";
+import { Person } from "@/components/shared/data-display/person";
+import { FilterToolbar } from "@/components/shared/forms/filter-toolbar";
+import { DataState } from "@/components/shared/feedback/data-state";
 import { PageHeader } from "@/components/Layout/page-header";
 import { Label } from "@/components/ui/label";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import {
   Table,
   TableCaption,
@@ -14,7 +14,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 /**
  * Lists saved candidate identities and their application counts for HR.
  */

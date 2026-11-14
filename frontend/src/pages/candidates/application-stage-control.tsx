@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {

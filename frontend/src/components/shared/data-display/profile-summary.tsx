@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Person } from "@/components/HR/workflow-ui";
+import { Person } from "@/components/shared/data-display/person";
 
 export function ProfileSummary({
   name,

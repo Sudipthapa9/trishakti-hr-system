@@ -1,10 +1,10 @@
 import { Progress } from "@/components/ui/progress";
-import { ProfileSummary } from "@/components/HR/profile-summary";
-import { DetailList } from "@/components/HR/detail-list";
+import { ProfileSummary } from "@/components/shared/data-display/profile-summary";
+import { DetailList } from "@/components/shared/data-display/detail-list";
 import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
-import { PaginationControls } from "@/components/HR/pagination-controls";
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";

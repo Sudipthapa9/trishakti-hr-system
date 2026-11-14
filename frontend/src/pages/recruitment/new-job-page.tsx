@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/Layout/page-header";
-import { FormField } from "@/components/HR/form-field";
+import { FormField } from "@/components/shared/forms/form-field";
 import { NativeSelect } from "@/components/ui/native-select";
-import { FeedbackMessage } from "@/components/HR/feedback-message";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
  * Collects job details and weighted skill settings, then saves a draft through the jobs API.
  */

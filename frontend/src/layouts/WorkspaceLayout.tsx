@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { Outlet } from "react-router-dom";
 import { AppShell, type NavItem } from "@/components/Layout/app-shell";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/auth/auth-context";
 import { initialCandidates } from "@/data/demo-data";
 import { WorkspaceContext } from "@/data/workspace-context";
@@ -113,7 +112,6 @@ export function WorkspaceLayout() {
         username={username}
         roleLabel={roleLabel}
         onLogout={logout}
-        topBar={<Badge variant="neutral">Frontend demo</Badge>}
       >
         {/* Render the child route selected by React Router. */}
         <Outlet />
