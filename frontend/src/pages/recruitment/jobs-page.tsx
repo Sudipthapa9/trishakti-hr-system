@@ -12,20 +12,24 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-
 import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
-/**
- * Lists database jobs and saves edits and status changes through the workspace.
- */
 import "./jobs-page.css";
 import { Fragment, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
 import type { Job, JobStatus } from "@/types/hr";
-// Lists database jobs and saves edits and status changes through the workspace.
+const pageSize = 8;
+const tableHeadings = [
+  "Job Title",
+  "Department",
+  "Location",
+  "Status",
+  "Applicants",
+  "Actions",
+];
+
 export function JobsPage({
   jobs,
   onStatusChange,
@@ -57,17 +61,11 @@ export function JobsPage({
     }
   }
 
-  // Keep search in component state; updates trigger a render.
   const [search, setSearch] = useState("");
-  // Keep department in component state; updates trigger a render.
   const [department, setDepartment] = useState("All Departments");
-  // Keep status in component state; updates trigger a render.
   const [status, setStatus] = useState("All Statuses");
-  // Keep expanded in component state; updates trigger a render.
   const [expanded, setExpanded] = useState<string | null>(null);
-  // Keep page in component state; updates trigger a render.
   const [page, setPage] = useState(0);
-  // Recompute this derived view only when its declared inputs change.
   const filtered = useMemo(
     () =>
       jobs.filter(
@@ -80,7 +78,7 @@ export function JobsPage({
       ),
     [jobs, search, department, status],
   );
-  const visible = filtered.slice(page * 8, page * 8 + 8);
+  const visible = filtered.slice(page * pageSize, (page + 1) * pageSize);
   return (
     <div className="page-recruitment-jobs-page">
       {actionError && (
@@ -89,20 +87,15 @@ export function JobsPage({
       {feedback && <FeedbackMessage role="status">{feedback}</FeedbackMessage>}
       <div className="page-stack">
         <PageHeader
-          className="page-heading"
-          title={<>Job Management</>}
-          description={
-            <>Overview of open requisitions, drafts, and closed positions.</>
-          }
+          title="Job Management"
+          description="Overview of open requisitions, drafts, and closed positions."
           action={
-            <>
-              <Button asChild>
-                <Link to="/jobs/new">
-                  <Plus />
-                  Post New Job
-                </Link>
-              </Button>
-            </>
+            <Button asChild>
+              <Link to="/jobs/new">
+                <Plus />
+                Post New Job
+              </Link>
+            </Button>
           }
         />
         <FilterToolbar className="jobs-toolbar">
@@ -148,18 +141,10 @@ export function JobsPage({
           </NativeSelect>
         </FilterToolbar>
         <div className="jobs-table-wrap">
-          {/* Use semantic rows and columns for the tabular records. */}
           <Table className="jobs-table">
             <TableHeader>
               <TableRow>
-                {[
-                  "Job Title",
-                  "Department",
-                  "Location",
-                  "Status",
-                  "Applicants",
-                  "Actions",
-                ].map((h) => (
+                {tableHeadings.map((h) => (
                   <TableHead key={h}>{h}</TableHead>
                 ))}
               </TableRow>
@@ -282,20 +267,19 @@ export function JobsPage({
             </p>
           ) : null}
         </div>
-        {/* Supporting links, pagination, or secondary screen actions. */}
         <footer className="table-pagination">
           <span>
-            Showing {filtered.length ? page * 8 + 1 : 0} to{" "}
-            {Math.min((page + 1) * 8, filtered.length)} of {filtered.length}{" "}
-            entries
+            Showing {filtered.length ? page * pageSize + 1 : 0} to{" "}
+            {Math.min((page + 1) * pageSize, filtered.length)} of{" "}
+            {filtered.length} entries
           </span>
           <div>
             <PaginationControls
               previousDisabled={page === 0}
-              nextDisabled={(page + 1) * 8 >= filtered.length}
+              nextDisabled={(page + 1) * pageSize >= filtered.length}
               onPrevious={() => setPage((p) => p - 1)}
               onNext={() => setPage((p) => p + 1)}
-            ></PaginationControls>
+            />
           </div>
         </footer>
       </div>
