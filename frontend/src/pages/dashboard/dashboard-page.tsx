@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Person } from "@/components/shared/data-display/person";
 import { StatusBadge } from "@/components/shared/data-display/status-badge";
@@ -8,7 +8,6 @@ import { PageHeader } from "@/components/Layout/page-header";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { NativeSelect } from "@/components/ui/native-select";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SummaryCard } from "@/components/HR/summary-card";
@@ -25,7 +24,10 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   FileText,
+  ScanSearch,
   UserRoundCheck,
+  Users,
+  ChevronRight,
 } from "lucide-react";
 import "./dashboard-page.css";
 
@@ -34,6 +36,30 @@ const ApplicationVolumeChart = lazy(() =>
     default: module.ApplicationVolumeChart,
   })),
 );
+
+// Reuse static actions and Nepal-time formatters across renders.
+const quickActions = [
+  { label: "Create Job", to: "/jobs/new", icon: BriefcaseBusiness },
+  { label: "Review Candidates", to: "/candidates", icon: Users },
+  { label: "Screening", to: "/screening", icon: ScanSearch },
+  { label: "Schedule Interviews", to: "/interviews", icon: CalendarDays },
+];
+const dashboardDate = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kathmandu",
+  dateStyle: "full",
+});
+const interviewTime = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kathmandu",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
+const interviewDate = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kathmandu",
+  day: "numeric",
+  month: "short",
+});
+const recentPageSize = 4;
 
 type Dashboard = {
   totalApplications: number;
@@ -74,41 +100,31 @@ export function DashboardPage() {
   const [recentPage, setRecentPage] = useState(0);
   const currentRecentPage = Math.min(
     recentPage,
-    Math.max(0, Math.ceil((data?.recent.length ?? 0) / 4) - 1),
+    Math.max(0, Math.ceil((data?.recent.length ?? 0) / recentPageSize) - 1),
   );
   return (
     <div className="page-dashboard-dashboard-page">
       <div className="page-stack">
         <PageHeader
           className="page-heading"
-          title={<>Dashboard Overview</>}
-          description={
-            <>
-              {new Intl.DateTimeFormat("en-GB", {
-                timeZone: "Asia/Kathmandu",
-                dateStyle: "full",
-              }).format(new Date())}{" "}
-              · Nepal time
-            </>
-          }
+          title="Dashboard Overview"
+          description={`${dashboardDate.format(new Date())} · Nepal time`}
           action={
-            <>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setLoading(true);
-                    setError("");
-                    setRevision((v) => v + 1);
-                  }}
-                >
-                  Refresh
-                </Button>
-                <Button asChild>
-                  <Link to="/careers">Public careers</Link>
-                </Button>
-              </div>
-            </>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setLoading(true);
+                  setError("");
+                  setRevision((v) => v + 1);
+                }}
+              >
+                Refresh
+              </Button>
+              <Button asChild>
+                <Link to="/careers">Public careers</Link>
+              </Button>
+            </div>
           }
         />
         {loading && (
@@ -167,10 +183,16 @@ export function DashboardPage() {
             </section>
             <div className="dashboard-columns">
               <div className="dashboard-primary">
-                <Card asChild className="gap-4 py-0 ring-0">
-                  <section className="dashboard-panel pipeline-panel rounded-lg border bg-white">
-                    <CardHeader className="flex flex-wrap items-center justify-between gap-3 border-b p-5">
-                      <h2>Application volume</h2>
+                <Card asChild className="ring-0">
+                  <section className="dashboard-panel pipeline-panel">
+                    <CardHeader className="pipeline-panel-header">
+                      <div>
+                        <h2>Application overview</h2>
+                        <p className="pipeline-subtitle">
+                          Application volume over the last {days} days
+                        </p>
+                      </div>
+
                       <NativeSelect
                         className="form-select"
                         aria-label="Application volume range"
@@ -185,12 +207,13 @@ export function DashboardPage() {
                         <option value={7}>Last 7 days</option>
                       </NativeSelect>
                     </CardHeader>
-                    <CardContent className="p-5">
+
+                    <CardContent>
                       <Suspense
                         fallback={
                           <Skeleton
                             className="h-64 w-full"
-                            aria-label="Loading chart"
+                            aria-label="Loading application chart"
                           />
                         }
                       >
@@ -199,20 +222,20 @@ export function DashboardPage() {
                           days={days}
                         />
                       </Suspense>
-                      <details>
+                      <details className="dashboard-daily-counts">
                         <summary>View daily counts</summary>
-                        <Table className="dashboard-applications-table">
+                        <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Date</TableHead>
+                              <TableHead>Date (Nepal)</TableHead>
                               <TableHead>Applications</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {data.volume.map((day) => (
-                              <TableRow key={day.day}>
-                                <TableCell>{day.day}</TableCell>
-                                <TableCell>{day.count}</TableCell>
+                            {data.volume.map(({ day, count }) => (
+                              <TableRow key={day}>
+                                <TableCell>{day}</TableCell>
+                                <TableCell>{count}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -221,13 +244,11 @@ export function DashboardPage() {
                     </CardContent>
                   </section>
                 </Card>
-                <Card asChild className="gap-4 py-0 ring-0">
-                  <section className="dashboard-panel recent-candidates rounded-lg border bg-white">
-                    <CardHeader className="border-b p-5">
-                      <h2>Recent applications</h2>
-                      <p className="text-xs text-muted-foreground">
-                        Latest {data.recent.length} applications · preview
-                      </p>
+                <Card asChild className="ring-0">
+                  <section className="dashboard-panel recent-applications">
+                    <CardHeader className="recent-applications-header">
+                      <h2>Recent Candidates</h2>
+                      <Link to="/applications">View All</Link>
                     </CardHeader>
                     <CardContent>
                       {!data.recent.length ? (
@@ -239,14 +260,16 @@ export function DashboardPage() {
                               <TableRow>
                                 <TableHead>Candidate</TableHead>
                                 <TableHead>Position</TableHead>
+                                <TableHead>AI MATCH</TableHead>
                                 <TableHead>Stage</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {data.recent
                                 .slice(
-                                  currentRecentPage * 4,
-                                  currentRecentPage * 4 + 4,
+                                  currentRecentPage * recentPageSize,
+                                  currentRecentPage * recentPageSize +
+                                    recentPageSize,
                                 )
                                 .map((a) => (
                                   <TableRow key={a.id}>
@@ -256,6 +279,11 @@ export function DashboardPage() {
                                       </Link>
                                     </TableCell>
                                     <TableCell>{a.jobTitle}</TableCell>
+                                    <TableCell>
+                                      <span title="Screening has not been run">
+                                        —
+                                      </span>
+                                    </TableCell>
                                     <TableCell>
                                       <StatusBadge
                                         domain="application"
@@ -269,13 +297,14 @@ export function DashboardPage() {
                         </div>
                       )}
                     </CardContent>
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-t px-5 py-3">
-                      {data.recent.length > 4 && (
+                    <div className="recent-applications-pagination">
+                      {data.recent.length > recentPageSize && (
                         <PaginationControls
                           label="Recent applications preview pages"
                           previousDisabled={currentRecentPage === 0}
                           nextDisabled={
-                            (currentRecentPage + 1) * 4 >= data.recent.length
+                            (currentRecentPage + 1) * recentPageSize >=
+                            data.recent.length
                           }
                           onPrevious={() =>
                             setRecentPage(currentRecentPage - 1)
@@ -287,65 +316,86 @@ export function DashboardPage() {
                           </span>
                         </PaginationControls>
                       )}
-                      <Button asChild variant="link">
-                        <Link to="/applications">All applications</Link>
-                      </Button>
                     </div>
                   </section>
                 </Card>
               </div>
               <aside className="dashboard-secondary">
-                <Card asChild className="gap-4 py-0 ring-0">
-                  <section className="dashboard-panel quick-actions rounded-lg border bg-white">
-                    <CardHeader className="border-b p-5">
+                <Card asChild className="ring-0">
+                  <section className="dashboard-panel quick-actions">
+                    <CardHeader>
                       <h2>Quick actions</h2>
                     </CardHeader>
-                    <CardContent className="p-5">
+                    <CardContent>
                       <div className="quick-action-grid">
-                        {[
-                          ["Create job", "/jobs/new"],
-                          ["Review candidates", "/candidates"],
-                          ["Schedule interviews", "/interviews"],
-                          ["Continue onboarding", "/onboarding"],
-                          [
-                            `Employee records (${data.employees})`,
-                            "/employees",
-                          ],
-                        ].map(([label, to]) => (
-                          <Link key={to} to={to}>
-                            {label}
-                          </Link>
+                        {quickActions.map(({ label, to, icon: Icon }) => (
+                          <Button key={to} asChild variant="outline">
+                            <Link to={to}>
+                              <Icon aria-hidden="true" />
+                              <span>{label}</span>
+                            </Link>
+                          </Button>
                         ))}
                       </div>
+
+                      <Button asChild className="w-full">
+                        <Link to="/onboarding">
+                          <UserRoundCheck aria-hidden="true" />
+                          Continue Onboarding ({data.pendingOnboarding})
+                        </Link>
+                      </Button>
+
+                      <Link className="quick-actions-employees" to="/employees">
+                        Employee records ({data.employees})
+                      </Link>
                     </CardContent>
                   </section>
                 </Card>
-                <Card asChild className="gap-4 py-0 ring-0">
-                  <section className="dashboard-panel upcoming-interviews rounded-lg border bg-white">
-                    <CardHeader className="border-b p-5">
+                <Card asChild className="ring-0">
+                  <section className="dashboard-panel upcoming-interviews">
+                    <CardHeader>
                       <h2>Upcoming interviews</h2>
                     </CardHeader>
-                    <CardContent className="grid gap-4 p-5">
+                    <CardContent className="upcoming-interview-content">
                       {!data.upcoming.length ? (
                         <DataState kind="empty">
                           No upcoming interviews.
                         </DataState>
                       ) : (
-                        data.upcoming.map((i) => (
-                          <p key={i.id}>
-                            <Link to="/interviews">
-                              {i.name} · {i.jobTitle}
-                              <br />
-                              {new Intl.DateTimeFormat("en-GB", {
-                                timeZone: "Asia/Kathmandu",
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                              }).format(new Date(i.startsAt))}
+                        <div className="upcoming-interview-list">
+                          {data.upcoming.map((interview) => (
+                            <Link
+                              key={interview.id}
+                              to="/interviews"
+                              className="upcoming-interview"
+                            >
+                              <time dateTime={interview.startsAt}>
+                                <strong>
+                                  {interviewTime.format(
+                                    new Date(interview.startsAt),
+                                  )}
+                                </strong>
+
+                                <small>
+                                  {interviewDate.format(
+                                    new Date(interview.startsAt),
+                                  )}
+                                </small>
+                              </time>
+
+                              <div className="upcoming-interview-person">
+                                <strong>{interview.name}</strong>
+                                <p>{interview.jobTitle}</p>
+                              </div>
+
+                              <ChevronRight aria-hidden="true" size={16} />
                             </Link>
-                          </p>
-                        ))
+                          ))}
+                        </div>
                       )}
-                      <Link to="/interviews">Full schedule</Link>
+                      <Link className="view-schedule" to="/interviews">
+                        View Full Schedule
+                      </Link>
                     </CardContent>
                   </section>
                 </Card>

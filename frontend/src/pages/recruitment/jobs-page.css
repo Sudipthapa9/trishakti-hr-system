@@ -140,3 +140,26 @@
     padding-block: 20px;
   }
 }
+
+/* Jobs owns these controls; they previously leaked in from dashboard CSS. */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #858980;
+  font-size: 11px;
+}
+.table-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+.table-pagination button {
+  height: 28px;
+  font-size: 11px;
+}
+@media (max-width: 600px) {
+  .table-pagination {
+    flex-wrap: wrap;
+  }
+}
