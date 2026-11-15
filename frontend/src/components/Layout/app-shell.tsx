@@ -27,7 +27,6 @@ import {
   LogOut,
   Plus,
   Search,
-  Settings,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
@@ -72,7 +71,7 @@ export function AppShell({
     <TooltipProvider>
       <SidebarProvider
         className={cn("hr-workspace", dashboard && "hr-dashboard", className)}
-        style={{ "--sidebar-width": "17.5rem" } as CSSProperties}
+        style={{ "--sidebar-width": "18rem" } as CSSProperties}
       >
         {/* Keep shared workspace navigation outside page-specific content. */}
         <Sidebar className="hr-workspace workspace-sidebar">
@@ -107,18 +106,6 @@ export function AppShell({
           </SidebarContent>
           {/* Keep account and supporting actions at the end of the sidebar. */}
           <SidebarFooter className="workspace-footer">
-            <details>
-              <summary>
-                <Settings size={18} /> Settings
-              </summary>
-              <p>Workspace settings are not connected in this prototype.</p>
-            </details>
-            <details>
-              <summary>
-                <CircleHelp size={18} /> Support
-              </summary>
-              <p>Contact your HR administrator for assistance.</p>
-            </details>
             <div className="workspace-account">
               <span className="workspace-avatar">
                 <UserRound size={19} />

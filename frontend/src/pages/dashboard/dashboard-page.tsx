@@ -222,25 +222,6 @@ export function DashboardPage() {
                           days={days}
                         />
                       </Suspense>
-                      <details className="dashboard-daily-counts">
-                        <summary>View daily counts</summary>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Date (Nepal)</TableHead>
-                              <TableHead>Applications</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {data.volume.map(({ day, count }) => (
-                              <TableRow key={day}>
-                                <TableCell>{day}</TableCell>
-                                <TableCell>{count}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </details>
                     </CardContent>
                   </section>
                 </Card>
