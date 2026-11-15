@@ -19,7 +19,12 @@ import { useAuth } from "@/auth/auth-context";
 import { initialCandidates } from "@/data/demo-data";
 import { WorkspaceContext } from "@/data/workspace-context";
 import keycloak from "@/keycloak";
-import { requestJobs, saveDraft, updateJob, type JobChanges } from "@/data/jobs-api";
+import {
+  requestJobs,
+  saveJob,
+  updateJob,
+  type JobChanges,
+} from "@/data/jobs-api";
 import type { CandidateStage, Job, JobStatus } from "@/types/hr";
 
 // Keep navigation labels, icons, and destinations in one shared list.
@@ -56,7 +61,9 @@ export function WorkspaceLayout() {
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
-          setJobsError(error instanceof Error ? error.message : "Could not load jobs.");
+          setJobsError(
+            error instanceof Error ? error.message : "Could not load jobs.",
+          );
         }
       })
       .finally(() => {
@@ -69,7 +76,7 @@ export function WorkspaceLayout() {
 
   async function editJob(id: string, changes: JobChanges) {
     const saved = await updateJob(id, changes);
-    setJobs((current) => current.map((job) => job.id === id ? saved : job));
+    setJobs((current) => current.map((job) => (job.id === id ? saved : job)));
   }
 
   async function updateJobStatus(id: string, status: JobStatus) {
@@ -79,7 +86,7 @@ export function WorkspaceLayout() {
   // Add the saved database record only after the API confirms creation.
   async function createJob(newJob: Omit<Job, "id" | "applicants">) {
     if (!keycloak.authenticated) throw new Error("Please sign in again.");
-    const saved = await saveDraft(newJob);
+    const saved = await saveJob(newJob);
     setJobs((current) => [saved, ...current]);
   }
 

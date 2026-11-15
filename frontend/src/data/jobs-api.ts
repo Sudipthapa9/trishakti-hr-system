@@ -27,21 +27,45 @@ async function request(options: RequestInit, path = "") {
       Authorization: `Bearer ${keycloak.token}`,
     },
   });
-  if (response.status === 401) throw new Error("Your session expired. Please sign in again.");
-  if (response.status === 403) throw new Error("An HR role is required to manage jobs.");
-  if (response.status === 400) throw new Error("Check all required fields and their lengths.");
-  if (response.status === 404) throw new Error("This job is no longer available. Refresh the list.");
-  if (!response.ok) throw new Error("The jobs service could not complete the request.");
+  if (response.status === 401)
+    throw new Error("Your session expired. Please sign in again.");
+  if (response.status === 403)
+    throw new Error("An HR role is required to manage jobs.");
+  if (response.status === 400)
+    throw new Error("Check all required fields and their lengths.");
+  if (response.status === 404)
+    throw new Error("This job is no longer available. Refresh the list.");
+  if (!response.ok)
+    throw new Error("The jobs service could not complete the request.");
   return response.json();
 }
 
-export type JobChanges = Partial<Pick<Job, "title" | "department" | "location" | "employmentType" | "description" | "status" | "closingDate" | "responsibilities" | "requiredSkills" | "preferredSkills" | "vacancies" | "shortlistMultiplier">>;
+export type JobChanges = Partial<
+  Pick<
+    Job,
+    | "title"
+    | "department"
+    | "location"
+    | "employmentType"
+    | "description"
+    | "status"
+    | "closingDate"
+    | "responsibilities"
+    | "requiredSkills"
+    | "preferredSkills"
+    | "vacancies"
+    | "shortlistMultiplier"
+  >
+>;
 
 export async function updateJob(id: string, changes: JobChanges): Promise<Job> {
-  const data: { job: SavedJob } = await request({
-    method: "PATCH",
-    body: JSON.stringify(changes),
-  }, "/" + encodeURIComponent(id));
+  const data: { job: SavedJob } = await request(
+    {
+      method: "PATCH",
+      body: JSON.stringify(changes),
+    },
+    "/" + encodeURIComponent(id),
+  );
   return toJob(data.job);
 }
 
@@ -50,16 +74,38 @@ export async function requestJobs(signal: AbortSignal): Promise<Job[]> {
   return data.jobs.map(toJob);
 }
 
-export async function saveDraft(job: Omit<Job, "id" | "applicants">): Promise<Job> {
+export async function saveJob(
+  job: Omit<Job, "id" | "applicants">,
+): Promise<Job> {
   const {
-    title, department, location, employmentType, description, closingDate,
-    responsibilities, requiredSkills, preferredSkills, vacancies, shortlistMultiplier,
+    title,
+    department,
+    location,
+    employmentType,
+    description,
+    closingDate,
+    responsibilities,
+    requiredSkills,
+    preferredSkills,
+    vacancies,
+    shortlistMultiplier,
+    status,
   } = job;
   const data: { job: SavedJob } = await request({
     method: "POST",
     body: JSON.stringify({
-      title, department, location, employmentType, description, closingDate,
-      responsibilities, requiredSkills, preferredSkills, vacancies, shortlistMultiplier,
+      title,
+      department,
+      location,
+      employmentType,
+      description,
+      closingDate,
+      responsibilities,
+      requiredSkills,
+      preferredSkills,
+      vacancies,
+      shortlistMultiplier,
+      status,
     }),
   });
   return toJob(data.job);

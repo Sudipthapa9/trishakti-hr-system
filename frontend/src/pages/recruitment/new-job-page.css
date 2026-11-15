@@ -189,7 +189,21 @@
 }
 /* set spacing between this region and its content. */
 .new-job-form .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
   margin-top: 20px;
+}
+
+.new-job-form .publish-job-button {
+  min-width: 160px;
+  background: #194e65;
+  color: white;
+}
+
+.new-job-form .publish-job-button:hover {
+  background: #133d50;
 }
 /* set text hierarchy and readability. */
 .new-job-form .form-actions button {

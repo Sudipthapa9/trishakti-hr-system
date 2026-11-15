@@ -15,6 +15,7 @@ const createJobSchema = z.object({
   location: z.string().trim().min(1).max(200),
   employmentType: z.string().trim().min(1).max(100),
   description: z.string().trim().min(1).max(10000),
+  status: z.enum(["Draft", "Open"]).optional(),
   closingDate: z.union([z.string().date(), z.literal("")]).optional(),
   responsibilities: z.string().trim().max(10000).optional(),
   requiredSkills: skillsSchema.optional(),

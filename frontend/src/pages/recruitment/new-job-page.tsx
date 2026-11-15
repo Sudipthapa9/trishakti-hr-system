@@ -3,7 +3,7 @@ import { FormField } from "@/components/shared/forms/form-field";
 import { NativeSelect } from "@/components/ui/native-select";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
- * Collects job details and weighted skill settings, then saves a draft through the jobs API.
+ * Collects job details and saves a draft or publishes a new job through the jobs API.
  */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,15 @@ import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
 import type { Job } from "@/types/hr";
-import { BriefcaseBusiness, FileText, Plus, Sparkles, X } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import {
+  BriefcaseBusiness,
+  FileText,
+  Plus,
+  Send,
+  Sparkles,
+  X,
+} from "lucide-react";
+import { useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import "./new-job-page.css";
 // Define Skill so callers and implementations agree on the required data shape.
@@ -109,6 +116,10 @@ export function NewJobPage({
 }) {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitAction, setSubmitAction] = useState<"draft" | "publish">(
+    "draft",
+  );
+  const busy = useRef(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   // Keep required in component state; updates trigger a render.
   const [required, setRequired] = useState<Skill[]>(
@@ -121,11 +132,20 @@ export function NewJobPage({
   const [preferred, setPreferred] = useState<Skill[]>(
     initialJob?.preferredSkills ?? [{ name: "Docker/Kubernetes", weight: 2 }],
   );
-  // Await the saved draft before navigating; keep entered values on failure.
+  // Use the clicked submit button; pressing Enter defaults to saving a draft.
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (busy.current) return;
+    const submitter = (e.nativeEvent as SubmitEvent).submitter;
+    const action =
+      !initialJob &&
+      submitter instanceof HTMLButtonElement &&
+      submitter.value === "publish"
+        ? "publish"
+        : "draft";
     const d = new FormData(e.currentTarget);
+    busy.current = true;
+    setSubmitAction(action);
     setIsSubmitting(true);
     setSubmitError(null);
     try {
@@ -141,14 +161,19 @@ export function NewJobPage({
         preferredSkills: preferred,
         vacancies: Number(d.get("vacancies")),
         shortlistMultiplier: Number(d.get("shortlistMultiplier")),
-        status: "Draft",
+        status: action === "publish" ? "Open" : "Draft",
       });
       navigate("/jobs");
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Could not save the draft.",
+        error instanceof Error
+          ? error.message
+          : action === "publish"
+            ? "Could not publish the job."
+            : "Could not save the job.",
       );
     } finally {
+      busy.current = false;
       setIsSubmitting(false);
     }
   }
@@ -354,19 +379,33 @@ export function NewJobPage({
                 value="draft"
                 variant="outline"
               >
-                {isSubmitting
+                {isSubmitting && submitAction === "draft"
                   ? "Saving…"
                   : initialJob
                     ? "Save Changes"
                     : "Save Draft"}
               </Button>
+              {!initialJob && (
+                <Button
+                  type="submit"
+                  name="action"
+                  value="publish"
+                  className="publish-job-button"
+                >
+                  <Send aria-hidden="true" size={18} />
+                  {isSubmitting && submitAction === "publish"
+                    ? "Publishing…"
+                    : "Publish Job"}
+                </Button>
+              )}
             </div>
           </fieldset>
         </form>
         <p className="demo-note">
-          New jobs are saved as drafts. Publish them from the Jobs list when
-          ready. Screening settings are stored for later use by the screening
-          service.
+          {initialJob
+            ? "Saving changes preserves this job's current status."
+            : "Save a draft to finish later, or publish the job to make it available on Careers."}{" "}
+          Screening settings are stored for later use by the screening service.
         </p>
       </div>
     </div>

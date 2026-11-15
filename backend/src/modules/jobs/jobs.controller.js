@@ -31,6 +31,7 @@ async function createJob(req, res, next) {
     closingDate = "", responsibilities = "",
     requiredSkills = [], preferredSkills = [],
     vacancies = 1, shortlistMultiplier = 5,
+    status = "Draft",
   } = req.body;
   try {
     const result = await pool.query(`
@@ -39,13 +40,13 @@ async function createJob(req, res, next) {
         closing_date, responsibilities, required_skills, preferred_skills,
         vacancies, shortlist_multiplier
       )
-      VALUES ($1, $2, $3, $4, $5, 'Draft', $6, $7, $8::jsonb, $9::jsonb, $10, $11)
+      VALUES ($1, $2, $3, $4, $5, $12, $6, $7, $8::jsonb, $9::jsonb, $10, $11)
       RETURNING ${jobColumns}
     `, [
       title, department, location, employmentType, description,
       closingDate || null, responsibilities,
       JSON.stringify(requiredSkills), JSON.stringify(preferredSkills),
-      vacancies, shortlistMultiplier,
+      vacancies, shortlistMultiplier, status,
     ]);
     res.status(201).json({ job: result.rows[0] });
   } catch (error) {
