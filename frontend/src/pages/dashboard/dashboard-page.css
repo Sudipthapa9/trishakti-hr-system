@@ -99,16 +99,9 @@
   letter-spacing: -0.05em;
 }
 /* apply the intended surface or text colors; control dimensions. */
-.summary-sparkline {
-  flex-shrink: 0;
-  width: 64px;
-  height: 32px;
-  color: #82998e;
-}
+
 /* apply the intended surface or text colors. */
-.summary-card:nth-child(3) .summary-sparkline {
-  color: #c88388;
-}
+
 /* set text hierarchy and readability; apply the intended surface or text colors. */
 .summary-label {
   font-size: 12px;
@@ -368,9 +361,7 @@
     gap: 10px;
   }
   /* Viewport-specific adjustment: control dimensions. */
-  .summary-sparkline {
-    width: 40px;
-  }
+
   /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
   .table-pagination {
     flex-wrap: wrap;
@@ -406,9 +397,7 @@
     font-size: 11px;
   }
   /* Viewport-specific adjustment: control dimensions. */
-  .summary-sparkline {
-    width: 40px;
-  }
+
   /* Viewport-specific adjustment: set spacing between this region and its content. */
   .summary-value {
     gap: 8px;

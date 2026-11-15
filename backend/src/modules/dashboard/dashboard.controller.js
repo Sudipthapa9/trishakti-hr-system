@@ -10,20 +10,8 @@ async function getDashboard(req, res, next) {
   try {
     // One SQL statement gives totals and panels the same database snapshot.
     const result = await pool.query(
-      `WITH application_days AS (
-        SELECT d.day::date AS day, count(a.id)::int AS count
-        FROM generate_series((now() AT TIME ZONE 'Asia/Kathmandu')::date-13,
-          (now() AT TIME ZONE 'Asia/Kathmandu')::date, interval '1 day') d(day)
-        LEFT JOIN public.applications a ON (a.created_at AT TIME ZONE 'Asia/Kathmandu')::date=d.day::date
-        GROUP BY d.day
-      )
-      SELECT
+      `SELECT
       (SELECT count(*)::int FROM public.applications) AS "totalApplications",
-      (SELECT jsonb_build_object(
-        'current', sum(count) FILTER (WHERE day >= (now() AT TIME ZONE 'Asia/Kathmandu')::date-6),
-        'previous', sum(count) FILTER (WHERE day < (now() AT TIME ZONE 'Asia/Kathmandu')::date-6),
-        'dailyCounts', jsonb_agg(count ORDER BY day) FILTER (WHERE day >= (now() AT TIME ZONE 'Asia/Kathmandu')::date-6)
-      ) FROM application_days) AS "applicationTrend",
       (SELECT count(*)::int FROM public.jobs WHERE status='Open' AND (closing_date IS NULL OR closing_date >= (now() AT TIME ZONE 'Asia/Kathmandu')::date)) AS "openJobs",
       (SELECT count(*)::int FROM public.interviews WHERE status='Scheduled' AND starts_at>=now()) AS "upcomingInterviews",
       (SELECT count(*)::int FROM public.onboarding WHERE completed_at IS NULL) AS "pendingOnboarding",

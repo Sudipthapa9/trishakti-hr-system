@@ -12,10 +12,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SummaryCard } from "@/components/HR/summary-card";
-import {
-  applicationTrendPresentation,
-  type ApplicationTrend,
-} from "./application-trend";
 import { hrRequest } from "@/data/hr-api";
 import {
   Table,
@@ -41,7 +37,6 @@ const ApplicationVolumeChart = lazy(() =>
 
 type Dashboard = {
   totalApplications: number;
-  applicationTrend?: ApplicationTrend;
   openJobs: number;
   upcomingInterviews: number;
   pendingOnboarding: number;
@@ -77,9 +72,6 @@ export function DashboardPage() {
     return () => controller.abort();
   }, [days, revision]);
   const [recentPage, setRecentPage] = useState(0);
-  const applicationComparison = data?.applicationTrend
-    ? applicationTrendPresentation(data.applicationTrend)
-    : undefined;
   const currentRecentPage = Math.min(
     recentPage,
     Math.max(0, Math.ceil((data?.recent.length ?? 0) / 4) - 1),
@@ -126,52 +118,50 @@ export function DashboardPage() {
         {!loading && !error && data && (
           <>
             <section className="metric-grid" aria-label="Saved HR totals">
-              {(
-                [
-                  ["Total Applications", data.totalApplications, FileText],
-                  ["Open Jobs", data.openJobs, BriefcaseBusiness],
-                  [
-                    "Upcoming Interviews",
-                    data.upcomingInterviews,
-                    CalendarDays,
-                  ],
-                  [
-                    "Pending Onboarding",
-                    data.pendingOnboarding,
-                    UserRoundCheck,
-                  ],
-                ] as const
-              ).map(([label, value, icon]) => (
+              {[
+                {
+                  label: "Total Applications",
+                  value: data.totalApplications,
+                  icon: FileText,
+                  badgeLabel: "All time",
+                  badgeTone: "neutral" as const,
+                },
+                {
+                  label: "Open Jobs",
+                  value: data.openJobs,
+                  icon: BriefcaseBusiness,
+                  badgeLabel: data.openJobs > 0 ? "Active" : "None open",
+                  badgeTone: "neutral" as const,
+                },
+                {
+                  label: "Upcoming Interviews",
+                  value: data.upcomingInterviews,
+                  icon: CalendarDays,
+                  badgeLabel:
+                    data.upcomingInterviews > 0
+                      ? "Action needed"
+                      : "None scheduled",
+                  badgeTone:
+                    data.upcomingInterviews > 0
+                      ? ("danger" as const)
+                      : ("neutral" as const),
+                },
+                {
+                  label: "Pending Onboarding",
+                  value: data.pendingOnboarding,
+                  icon: UserRoundCheck,
+                  badgeLabel:
+                    data.pendingOnboarding > 0 ? "Pending" : "Up to date",
+                  badgeTone:
+                    data.pendingOnboarding > 0
+                      ? ("warning" as const)
+                      : ("neutral" as const),
+                },
+              ].map((card) => (
                 <SummaryCard
-                  key={label}
-                  label={label}
-                  value={String(value)}
-                  icon={icon}
-                  badgeLabel={
-                    label === "Total Applications"
-                      ? applicationComparison?.badgeLabel
-                      : undefined
-                  }
-                  badgeTone={
-                    label === "Total Applications"
-                      ? applicationComparison?.badgeTone
-                      : undefined
-                  }
-                  badgeDescription={
-                    label === "Total Applications"
-                      ? applicationComparison?.description
-                      : undefined
-                  }
-                  trendValues={
-                    label === "Total Applications"
-                      ? data.applicationTrend?.dailyCounts
-                      : undefined
-                  }
-                  trendDescription={
-                    label === "Total Applications"
-                      ? applicationComparison?.chartDescription
-                      : undefined
-                  }
+                  key={card.label}
+                  {...card}
+                  value={String(card.value)}
                 />
               ))}
             </section>
