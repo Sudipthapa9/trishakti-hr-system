@@ -11,7 +11,7 @@ export function ApplicationVolumeChart({
   return (
     <ChartContainer
       role="img"
-      aria-label={`Daily application counts for the last ${days} days in Nepal time. Exact values are available in View daily counts.`}
+      aria-label={`Daily application counts for the last ${days} days in Nepal time`}
     >
       <AreaChart
         accessibilityLayer
