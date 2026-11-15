@@ -1,3 +1,20 @@
+import { Person } from "@/components/shared/data-display/person";
+import { FilterToolbar } from "@/components/shared/forms/filter-toolbar";
+import { DataState } from "@/components/shared/feedback/data-state";
+import { PageHeader } from "@/components/Layout/page-header";
+import { Label } from "@/components/ui/label";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
+import {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 /**
  * Lists saved candidate identities and their application counts for HR.
  */
@@ -20,14 +37,22 @@ export function CandidatesPage() {
     const controller = new AbortController();
     async function loadCandidates() {
       try {
-        const data = await requestCandidates(query.search, query.page, controller.signal);
+        const data = await requestCandidates(
+          query.search,
+          query.page,
+          controller.signal,
+        );
         if (!controller.signal.aborted) {
           setResult(data);
           setLoadError(null);
         }
       } catch (error) {
         if (!controller.signal.aborted) {
-          setLoadError(error instanceof Error ? error.message : "Could not load candidates.");
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : "Could not load candidates.",
+          );
         }
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);
@@ -51,58 +76,100 @@ export function CandidatesPage() {
   return (
     <div className="page-candidates-candidates-page">
       <div className="page-stack">
-        <header className="page-heading">
-          <div>
-            <h1>Candidates</h1>
-            <p>People who have submitted applications to your jobs.</p>
-          </div>
-        </header>
-        <form className="candidate-list-search" onSubmit={runSearch}>
-          <label htmlFor="candidate-search" className="sr-only">Search candidates</label>
-          <Input id="candidate-search" value={search} maxLength={200}
-            placeholder="Search by name, email, or phone"
-            onChange={(event) => setSearch(event.target.value)} />
-          <Button type="submit" disabled={isLoading}>
-            <Search size={16} /> Search
-          </Button>
-        </form>
+        <PageHeader
+          className="page-heading"
+          title={<>Candidates</>}
+          description={
+            <>People who have submitted applications to your jobs.</>
+          }
+        />
+        <FilterToolbar asChild>
+          <form className="candidate-list-search" onSubmit={runSearch}>
+            <Label htmlFor="candidate-search" className="sr-only">
+              Search candidates
+            </Label>
+            <Input
+              id="candidate-search"
+              value={search}
+              maxLength={200}
+              placeholder="Search by name, email, or phone"
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            <Button type="submit" disabled={isLoading}>
+              <Search size={16} /> Search
+            </Button>
+          </form>
+        </FilterToolbar>
         {isLoading ? (
-          <p role="status">Loading candidates…</p>
+          <FeedbackMessage role="status">Loading candidates…</FeedbackMessage>
         ) : loadError ? (
           <div role="alert">
             <p>{loadError}</p>
-            <Button variant="outline" onClick={() => {
-              setIsLoading(true);
-              setQuery({ ...query });
-            }}>Try again</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsLoading(true);
+                setQuery({ ...query });
+              }}
+            >
+              Try again
+            </Button>
           </div>
         ) : result?.candidates.length ? (
           <div className="candidate-list-scroll">
-            <table className="candidate-list-table">
-              <caption className="sr-only">Saved candidates and application counts</caption>
-              <thead>
-                <tr><th scope="col">Candidate</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Applications</th><th scope="col">Added</th></tr>
-              </thead>
-              <tbody>
+            <Table className="candidate-list-table">
+              <TableCaption className="sr-only">
+                Saved candidates and application counts
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead scope="col">Candidate</TableHead>
+                  <TableHead scope="col">Email</TableHead>
+                  <TableHead scope="col">Phone</TableHead>
+                  <TableHead scope="col">Applications</TableHead>
+                  <TableHead scope="col">Added</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {result.candidates.map((candidate) => (
-                  <tr key={candidate.id}>
-                    <td><Link className="underline" to={"/candidates/" + candidate.id}>{candidate.fullName}</Link></td>
-                    <td>{candidate.email}</td>
-                    <td>{candidate.phone}</td>
-                    <td>{candidate.applicationCount}</td>
-                    <td><time dateTime={candidate.createdAt}>{new Date(candidate.createdAt).toLocaleDateString()}</time></td>
-                  </tr>
+                  <TableRow key={candidate.id}>
+                    <TableCell>
+                      <Link
+                        className="underline"
+                        to={"/candidates/" + candidate.id}
+                      >
+                        <Person name={candidate.fullName} />
+                      </Link>
+                    </TableCell>
+                    <TableCell>{candidate.email}</TableCell>
+                    <TableCell>{candidate.phone}</TableCell>
+                    <TableCell>{candidate.applicationCount}</TableCell>
+                    <TableCell>
+                      <time dateTime={candidate.createdAt}>
+                        {new Date(candidate.createdAt).toLocaleDateString()}
+                      </time>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         ) : (
-          <p>{query.search ? "No candidates match your search." : "No candidates have applied yet."}</p>
+          <DataState kind="empty">
+            {query.search
+              ? "No candidates match your search."
+              : "No candidates have applied yet."}
+          </DataState>
         )}
         <nav className="candidate-list-pagination" aria-label="Candidate pages">
-          <Button variant="outline" disabled={isLoading || query.page === 1} onClick={() => changePage(query.page - 1)}>Previous</Button>
-          <span>Page {query.page}</span>
-          <Button variant="outline" disabled={isLoading || loadError !== null || !result?.hasMore} onClick={() => changePage(query.page + 1)}>Next</Button>
+          <PaginationControls
+            previousDisabled={isLoading || query.page === 1}
+            nextDisabled={isLoading || loadError !== null || !result?.hasMore}
+            onPrevious={() => changePage(query.page - 1)}
+            onNext={() => changePage(query.page + 1)}
+          >
+            <span>Page {query.page}</span>
+          </PaginationControls>
         </nav>
       </div>
     </div>

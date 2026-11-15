@@ -1,5 +1,5 @@
 /**
- * Displays one dashboard metric with optional status feedback and an illustrative miniature trend graphic.
+ * Displays a dashboard total with an optional status badge.
  */
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
@@ -9,22 +9,22 @@ import type { LucideIcon } from "lucide-react";
 type SummaryCardProps = {
   label: string;
   value: string;
-  change: string;
+  change?: string;
   badgeLabel?: string;
   badgeTone?: "default" | "success" | "warning" | "neutral" | "danger";
   icon?: LucideIcon;
-  showTrend?: boolean;
+  badgeDescription?: string;
 };
 
-// Displays one dashboard metric with optional status feedback and an illustrative miniature trend graphic.
+// Keep summary totals simple; the main dashboard chart handles activity data.
 export function SummaryCard({
   label,
   value,
-  change,
+  change = "",
   badgeLabel,
   badgeTone = "default",
   icon: Icon,
-  showTrend = true,
+  badgeDescription,
 }: SummaryCardProps) {
   return (
     <Card className="summary-card rounded-2xl p-0">
@@ -36,25 +36,25 @@ export function SummaryCard({
               <Icon aria-hidden="true" size={20} />
             </span>
           ) : null}
-          {badgeLabel ? <Badge variant={badgeTone}>{badgeLabel}</Badge> : null}
+          {badgeLabel ? (
+            <Badge
+              variant={badgeTone}
+              title={badgeDescription}
+              aria-label={
+                badgeDescription
+                  ? `${badgeLabel}. ${badgeDescription}`
+                  : undefined
+              }
+            >
+              {badgeLabel}
+            </Badge>
+          ) : null}
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="summary-label">{label}</span>
         </div>
         <div className="summary-value">
           <strong>{value}</strong>
-          {showTrend && <svg
-            viewBox="0 0 70 34"
-            className="summary-sparkline"
-            aria-hidden="true"
-          >
-            <path
-              d="M1 26 Q8 13 16 22 T28 20 T40 15 T52 11 T68 5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            />
-          </svg>}
         </div>
         {change ? (
           <div className="mt-2 text-sm text-[var(--color-text-secondary)]">

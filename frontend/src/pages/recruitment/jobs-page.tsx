@@ -1,3 +1,19 @@
+import { FilterToolbar } from "@/components/shared/forms/filter-toolbar";
+import { StatusBadge } from "@/components/shared/data-display/status-badge";
+import { PageHeader } from "@/components/Layout/page-header";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+
+import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 /**
  * Lists database jobs and saves edits and status changes through the workspace.
  */
@@ -6,7 +22,7 @@ import { Fragment, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Input } from "@/components/ui/input";
 import type { Job, JobStatus } from "@/types/hr";
 // Lists database jobs and saves edits and status changes through the workspace.
@@ -32,7 +48,9 @@ export function JobsPage({
       await action();
       setFeedback("Job saved.");
     } catch (error) {
-      setActionError(error instanceof Error ? error.message : "Could not save this job.");
+      setActionError(
+        error instanceof Error ? error.message : "Could not save this job.",
+      );
     } finally {
       busy.current = false;
       setIsSaving(false);
@@ -65,23 +83,30 @@ export function JobsPage({
   const visible = filtered.slice(page * 8, page * 8 + 8);
   return (
     <div className="page-recruitment-jobs-page">
-      {actionError && <p role="alert">{actionError}</p>}
-      {feedback && <p role="status">{feedback}</p>}
+      {actionError && (
+        <FeedbackMessage role="alert">{actionError}</FeedbackMessage>
+      )}
+      {feedback && <FeedbackMessage role="status">{feedback}</FeedbackMessage>}
       <div className="page-stack">
-        <div className="page-heading">
-          <div>
-            <h1>Job Management</h1>
-            <p>Overview of open requisitions, drafts, and closed positions.</p>
-          </div>
-          <Button asChild>
-            <Link to="/jobs/new">
-              <Plus />
-              Post New Job
-            </Link>
-          </Button>
-        </div>
-        <div className="jobs-toolbar">
-          <label>
+        <PageHeader
+          className="page-heading"
+          title={<>Job Management</>}
+          description={
+            <>Overview of open requisitions, drafts, and closed positions.</>
+          }
+          action={
+            <>
+              <Button asChild>
+                <Link to="/jobs/new">
+                  <Plus />
+                  Post New Job
+                </Link>
+              </Button>
+            </>
+          }
+        />
+        <FilterToolbar className="jobs-toolbar">
+          <Label>
             <Search size={17} />
             <Input
               aria-label="Search jobs"
@@ -92,8 +117,8 @@ export function JobsPage({
                 setPage(0);
               }}
             />
-          </label>
-          <select
+          </Label>
+          <NativeSelect
             className="form-select"
             aria-label="Filter departments"
             value={department}
@@ -106,8 +131,8 @@ export function JobsPage({
             {[...new Set(jobs.map((j) => j.department))].map((v) => (
               <option key={v}>{v}</option>
             ))}
-          </select>
-          <select
+          </NativeSelect>
+          <NativeSelect
             className="form-select"
             aria-label="Filter job status"
             value={status}
@@ -120,13 +145,13 @@ export function JobsPage({
             <option value="Open">Active</option>
             <option value="Draft">Draft</option>
             <option value="Archived">Closed</option>
-          </select>
-        </div>
+          </NativeSelect>
+        </FilterToolbar>
         <div className="jobs-table-wrap">
           {/* Use semantic rows and columns for the tabular records. */}
-          <table className="jobs-table">
-            <thead>
-              <tr>
+          <Table className="jobs-table">
+            <TableHeader>
+              <TableRow>
                 {[
                   "Job Title",
                   "Department",
@@ -135,15 +160,15 @@ export function JobsPage({
                   "Applicants",
                   "Actions",
                 ].map((h) => (
-                  <th key={h}>{h}</th>
+                  <TableHead key={h}>{h}</TableHead>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {visible.map((j) => (
                 <Fragment key={j.id}>
-                  <tr>
-                    <td>
+                  <TableRow>
+                    <TableCell>
                       <strong>{j.title}</strong>
                       <small>
                         {j.id.startsWith("job-")
@@ -151,28 +176,22 @@ export function JobsPage({
                             String(41 + jobs.indexOf(j)).padStart(3, "0")
                           : j.id}
                       </small>
-                    </td>
-                    <td>{j.department}</td>
-                    <td>{j.location}</td>
-                    <td>
-                      <Badge
-                        variant={
-                          j.status === "Open"
-                            ? "success"
-                            : j.status === "Draft"
-                              ? "warning"
-                              : "neutral"
-                        }
-                      >
+                    </TableCell>
+                    <TableCell>{j.department}</TableCell>
+                    <TableCell>{j.location}</TableCell>
+                    <TableCell>
+                      <StatusBadge domain="job" status={j.status}>
                         {j.status === "Open"
                           ? "Active"
                           : j.status === "Archived"
                             ? "Closed"
                             : "Draft"}
-                      </Badge>
-                    </td>
-                    <td>{j.status === "Draft" ? "—" : j.applicants}</td>
-                    <td>
+                      </StatusBadge>
+                    </TableCell>
+                    <TableCell>
+                      {j.status === "Draft" ? "—" : j.applicants}
+                    </TableCell>
+                    <TableCell>
                       <Button
                         size="icon-sm"
                         variant="ghost"
@@ -184,45 +203,79 @@ export function JobsPage({
                       >
                         <Pencil size={16} />
                       </Button>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                   {expanded === j.id ? (
-                    <tr className="job-expanded">
-                      <td colSpan={6}>
+                    <TableRow className="job-expanded">
+                      <TableCell colSpan={6}>
                         <h2>{j.title}</h2>
                         <p>
                           {j.description || "No description has been added."}
                         </p>
                         <p>Closing date: {j.closingDate}</p>
                         <fieldset disabled={isSaving}>
-                            <div className="flex flex-wrap gap-2">
-                              <Button asChild size="sm" variant="outline">
-                                <Link to={"/jobs/" + j.id + "/edit"}>Edit job details</Link>
-                              </Button>
+                          <div className="flex flex-wrap gap-2">
+                            <Button asChild size="sm" variant="outline">
+                              <Link to={"/jobs/" + j.id + "/edit"}>
+                                Edit job details
+                              </Link>
+                            </Button>
 
-                              {j.status === "Draft" && (
-                                <Button type="button" size="sm" onClick={() => void runAction(() => onStatusChange(j.id, "Open"))}>
-                                  Publish
-                                </Button>
-                              )}
-                              {j.status === "Open" && (
-                                <Button type="button" size="sm" variant="outline" onClick={() => void runAction(() => onStatusChange(j.id, "Draft"))}>
-                                  Unpublish
-                                </Button>
-                              )}
-                              <Button type="button" variant="outline" size="sm"
-                                onClick={() => void runAction(() => onStatusChange(j.id, j.status === "Archived" ? "Draft" : "Archived"))}>
-                                {j.status === "Archived" ? "Restore as draft" : "Archive"}
+                            {j.status === "Draft" && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  void runAction(() =>
+                                    onStatusChange(j.id, "Open"),
+                                  )
+                                }
+                              >
+                                Publish
                               </Button>
-                            </div>
+                            )}
+                            {j.status === "Open" && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  void runAction(() =>
+                                    onStatusChange(j.id, "Draft"),
+                                  )
+                                }
+                              >
+                                Unpublish
+                              </Button>
+                            )}
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                void runAction(() =>
+                                  onStatusChange(
+                                    j.id,
+                                    j.status === "Archived"
+                                      ? "Draft"
+                                      : "Archived",
+                                  ),
+                                )
+                              }
+                            >
+                              {j.status === "Archived"
+                                ? "Restore as draft"
+                                : "Archive"}
+                            </Button>
+                          </div>
                         </fieldset>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ) : null}
                 </Fragment>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
           {!filtered.length ? (
             <p className="empty-message">
               No jobs match your search. Try changing the filters.
@@ -237,22 +290,12 @@ export function JobsPage({
             entries
           </span>
           <div>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={page === 0}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={(page + 1) * 8 >= filtered.length}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </Button>
+            <PaginationControls
+              previousDisabled={page === 0}
+              nextDisabled={(page + 1) * 8 >= filtered.length}
+              onPrevious={() => setPage((p) => p - 1)}
+              onNext={() => setPage((p) => p + 1)}
+            ></PaginationControls>
           </div>
         </footer>
       </div>

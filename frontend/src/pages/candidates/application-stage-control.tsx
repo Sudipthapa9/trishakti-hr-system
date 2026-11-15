@@ -1,9 +1,22 @@
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { applicationStages, type ApplicationStage } from "@/data/application-stages";
-import { saveApplicationStage, StageConflictError } from "@/data/application-stage-api";
+import {
+  applicationStages,
+  type ApplicationStage,
+} from "@/data/application-stages";
+import {
+  saveApplicationStage,
+  StageConflictError,
+} from "@/data/application-stage-api";
 
-export function ApplicationStageControl({ id, stage, onSaved }: {
+export function ApplicationStageControl({
+  id,
+  stage,
+  onSaved,
+}: {
   id: string;
   stage: ApplicationStage;
   onSaved: (stage: ApplicationStage) => void;
@@ -26,7 +39,9 @@ export function ApplicationStageControl({ id, stage, onSaved }: {
       setSaved(true);
     } catch (error) {
       if (error instanceof StageConflictError) onSaved(error.currentStage);
-      setError(error instanceof Error ? error.message : "Could not save this stage.");
+      setError(
+        error instanceof Error ? error.message : "Could not save this stage.",
+      );
     } finally {
       busy.current = false;
       setIsSaving(false);
@@ -35,22 +50,32 @@ export function ApplicationStageControl({ id, stage, onSaved }: {
 
   return (
     <div className="my-4">
-      <label htmlFor={"stage-" + id}>Application stage</label>
+      <Label htmlFor={"stage-" + id}>Application stage</Label>
       <div className="flex flex-wrap items-center gap-3">
-        <select id={"stage-" + id} className="form-select" value={selected} disabled={isSaving}
+        <NativeSelect
+          id={"stage-" + id}
+          className="form-select"
+          value={selected}
+          disabled={isSaving}
           onChange={(event) => {
             setSelected(event.target.value as ApplicationStage);
             setError(null);
             setSaved(false);
-          }}>
-          {applicationStages.map((value) => <option key={value}>{value}</option>)}
-        </select>
-        <Button disabled={isSaving || selected === stage} onClick={() => void save()}>
+          }}
+        >
+          {applicationStages.map((value) => (
+            <option key={value}>{value}</option>
+          ))}
+        </NativeSelect>
+        <Button
+          disabled={isSaving || selected === stage}
+          onClick={() => void save()}
+        >
           {isSaving ? "Saving…" : "Save stage"}
         </Button>
       </div>
-      {error && <p role="alert">{error}</p>}
-      {saved && <p role="status">Stage saved.</p>}
+      {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+      {saved && <FeedbackMessage role="status">Stage saved.</FeedbackMessage>}
     </div>
   );
 }

@@ -1,59 +1,50 @@
-/* dashboard-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
+/* Dashboard-only layout and feature presentation. UI primitives supply defaults. */
 @reference "../../index.css";
-/* arrange the contained elements. */
+
 .page-dashboard-dashboard-page {
   display: contents;
 }
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.dashboard-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #e2dfd5;
-  border-radius: 20px;
-  padding: 5px 10px;
-  font-size: 11px;
-  white-space: nowrap;
-  background: #f8f3e9;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
+
 .page-dashboard-dashboard-page .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.dashboard-columns {
+
+.page-dashboard-dashboard-page .dashboard-columns {
   display: grid;
   grid-template-columns: minmax(0, 1.85fr) minmax(260px, 1fr);
   gap: 24px;
+  min-width: 0;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.dashboard-primary,
-.dashboard-secondary {
+
+.page-dashboard-dashboard-page .dashboard-primary,
+.page-dashboard-dashboard-page .dashboard-secondary {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
 }
-/* control dimensions. */
-.page-dashboard-dashboard-page .summary-card {
+
+/* Summary totals intentionally have no miniature charts. */
+.page-dashboard-dashboard-page .summary-card[data-slot="card"] {
   min-height: 178px;
-  border-radius: 14px !important;
+  border-radius: 14px;
 }
-/* set spacing between this region and its content. */
+
 .page-dashboard-dashboard-page .summary-card [data-slot="card-content"] {
   padding: 24px;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.summary-card-top {
+
+.page-dashboard-dashboard-page .summary-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
   gap: 4px;
+  margin-bottom: 18px;
 }
-/* arrange the contained elements; apply the intended surface or text colors; control dimensions. */
-.summary-card-icon {
+
+.page-dashboard-dashboard-page .summary-card-icon {
   display: grid;
   place-items: center;
   width: 38px;
@@ -62,354 +53,340 @@
   background: #e6eef1;
   color: #194e65;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
-.summary-card-top [data-slot="badge"] {
+
+.page-dashboard-dashboard-page .summary-card-top [data-slot="badge"] {
   min-height: 18px;
   padding: 2px 6px;
   font-size: 10px;
   line-height: 14px;
 }
-/* apply the intended surface or text colors. */
-.summary-card:nth-child(2) .summary-card-icon {
+
+.page-dashboard-dashboard-page .summary-card:nth-child(2) .summary-card-icon {
   background: #eee5d2;
   color: #6a5b34;
 }
-/* apply the intended surface or text colors. */
-.summary-card:nth-child(3) .summary-card-icon {
+
+.page-dashboard-dashboard-page .summary-card:nth-child(3) .summary-card-icon {
   background: #fbe3e3;
   color: #c45d65;
 }
-/* apply the intended surface or text colors. */
-.summary-card:nth-child(4) .summary-card-icon {
+
+.page-dashboard-dashboard-page .summary-card:nth-child(4) .summary-card-icon {
   background: #e5eee4;
   color: #537464;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.summary-value {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+
+.page-dashboard-dashboard-page .summary-value {
   margin-top: 8px;
 }
-/* set text hierarchy and readability. */
-.summary-value > strong {
+
+.page-dashboard-dashboard-page .summary-value > strong {
   font-size: 36px;
   line-height: 1;
   font-weight: 650;
   letter-spacing: -0.05em;
 }
-/* apply the intended surface or text colors; control dimensions. */
-.summary-sparkline {
-  width: 64px;
-  height: 32px;
-  color: #82998e;
-}
-/* apply the intended surface or text colors. */
-.summary-card:nth-child(3) .summary-sparkline {
-  color: #c88388;
-}
-/* set text hierarchy and readability; apply the intended surface or text colors. */
-.summary-label {
+
+.page-dashboard-dashboard-page .summary-label {
   font-size: 12px;
   color: #7d827c;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.pipeline-panel [data-slot="card-header"],
-.recent-candidates [data-slot="card-header"],
-.upcoming-interviews [data-slot="card-header"] {
+
+.page-dashboard-dashboard-page .dashboard-panel[data-slot="card"] {
+  border-radius: 14px;
+}
+
+.page-dashboard-dashboard-page .pipeline-panel[data-slot="card"] {
+  border-radius: 16px;
+}
+
+.page-dashboard-dashboard-page .pipeline-panel .pipeline-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 24px 18px;
+  border-bottom: none;
+}
+
+.page-dashboard-dashboard-page .pipeline-panel-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.page-dashboard-dashboard-page .pipeline-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b7475;
+}
+
+.page-dashboard-dashboard-page .pipeline-panel .form-select {
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.page-dashboard-dashboard-page .pipeline-panel [data-slot="card-content"] {
+  padding: 18px 24px 30px;
+}
+
+.page-dashboard-dashboard-page .dashboard-daily-counts {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.page-dashboard-dashboard-page .dashboard-daily-counts summary {
+  cursor: pointer;
+}
+
+/* Recent applications use the same class in TSX and CSS. */
+.page-dashboard-dashboard-page .recent-applications-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-}
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.pipeline-panel [data-slot="card-header"] p {
-  font-size: 11px;
-  color: #8a8d87;
-  margin-top: 8px;
-}
-/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
-.pipeline-panel .form-select {
-  font-size: 11px;
-  min-height: 32px;
-  padding: 5px 8px;
-}
-/* arrange the contained elements; control dimensions. */
-.page-dashboard-dashboard-page .pipeline-chart {
-  width: 100%;
-  height: 240px;
-  display: block;
-  overflow: visible;
-}
-/* set spacing between this region and its content. */
-.pipeline-panel [data-slot="card-content"] {
-  padding-top: 18px !important;
-  padding-bottom: 30px !important;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
-.quick-actions [data-slot="card-content"] {
-  display: grid;
-  gap: 16px;
-  padding-top: 16px !important;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
-.quick-action-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
-.quick-action-grid a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-  text-decoration: none;
-  color: #33494f;
-  background: #f3eee5;
-  border: 1px solid #d8d5cd;
-  border-radius: 8px;
-  min-height: 96px;
-  font-size: 11px;
-}
-/* control dimensions. */
-.quick-action-grid svg {
-  width: 24px;
-  height: 24px;
-}
-/* set text hierarchy and readability; control dimensions. */
-.quick-actions [data-slot="button"] {
-  height: 36px;
-  font-size: 11px;
-}
-/* set spacing between this region and its content. */
-.recent-candidates [data-slot="card-header"] {
-  padding: 18px 24px !important;
+  padding: 18px 24px;
   border-bottom: 1px solid #dedfd9;
 }
-/* set text hierarchy and readability; apply the intended surface or text colors. */
-.recent-candidates [data-slot="card-header"] a {
+
+.page-dashboard-dashboard-page .recent-applications h2,
+.page-dashboard-dashboard-page .quick-actions h2,
+.page-dashboard-dashboard-page .upcoming-interviews h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #242927;
+}
+
+.page-dashboard-dashboard-page .recent-applications-header a {
   font-size: 11px;
   color: #194e65;
 }
-/* set spacing between this region and its content. */
-.recent-candidates [data-slot="card-content"] {
-  padding: 0 !important;
+
+.page-dashboard-dashboard-page .recent-applications [data-slot="card-content"] {
+  padding: 0;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
-.recent-candidates th {
-  font-size: 10px;
+
+.page-dashboard-dashboard-page .dashboard-applications-table th {
   height: 36px;
-  padding: 8px 20px;
+  padding: 8px 16px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #faf4e9;
+  color: #6b7475;
 }
-/* set spacing between this region and its content; set text hierarchy and readability. */
-.recent-candidates td {
-  padding: 14px 20px;
+
+.page-dashboard-dashboard-page .dashboard-applications-table td {
+  padding: 10px 16px;
   font-size: 12px;
 }
-/* control dimensions. */
-.recent-candidates .candidate-initials {
-  width: 32px;
-  height: 32px;
-  flex-basis: 32px;
+
+.page-dashboard-dashboard-page .recent-applications [data-slot="avatar"] {
+  width: 28px;
+  height: 28px;
 }
-/* arrange the contained elements. */
-.recent-candidates .candidate-name small {
-  display: none;
+
+.page-dashboard-dashboard-page
+  .recent-applications
+  [data-slot="avatar-fallback"] {
+  font-size: 10px;
 }
-/* set text hierarchy and readability. */
-.recent-candidates .candidate-name strong {
+
+.page-dashboard-dashboard-page .recent-applications td p {
   font-size: 12px;
   font-weight: 500;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
-.recent-candidates [data-slot="badge"] {
+
+.page-dashboard-dashboard-page .recent-applications [data-slot="badge"] {
   min-height: 19px;
-  font-size: 10px;
   padding: 2px 6px;
+  font-size: 10px;
 }
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.table-pagination {
+
+.page-dashboard-dashboard-page .recent-applications-pagination {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  color: #858980;
-  font-size: 11px;
+  padding: 12px 20px;
+  border-top: 1px solid #dedfd9;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
-.table-pagination > div {
+
+.page-dashboard-dashboard-page .quick-actions [data-slot="card-header"],
+.page-dashboard-dashboard-page .upcoming-interviews [data-slot="card-header"] {
+  padding: 18px 20px 0;
+  border-bottom: none;
+}
+
+.page-dashboard-dashboard-page .quick-actions [data-slot="card-content"] {
+  display: grid;
+  gap: 16px;
+  padding: 16px 24px 24px;
+}
+
+.page-dashboard-dashboard-page .quick-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.page-dashboard-dashboard-page .quick-action-grid a {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+  padding: 12px 8px;
   gap: 8px;
+  border: 1px solid #d8d5cd;
+  border-radius: 8px;
+  background: #f3eee5;
+  color: #33494f;
+  font-size: 11px;
+  white-space: normal;
+  text-align: center;
+  text-decoration: none;
 }
-/* set text hierarchy and readability; control dimensions. */
-.table-pagination button {
-  height: 28px;
+
+.page-dashboard-dashboard-page .quick-action-grid svg {
+  width: 20px;
+  height: 20px;
+}
+
+.page-dashboard-dashboard-page .quick-actions [data-slot="button"] {
+  height: 36px;
   font-size: 11px;
 }
-/* set spacing between this region and its content. */
-.dashboard-primary > .table-pagination {
-  margin-top: -16px;
+
+.page-dashboard-dashboard-page .quick-actions-employees,
+.page-dashboard-dashboard-page .view-schedule {
+  text-align: center;
+  font-size: 11px;
+  color: #194e65;
 }
-/* set text hierarchy and readability. */
-.upcoming-interviews [data-slot="card-title"] {
-  font-size: 15px;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
-.upcoming-interview-list {
+
+.page-dashboard-dashboard-page .upcoming-interview-content {
   display: grid;
-  gap: 20px;
+  gap: 16px;
+  padding: 20px 24px 24px;
 }
-/* arrange the contained elements; set spacing between this region and its content; apply the intended surface or text colors. */
-.upcoming-interview {
+
+.page-dashboard-dashboard-page .upcoming-interview-list {
   display: grid;
-  grid-template-columns: 52px 1fr 18px;
+  gap: 18px;
+}
+
+.page-dashboard-dashboard-page .upcoming-interview {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 16px;
   align-items: start;
   gap: 12px;
   text-decoration: none;
   color: #194e65;
 }
-/* set text hierarchy and readability. */
-.upcoming-interview strong {
-  font-size: 13px;
-}
-/* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors. */
-.upcoming-interview strong small {
+
+.page-dashboard-dashboard-page .upcoming-interview time strong {
   display: block;
-  text-align: left;
-  font-size: 9px;
-  color: #888c86;
-  font-weight: 400;
-}
-/* arrange the contained elements; apply the intended surface or text colors. */
-.upcoming-interview span {
-  display: block;
-  color: #353c38;
-}
-/* set text hierarchy and readability. */
-.upcoming-interview b {
   font-size: 12px;
-  font-weight: 500;
 }
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.upcoming-interview span small {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  color: #92968e;
-  margin-top: 6px;
-}
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.view-schedule {
+
+.page-dashboard-dashboard-page .upcoming-interview time small {
   display: block;
-  text-align: center;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #6b7475;
+}
+
+.page-dashboard-dashboard-page .upcoming-interview-person {
+  min-width: 0;
+}
+
+.page-dashboard-dashboard-page .upcoming-interview-person strong {
+  display: block;
+  font-size: 12px;
+  color: #242927;
+  overflow-wrap: anywhere;
+}
+
+.page-dashboard-dashboard-page .upcoming-interview-person p {
+  margin-top: 4px;
   font-size: 11px;
-  color: #194e65;
-  margin-top: 24px;
+  line-height: 1.4;
+  color: #6b7475;
 }
-/* set spacing between this region and its content. */
-.upcoming-interviews [data-slot="card-content"] {
-  padding-top: 20px !important;
+
+.page-dashboard-dashboard-page .view-schedule {
+  display: block;
+  margin-top: 8px;
 }
+
 @media (max-width: 1100px) {
-  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
-  .dashboard-columns {
+  .page-dashboard-dashboard-page .dashboard-columns {
     grid-template-columns: minmax(0, 1.6fr) minmax(230px, 1fr);
     gap: 16px;
   }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
+
   .page-dashboard-dashboard-page .summary-card [data-slot="card-content"] {
     padding: 18px;
   }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .summary-card-top {
+
+  .page-dashboard-dashboard-page .summary-card-top {
     flex-wrap: wrap;
   }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
-  .recent-candidates td,
-  .recent-candidates th {
+
+  .page-dashboard-dashboard-page .dashboard-applications-table th,
+  .page-dashboard-dashboard-page .dashboard-applications-table td {
     padding-inline: 12px;
   }
-  /* Viewport-specific adjustment: set text hierarchy and readability. */
-  .summary-value > strong {
+
+  .page-dashboard-dashboard-page .summary-value > strong {
     font-size: 30px;
   }
 }
+
 @media (max-width: 1000px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
   .page-dashboard-dashboard-page .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .dashboard-columns {
-    grid-template-columns: 1fr;
+
+  .page-dashboard-dashboard-page .dashboard-columns {
+    grid-template-columns: minmax(0, 1fr);
   }
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .dashboard-secondary {
+
+  .page-dashboard-dashboard-page .dashboard-secondary {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
 }
-@media (max-width: 600px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .dashboard-secondary {
-    grid-template-columns: 1fr;
-  }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .dashboard-date {
-    align-self: flex-start;
-  }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
-  .page-dashboard-dashboard-page .metric-grid {
-    gap: 10px;
-  }
-  /* Viewport-specific adjustment: control dimensions. */
-  .summary-sparkline {
-    width: 40px;
-  }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .table-pagination {
-    flex-wrap: wrap;
-  }
-  /* Viewport-specific adjustment: control dimensions. */
-  .page-dashboard-dashboard-page .summary-card {
-    min-height: 150px;
-  }
-}
 
-/* define the visual boundary or interaction treatment. */
-
-.dashboard-columns,
-.dashboard-primary,
-.dashboard-secondary {
-  min-width: 0;
-}
 @media (max-width: 600px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
   .page-dashboard-dashboard-page > .page-stack {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .pipeline-panel [data-slot="card-header"] {
-    flex-wrap: wrap;
+
+  .page-dashboard-dashboard-page .dashboard-secondary {
+    grid-template-columns: minmax(0, 1fr);
   }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
+
+  .page-dashboard-dashboard-page .metric-grid {
+    gap: 10px;
+  }
+
+  .page-dashboard-dashboard-page .summary-card[data-slot="card"] {
+    min-height: 150px;
+  }
+
   .page-dashboard-dashboard-page .summary-card [data-slot="card-content"] {
     padding: 16px;
   }
-  /* Viewport-specific adjustment: set text hierarchy and readability. */
-  .summary-label {
+
+  .page-dashboard-dashboard-page .summary-label {
     font-size: 11px;
-  }
-  /* Viewport-specific adjustment: control dimensions. */
-  .summary-sparkline {
-    width: 40px;
-  }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
-  .summary-value {
-    gap: 8px;
   }
 }

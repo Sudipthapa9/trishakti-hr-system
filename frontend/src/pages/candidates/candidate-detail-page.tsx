@@ -1,8 +1,11 @@
+import { PageHeader } from "@/components/Layout/page-header";
+import { Card } from "@/components/ui/card";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import "./candidates-page.css";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/data-display/status-badge";
 import { requestCandidate, type CandidateDetail } from "@/data/candidates-api";
 import { ApplicationStageControl } from "./application-stage-control";
 import { CandidateProfileEditor } from "./candidate-profile-editor";
@@ -22,14 +25,21 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
     const controller = new AbortController();
     async function load() {
       try {
-        const data = await requestCandidate(candidateId ?? "", controller.signal);
+        const data = await requestCandidate(
+          candidateId ?? "",
+          controller.signal,
+        );
         if (!controller.signal.aborted) {
           setCandidate(data.candidate);
           setLoadError(null);
         }
       } catch (error) {
         if (!controller.signal.aborted) {
-          setLoadError(error instanceof Error ? error.message : "Could not load candidate.");
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : "Could not load candidate.",
+          );
         }
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);
@@ -41,54 +51,110 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
 
   return (
     <div className="page-stack">
-      <Link className="underline" to="/candidates">Back to candidates</Link>
-      {isLoading ? <p role="status">Loading candidate…</p> : loadError ? (
+      <Link className="underline" to="/candidates">
+        Back to candidates
+      </Link>
+      {isLoading ? (
+        <FeedbackMessage role="status">Loading candidate…</FeedbackMessage>
+      ) : loadError ? (
         <div role="alert">
           <p>{loadError}</p>
-          <Button variant="outline" onClick={() => {
-            setIsLoading(true);
-            setAttempt((value) => value + 1);
-          }}>Try again</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsLoading(true);
+              setAttempt((value) => value + 1);
+            }}
+          >
+            Try again
+          </Button>
         </div>
       ) : candidate ? (
         <>
-          <header className="page-heading">
-            <div>
-              <h1>{candidate.fullName}</h1>
-              <p>{candidate.email} · {candidate.phone}</p>
-            </div>
-          </header>
-          <CandidateProfileEditor candidate={candidate} onSaved={(profile) => {
-            setCandidate((current) => current && ({ ...current, ...profile }));
-          }} />
+          <PageHeader
+            className="page-heading"
+            title={<>{candidate.fullName}</>}
+            description={
+              <>
+                {candidate.email} · {candidate.phone}
+              </>
+            }
+          />
+          <CandidateProfileEditor
+            candidate={candidate}
+            onSaved={(profile) => {
+              setCandidate((current) => current && { ...current, ...profile });
+            }}
+          />
           <h2>Applications ({candidate.applications.length})</h2>
-          {!candidate.applications.length ? <p>This candidate has no applications.</p> : (
+          {!candidate.applications.length ? (
+            <p>This candidate has no applications.</p>
+          ) : (
             <div className="grid gap-4">
               {candidate.applications.map((application) => (
-                <article className="rounded-lg border bg-white p-5" key={application.id}>
-                  <h3>{application.jobTitle}</h3>
-                  <p>Job status: {application.jobStatus}</p>
-                  <Badge variant="neutral">{application.stage}</Badge>
-                  <ApplicationStageControl id={application.id} stage={application.stage} onSaved={(stage) => {
-                    setCandidate((current) => current && ({
-                      ...current,
-                      applications: current.applications.map((record) =>
-                        record.id === application.id ? { ...record, stage } : record),
-                    }));
-                  }} />
-                  <p>Submitted {new Date(application.createdAt).toLocaleString()}</p>
-                  <p>Reference TSH-{application.id}</p>
-                  <details className="my-3">
-                    <summary>Submitted contact details and cover letter</summary>
-                    <p>{application.fullName} · {application.email} · {application.phone}</p>
-                    <p className="whitespace-pre-line">{application.coverLetter || "No cover letter provided."}</p>
-                  </details>
-                  <p>{application.hasResume ? "CV received." : "No CV available."}</p>
-                </article>
+                <Card
+                  asChild
+                  className="gap-4 py-0 ring-0"
+                  key={application.id}
+                >
+                  <article
+                    className="rounded-lg border bg-white p-5"
+                    key={application.id}
+                  >
+                    <h3>{application.jobTitle}</h3>
+                    <p>Job status: {application.jobStatus}</p>
+                    <StatusBadge
+                      domain="application"
+                      status={application.stage}
+                    />
+                    <ApplicationStageControl
+                      id={application.id}
+                      stage={application.stage}
+                      onSaved={(stage) => {
+                        setCandidate(
+                          (current) =>
+                            current && {
+                              ...current,
+                              applications: current.applications.map(
+                                (record) =>
+                                  record.id === application.id
+                                    ? { ...record, stage }
+                                    : record,
+                              ),
+                            },
+                        );
+                      }}
+                    />
+                    <p>
+                      Submitted{" "}
+                      {new Date(application.createdAt).toLocaleString()}
+                    </p>
+                    <p>Reference TSH-{application.id}</p>
+                    <details className="my-3">
+                      <summary>
+                        Submitted contact details and cover letter
+                      </summary>
+                      <p>
+                        {application.fullName} · {application.email} ·{" "}
+                        {application.phone}
+                      </p>
+                      <p className="whitespace-pre-line">
+                        {application.coverLetter || "No cover letter provided."}
+                      </p>
+                    </details>
+                    <p>
+                      {application.hasResume
+                        ? "CV received."
+                        : "No CV available."}
+                    </p>
+                  </article>
+                </Card>
               ))}
             </div>
           )}
-          <Button asChild variant="outline"><Link to="/applications">Review applications and CVs</Link></Button>
+          <Button asChild variant="outline">
+            <Link to="/applications">Review applications and CVs</Link>
+          </Button>
         </>
       ) : null}
     </div>

@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 /**
  * Presents authentication entry actions; Keycloak owns credential entry, registration, and recovery.
  */
@@ -6,6 +7,7 @@ import { BrandMark } from "@/pages/auth/brand-mark";
 import "./auth-landing.css";
 
 import keycloak from "../../keycloak";
+import { useAuth } from "@/auth/auth-context";
 
 // Return the application entry URL used after Keycloak finishes an authentication action.
 function getAuthRedirectUri() {
@@ -14,6 +16,7 @@ function getAuthRedirectUri() {
 
 // Presents authentication entry actions; Keycloak owns credential entry, registration, and recovery.
 export function AuthLanding() {
+  const { authError } = useAuth();
   return (
     <div className="page-auth-auth-landing">
       {/* Main screen content; shared navigation is composed separately. */}
@@ -61,6 +64,9 @@ export function AuthLanding() {
               Use your organization account to continue.
             </p>
             <div className="mt-8 space-y-3">
+              {authError && (
+                <FeedbackMessage role="alert">{authError}</FeedbackMessage>
+              )}
               <Button
                 className="w-full"
                 onClick={() =>
@@ -78,7 +84,8 @@ export function AuthLanding() {
               >
                 Create an account
               </Button>
-              <button
+              <Button
+                variant="link"
                 type="button"
                 className="mt-2 block w-full text-center text-sm font-semibold text-[var(--color-action-primary)]"
                 onClick={() =>
@@ -86,11 +93,12 @@ export function AuthLanding() {
                 }
               >
                 Forgot your password?
-              </button>
+              </Button>
             </div>
             <p className="mt-8 text-center text-xs leading-6 text-[var(--color-text-secondary)]">
-              Password recovery is handled securely by Keycloak. Select the
-              forgot password link on the sign-in screen.
+              New accounts need an assigned HR role before they can access the
+              workspace. Password recovery is handled securely by Keycloak.
+              Select the forgot password link on the sign-in screen.
             </p>
           </div>
         </section>

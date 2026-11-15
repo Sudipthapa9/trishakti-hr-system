@@ -1,3 +1,4 @@
+import { Label } from "@/components/ui/label";
 /**
  * Renders the shared workspace sidebar and header around page content, including responsive navigation.
  */
@@ -149,7 +150,7 @@ export function AppShell({
             !pathname.startsWith("/interviews") ? (
               <strong className="workspace-header-title">{title}</strong>
             ) : null}
-            <label className="workspace-search">
+            <Label className="workspace-search">
               <Search size={16} />
               <Input
                 aria-label="Search workspace"
@@ -161,7 +162,7 @@ export function AppShell({
                       : "Search across Trikshati HR..."
                 }
               />
-            </label>
+            </Label>
             <div className="workspace-header-actions">
               <details>
                 <summary aria-label="Notifications">

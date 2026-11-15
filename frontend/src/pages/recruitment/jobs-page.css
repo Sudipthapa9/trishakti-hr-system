@@ -74,6 +74,7 @@
 }
 /* apply the intended surface or text colors. */
 .jobs-table td:first-child {
+  white-space: normal;
   max-width: 240px;
   color: #323c2b;
 }
@@ -96,6 +97,7 @@
 }
 /* set spacing between this region and its content; apply the intended surface or text colors. */
 .jobs-table .job-expanded td {
+  white-space: normal;
   background: #faf7ee;
   padding: 24px;
 }
@@ -136,5 +138,28 @@
   /* Viewport-specific adjustment: set spacing between this region and its content. */
   .jobs-table td {
     padding-block: 20px;
+  }
+}
+
+/* Jobs owns these controls; they previously leaked in from dashboard CSS. */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #858980;
+  font-size: 11px;
+}
+.table-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+.table-pagination button {
+  height: 28px;
+  font-size: 11px;
+}
+@media (max-width: 600px) {
+  .table-pagination {
+    flex-wrap: wrap;
   }
 }
