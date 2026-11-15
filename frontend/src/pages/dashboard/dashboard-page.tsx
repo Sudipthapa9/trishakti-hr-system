@@ -12,6 +12,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SummaryCard } from "@/components/HR/summary-card";
+import {
+  applicationTrendPresentation,
+  type ApplicationTrend,
+} from "./application-trend";
 import { hrRequest } from "@/data/hr-api";
 import {
   Table,
@@ -37,6 +41,7 @@ const ApplicationVolumeChart = lazy(() =>
 
 type Dashboard = {
   totalApplications: number;
+  applicationTrend?: ApplicationTrend;
   openJobs: number;
   upcomingInterviews: number;
   pendingOnboarding: number;
@@ -72,6 +77,9 @@ export function DashboardPage() {
     return () => controller.abort();
   }, [days, revision]);
   const [recentPage, setRecentPage] = useState(0);
+  const applicationComparison = data?.applicationTrend
+    ? applicationTrendPresentation(data.applicationTrend)
+    : undefined;
   const currentRecentPage = Math.min(
     recentPage,
     Math.max(0, Math.ceil((data?.recent.length ?? 0) / 4) - 1),
@@ -138,9 +146,32 @@ export function DashboardPage() {
                   key={label}
                   label={label}
                   value={String(value)}
-                  change=""
                   icon={icon}
-                  showTrend={false}
+                  badgeLabel={
+                    label === "Total Applications"
+                      ? applicationComparison?.badgeLabel
+                      : undefined
+                  }
+                  badgeTone={
+                    label === "Total Applications"
+                      ? applicationComparison?.badgeTone
+                      : undefined
+                  }
+                  badgeDescription={
+                    label === "Total Applications"
+                      ? applicationComparison?.description
+                      : undefined
+                  }
+                  trendValues={
+                    label === "Total Applications"
+                      ? data.applicationTrend?.dailyCounts
+                      : undefined
+                  }
+                  trendDescription={
+                    label === "Total Applications"
+                      ? applicationComparison?.chartDescription
+                      : undefined
+                  }
                 />
               ))}
             </section>

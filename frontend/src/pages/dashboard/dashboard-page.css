@@ -100,6 +100,7 @@
 }
 /* apply the intended surface or text colors; control dimensions. */
 .summary-sparkline {
+  flex-shrink: 0;
   width: 64px;
   height: 32px;
   color: #82998e;
