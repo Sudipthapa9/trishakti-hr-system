@@ -2,13 +2,9 @@ import { PageHeader } from "@/components/Layout/page-header";
 import { FormField } from "@/components/shared/forms/form-field";
 import { NativeSelect } from "@/components/ui/native-select";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
-/**
- * Collects job details and saves a draft or publishes a new job through the jobs API.
- */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { Textarea } from "@/components/ui/textarea";
 import type { Job } from "@/types/hr";
 import {
@@ -22,8 +18,21 @@ import {
 import { useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import "./new-job-page.css";
-// Define Skill so callers and implementations agree on the required data shape.
 type Skill = { name: string; weight: number };
+
+const departments = [
+  "Human Resources",
+  "Manufacturing",
+  "Quality Assurance",
+  "Sales",
+  "Supply Chain",
+  "Operations",
+  "R&D",
+  "Maintenance",
+  "Technology",
+];
+const employmentTypes = ["Full-Time", "Part-Time", "Contract", "Internship"];
+
 // Manage one weighted skill list through parent callbacks, rejecting empty and duplicate additions.
 function SkillEditor({
   preferred = false,
@@ -34,13 +43,10 @@ function SkillEditor({
   value: Skill[];
   onChange: (v: Skill[]) => void;
 }) {
-  // Keep name in component state; updates trigger a render.
   const [name, setName] = useState("");
-  // Keep weight in component state; updates trigger a render.
   const [weight, setWeight] = useState(preferred ? 1 : 5);
   return (
     <section className="job-skill-box">
-      {/* Page or panel heading and contextual actions. */}
       <header>
         <h3>{preferred ? "Preferred Skills" : "Required Skills"}</h3>
         <Badge variant={preferred ? "success" : "danger"}>
@@ -106,7 +112,6 @@ function SkillEditor({
     </section>
   );
 }
-// Collects job details and weighted skill settings, then saves a draft through the jobs API.
 export function NewJobPage({
   onCreate,
   initialJob,
@@ -121,14 +126,12 @@ export function NewJobPage({
   );
   const busy = useRef(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  // Keep required in component state; updates trigger a render.
   const [required, setRequired] = useState<Skill[]>(
     initialJob?.requiredSkills ?? [
       { name: "Python Development", weight: 5 },
       { name: "System Architecture", weight: 4 },
     ],
   );
-  // Keep preferred in component state; updates trigger a render.
   const [preferred, setPreferred] = useState<Skill[]>(
     initialJob?.preferredSkills ?? [{ name: "Docker/Kubernetes", weight: 2 }],
   );
@@ -181,13 +184,9 @@ export function NewJobPage({
     <div className="page-recruitment-new-job-page">
       <div className="page-stack">
         <PageHeader
-          className="page-heading"
-          title={<>{initialJob ? "Edit Job" : "Create New Job"}</>}
-          description={
-            <>Define the role parameters and configure AI screening criteria.</>
-          }
+          title={initialJob ? "Edit Job" : "Create New Job"}
+          description="Define the role parameters and configure AI screening criteria."
         />
-        {/* Collect inputs; the submit handler controls validation and the resulting local action. */}
         <form
           className="new-job-form"
           onSubmit={submit}
@@ -197,7 +196,6 @@ export function NewJobPage({
             <FeedbackMessage role="alert">{submitError}</FeedbackMessage>
           )}
           <fieldset disabled={isSubmitting} className="contents">
-            {/* Group related content and controls in this screen section. */}
             <section>
               <h2>
                 <BriefcaseBusiness size={17} />
@@ -217,7 +215,7 @@ export function NewJobPage({
                     required
                   />
                 </FormField>
-                <FormField htmlFor="job-department" label={<>Department</>}>
+                <FormField htmlFor="job-department" label="Department">
                   <NativeSelect
                     id="job-department"
                     name="department"
@@ -228,45 +226,36 @@ export function NewJobPage({
                     <option value="" disabled>
                       Select department
                     </option>
-                    {initialJob?.department && (
-                      <option value={initialJob.department}>
-                        {initialJob.department}
-                      </option>
-                    )}
-                    {[
-                      "Human Resources",
-                      "Manufacturing",
-                      "Quality Assurance",
-                      "Sales",
-                      "Supply Chain",
-                      "Operations",
-                      "R&D",
-                      "Maintenance",
-                      "Technology",
-                    ].map((v) => (
+                    {initialJob?.department &&
+                      !departments.includes(initialJob.department) && (
+                        <option value={initialJob.department}>
+                          {initialJob.department}
+                        </option>
+                      )}
+                    {departments.map((v) => (
                       <option key={v}>{v}</option>
                     ))}
                   </NativeSelect>
                 </FormField>
-                <FormField htmlFor="job-type" label={<>Employment Type</>}>
+                <FormField htmlFor="job-type" label="Employment Type">
                   <NativeSelect
                     name="employmentType"
                     defaultValue={initialJob?.employmentType ?? "Full-Time"}
                     id="job-type"
                     className="form-select"
                   >
-                    {initialJob?.employmentType && (
-                      <option value={initialJob.employmentType}>
-                        {initialJob.employmentType}
-                      </option>
-                    )}
-                    <option>Full-Time</option>
-                    <option>Part-Time</option>
-                    <option>Contract</option>
-                    <option>Internship</option>
+                    {initialJob?.employmentType &&
+                      !employmentTypes.includes(initialJob.employmentType) && (
+                        <option value={initialJob.employmentType}>
+                          {initialJob.employmentType}
+                        </option>
+                      )}
+                    {employmentTypes.map((type) => (
+                      <option key={type}>{type}</option>
+                    ))}
                   </NativeSelect>
                 </FormField>
-                <FormField htmlFor="job-location" label={<>Location</>}>
+                <FormField htmlFor="job-location" label="Location">
                   <Input
                     name="location"
                     defaultValue={initialJob?.location ?? ""}
@@ -275,7 +264,7 @@ export function NewJobPage({
                     required
                   />
                 </FormField>
-                <FormField htmlFor="job-closing" label={<>Closing Date</>}>
+                <FormField htmlFor="job-closing" label="Closing Date">
                   <Input
                     type="date"
                     name="closingDate"
@@ -285,13 +274,12 @@ export function NewJobPage({
                 </FormField>
               </div>
             </section>
-            {/* Group related content and controls in this screen section. */}
             <section className="job-role-details">
               <h2>
                 <FileText size={17} />
                 Role Details
               </h2>
-              <FormField htmlFor="job-description" label={<>Job Description</>}>
+              <FormField htmlFor="job-description" label="Job Description">
                 <Textarea
                   name="description"
                   defaultValue={initialJob?.description ?? ""}
@@ -303,7 +291,7 @@ export function NewJobPage({
               </FormField>
               <FormField
                 htmlFor="job-responsibilities"
-                label={<>Key Responsibilities</>}
+                label="Key Responsibilities"
               >
                 <Textarea
                   name="responsibilities"
@@ -314,9 +302,7 @@ export function NewJobPage({
                 />
               </FormField>
             </section>
-            {/* Additional settings will be enabled when database persistence is available. */}
             <section className="job-ai-section">
-              {/* Page or panel heading and contextual actions. */}
               <header className="job-ai-heading">
                 <div>
                   <h2>
@@ -340,7 +326,7 @@ export function NewJobPage({
                 />
               </div>
               <div className="job-ai-footer">
-                <FormField htmlFor="job-vacancies" label={<>Vacancy Count</>}>
+                <FormField htmlFor="job-vacancies" label="Vacancy Count">
                   <Input
                     name="vacancies"
                     id="job-vacancies"
@@ -354,7 +340,7 @@ export function NewJobPage({
                 </FormField>
                 <FormField
                   htmlFor="job-multiplier"
-                  label={<>Shortlist Multiplier</>}
+                  label="Shortlist Multiplier"
                 >
                   <Input
                     name="shortlistMultiplier"
