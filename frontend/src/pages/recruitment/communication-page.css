@@ -1,138 +1,273 @@
-/* communication-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
 @reference "../../index.css";
-/* arrange the contained elements. */
 .page-recruitment-communication-page {
   display: contents;
 }
-/* arrange the contained elements. */
-.page-recruitment-communication-page > .page-stack > .page-heading {
-  display: none;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
 .communication-layout {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
-  gap: 48px;
+  grid-template-areas: "sidebar composer";
+  align-items: stretch;
+  gap: 24px;
+  color: #272722;
 }
-/* set spacing between this region and its content. */
-.communication-layout > div:first-child {
-  border-right: 1px solid #dedbd1;
-  padding-right: 24px;
+.communication-composer {
+  grid-area: composer;
+  min-width: 0;
+  box-shadow: none;
 }
-/* control dimensions. */
-.communication-layout > div:first-child > [data-slot="card"] {
-  min-height: 310px;
-}
-/* set spacing between this region and its content; apply the intended surface or text colors. */
-.communication-layout [data-slot="card-header"] {
-  background: #faf4ea;
-  padding: 22px 20px !important;
-  border-bottom: 1px solid #dedbd1;
-}
-/* set text hierarchy and readability. */
-.communication-layout [data-slot="card-header"] h2 {
-  font-size: 16px;
-}
-/* set spacing between this region and its content. */
-.communication-layout > div:first-child [data-slot="card-content"] {
-  padding: 12px !important;
-}
-/* set text hierarchy and readability. */
-.communication-layout > div:first-child button {
-  font-size: 12px;
-}
-/* set spacing between this region and its content. */
-.communication-layout > div:last-child [data-slot="card-content"] {
-  padding: 24px !important;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
-.communication-layout form > .form-field {
+.communication-sidebar {
+  grid-area: sidebar;
   display: grid;
-  grid-template-columns: 70px 1fr;
+  grid-template-rows: minmax(310px, auto) 1fr;
+  gap: 20px;
+  min-width: 0;
+  padding-right: 20px;
+  border-right: 1px solid #dedbd1;
+}
+.communication-composer-header {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -20px -20px 20px;
+  padding: 18px 20px;
   border-bottom: 1px solid #dedbd1;
-  padding-bottom: 12px;
+  border-radius: 8px 8px 0 0;
+  background: #faf4ea;
 }
-/* arrange the contained elements. */
-.communication-layout form > .form-field:last-of-type {
-  display: block;
-  border: 0;
+.communication-composer-header h2 {
+  font-size: 16px;
+  font-weight: 600;
 }
-/* set text hierarchy and readability; apply the intended surface or text colors. */
-.communication-layout label {
-  font-size: 11px;
-  color: #8c9186;
+.communication-composer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-/* set text hierarchy and readability; apply the intended surface or text colors. */
-.communication-layout input,
-.communication-layout select {
-  border: 0;
-  background: transparent !important;
+.communication-composer-actions button {
   font-size: 12px;
 }
-/* position this element relative to its surrounding layout; control dimensions. */
-.communication-layout form > .form-field:last-of-type > label {
-  position: absolute;
-  clip-path: inset(50%);
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
+.communication-fields {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
+.communication-field-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  border-bottom: 1px solid #d7dbe0;
+  padding-bottom: 6px;
+}
+.communication-field-row label {
+  color: #737b86;
+  font-size: 12px;
+}
+.communication-field-row input,
+.communication-field-row select {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: #272722;
+  font-size: 13px;
+}
+.communication-recipient-pages {
+  padding-left: 64px;
+}
+.communication-recipient-pages button {
+  font-size: 11px;
+}
+.communication-editor-toolbar {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 0 10px;
+  border-bottom: 1px solid #d7dbe0;
+}
+.communication-editor-toolbar select {
+  max-width: 160px;
+  height: 28px;
+  background: #f1ebe2;
+  border: 0;
+  font-size: 11px;
+}
 .communication-layout .communication-body {
-  min-height: 530px;
-  background: #fff8ef !important;
-  font-size: 14px;
-  padding: 24px;
+  min-height: 480px;
+  padding: 20px;
+  border: 1px solid #d9d5cc;
+  border-radius: 4px;
+  background: #fff8ef;
+  color: #272722;
+  font-size: 13px;
+  line-height: 1.65;
+  resize: vertical;
 }
-/* set text hierarchy and readability; control dimensions. */
-.communication-layout .border-y button {
+.communication-templates {
+  overflow: hidden;
+  box-shadow: none;
+}
+.communication-sidebar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #faf4ea;
+  border-bottom: 1px solid #dedbd1;
+}
+.communication-sidebar-heading h2,
+.communication-history > h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #194e65;
+}
+.communication-sidebar-heading button {
+  color: #737b86;
+}
+.communication-template-list {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+}
+.communication-template-button[data-slot="button"] {
+  justify-content: flex-start;
+  height: auto;
+  min-height: 38px;
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: normal;
+  text-align: left;
+}
+.communication-template-button[aria-pressed="true"] {
+  background: #315f79;
+  color: white;
+}
+.communication-template-button svg {
+  width: 14px;
+  height: 14px;
+}
+.communication-template-hint {
+  padding: 0 16px 16px;
+  color: #737b86;
+  font-size: 11px;
+}
+.communication-history {
+  min-height: 310px;
+  box-shadow: none;
+}
+.communication-history > h2 {
+  margin: -20px -20px 8px;
+  padding: 18px 16px;
+  background: #faf4ea;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #dedbd1;
+}
+.communication-history-entry {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  border: 0;
+  border-radius: 4px;
+  padding: 12px 0;
+  text-align: left;
+  cursor: pointer;
+}
+.communication-history-entry:hover,
+.communication-history-entry[aria-pressed="true"] {
+  background: #faf4ea;
+}
+.communication-history-entry:focus-visible {
+  outline: 2px solid #315f79;
+  outline-offset: 3px;
+}
+.communication-history-entry:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.communication-history-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.communication-history-top strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.communication-history-top time {
+  flex-shrink: 0;
+  color: #737b86;
   font-size: 10px;
-  min-height: 25px;
 }
-/* set text hierarchy and readability. */
-.page-recruitment-communication-page > .page-stack > p.text-xs {
-  order: 2;
+.communication-history-subject {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #51565c;
+}
+.communication-history-status {
+  justify-self: start;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  border-radius: 12px;
+  padding: 2px 7px;
+  background: #e8e3d9;
+  color: #555b58;
+  font-size: 10px;
+}
+.communication-history-status[data-status="Accepted"] {
+  background: #d6efdd;
+  color: #397a4e;
+}
+.communication-history-status[data-status="Failed"],
+.communication-history-status[data-status="Unknown"] {
+  background: #fbe4de;
+  color: #a84332;
+}
+.communication-history-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.communication-history-pagination nav {
+  flex-wrap: wrap;
+}
+.communication-history-pagination button {
+  height: 26px;
+  padding: 2px 7px;
+  font-size: 10px;
+}
+.communication-history-pagination span {
   font-size: 10px;
 }
 @media (max-width: 1100px) {
-  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
   .communication-layout {
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 20px;
   }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
-  .communication-layout > div:first-child {
+  .communication-sidebar {
     padding-right: 16px;
-  }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .communication-layout [data-slot="card-header"] .flex {
-    flex-wrap: wrap;
   }
 }
 @media (max-width: 750px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
   .communication-layout {
     grid-template-columns: 1fr;
+    grid-template-areas: "composer" "sidebar";
   }
-  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
-  .communication-layout > div:first-child {
-    border: 0;
+  .communication-sidebar {
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    border: 0;
   }
-  /* Viewport-specific adjustment: control dimensions. */
-  .communication-layout > div:first-child > [data-slot="card"] {
-    min-height: 0;
-  }
-  /* Viewport-specific adjustment: control dimensions. */
   .communication-layout .communication-body {
     min-height: 350px;
-  }
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .communication-layout form > .form-field {
-    grid-template-columns: 45px 1fr;
   }
 }
