@@ -1,5 +1,4 @@
 import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
-import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Label } from "@/components/ui/label";
@@ -9,6 +8,15 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Mail,
+  CalendarDays,
+  CircleX,
+  Send,
+  CircleCheck,
+  Plus,
+  RotateCcw,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   communicationRequest,
@@ -27,11 +35,24 @@ const templates = {
     "Hi {{candidate_name}},\n\nThank you for applying for {{job_title}}. Our HR team will review your application.\n\nBest regards,\nTrishakti HR",
   "Interview invitation":
     "Hi {{candidate_name}},\n\nWe would like to discuss your application for {{job_title}}. Please reply with your availability.\n\nBest regards,\nTrishakti HR",
+  "Selection notification":
+    "Dear {{candidate_name}},\n\nYour application for {{job_title}} has been shortlisted. Our team will contact you about the next steps.\n\nBest regards,\nThe Trishakti Recruitment Team",
   "Rejection notice":
     "Hi {{candidate_name}},\n\nThank you for your interest in {{job_title}}. We will not be progressing this application at this time.\n\nBest regards,\nTrishakti HR",
   "Offer communication":
     "Hi {{candidate_name}},\n\nWe would like to discuss an offer for {{job_title}}. Please contact our HR team for details.\n\nBest regards,\nTrishakti HR",
 };
+
+function relativeTime(value: string) {
+  const minutes = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(value).getTime()) / 60000),
+  );
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / 1440)}d ago`;
+}
 
 export function CommunicationPage() {
   const [searchParams] = useSearchParams();
@@ -50,7 +71,11 @@ export function CommunicationPage() {
   const [current, setCurrent] = useState<MessageRecord | null>(null);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<
+    keyof typeof templates | null
+  >(null);
   const [isSaving, setIsSaving] = useState(false);
+  const bodyInput = useRef<HTMLTextAreaElement>(null);
   const busy = useRef(false);
   const draftId = useRef<string | null>(null);
   const openedId = useRef<string | null>(searchParams.get("message"));
@@ -126,6 +151,7 @@ export function CommunicationPage() {
     setRevision((value) => value + 1);
   }
   function newMessage() {
+    setSelectedTemplate(null);
     setCurrent(null);
     openedId.current = null;
     draftId.current = null;
@@ -136,6 +162,7 @@ export function CommunicationPage() {
     setNotice("");
   }
   function open(record: MessageRecord) {
+    setSelectedTemplate(null);
     setCurrent(record);
     openedId.current = record.id;
     draftId.current = record.id;
@@ -147,7 +174,9 @@ export function CommunicationPage() {
   }
   function chooseTemplate(name: keyof typeof templates) {
     const recipient = recipients.find((entry) => entry.id === applicationId);
-    if (!recipient) return;
+    if (!recipient || busy.current || current) return;
+    setSelectedTemplate(name);
+    draftId.current = null;
     setSubject(name + " — " + recipient.jobTitle);
     setBody(
       templates[name]
@@ -261,27 +290,6 @@ export function CommunicationPage() {
   return (
     <div className="page-recruitment-communication-page">
       <div className="page-stack">
-        <PageHeader
-          className="page-heading"
-          title={<>Communication Hub</>}
-          description={
-            <>
-              Write candidate messages, save drafts and review email
-              submissions.
-            </>
-          }
-          action={
-            <>
-              <Button
-                variant="outline"
-                disabled={isSaving}
-                onClick={newMessage}
-              >
-                New message
-              </Button>
-            </>
-          }
-        />
         {loadError && (
           <div role="alert">
             <p>{loadError}</p>
@@ -290,11 +298,34 @@ export function CommunicationPage() {
         )}
         {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
         {notice && <FeedbackMessage role="status">{notice}</FeedbackMessage>}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="communication-layout">
           <Card asChild className="gap-4 py-0 ring-0">
-            <section className="rounded-lg border bg-white p-5">
-              <h2>Compose message {current && "· " + current.status}</h2>
+            <section className="communication-composer rounded-lg border bg-white p-5">
+              <header className="communication-composer-header">
+                <h2>Compose Message {current && " / " + current.status}</h2>
+                <div className="communication-composer-actions">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isSaving || !editable}
+                    onClick={() => void save(false)}
+                  >
+                    {isSaving ? "Working..." : "Save Draft"}
+                  </Button>
+                  <Button
+                    type="submit"
+                    form="communication-compose-form"
+                    size="sm"
+                    disabled={isSaving || !editable}
+                  >
+                    <Send aria-hidden="true" />{" "}
+                    {isSaving ? "Working..." : "Send Email"}
+                  </Button>
+                </div>
+              </header>
               <form
+                id="communication-compose-form"
                 onSubmit={(event) => {
                   event.preventDefault();
                   void save(true);
@@ -302,38 +333,41 @@ export function CommunicationPage() {
               >
                 <fieldset
                   disabled={isSaving || !editable}
-                  className="grid gap-3"
+                  className="communication-fields"
                 >
-                  <Label htmlFor="message-application">Application</Label>
-                  <NativeSelect
-                    className="form-select"
-                    id="message-application"
-                    value={applicationId}
-                    required
-                    disabled={!!current || loading}
-                    onChange={(event) => {
-                      setApplicationId(event.target.value);
-                      draftId.current = null;
-                    }}
-                  >
-                    <option value="">Select an application</option>
-                    {current &&
-                      !recipients.some(
-                        (entry) => entry.id === current.applicationId,
-                      ) && (
-                        <option value={current.applicationId}>
-                          {current.recipientName} · {current.recipientEmail}
+                  <div className="communication-field-row">
+                    <Label htmlFor="message-application">To:</Label>
+                    <NativeSelect
+                      className="form-select"
+                      id="message-application"
+                      value={applicationId}
+                      required
+                      disabled={!!current || loading}
+                      onChange={(event) => {
+                        setSelectedTemplate(null);
+                        setApplicationId(event.target.value);
+                        draftId.current = null;
+                      }}
+                    >
+                      <option value="">Select an application</option>
+                      {current &&
+                        !recipients.some(
+                          (entry) => entry.id === current.applicationId,
+                        ) && (
+                          <option value={current.applicationId}>
+                            {current.recipientName} · {current.recipientEmail}
+                          </option>
+                        )}
+                      {recipients.map((recipient) => (
+                        <option key={recipient.id} value={recipient.id}>
+                          {recipient.fullName} · {recipient.jobTitle} ·{" "}
+                          {recipient.email}
                         </option>
-                      )}
-                    {recipients.map((recipient) => (
-                      <option key={recipient.id} value={recipient.id}>
-                        {recipient.fullName} · {recipient.jobTitle} ·{" "}
-                        {recipient.email}
-                      </option>
-                    ))}
-                  </NativeSelect>
+                      ))}
+                    </NativeSelect>
+                  </div>
                   {!current && (
-                    <div className="flex gap-2">
+                    <div className="communication-recipient-pages">
                       <PaginationControls
                         label="Application selection pages"
                         previousLabel="Previous applicants"
@@ -342,72 +376,98 @@ export function CommunicationPage() {
                         nextDisabled={loading || !moreRecipients}
                         onPrevious={() => {
                           setLoading(true);
+                          setSelectedTemplate(null);
+                          draftId.current = null;
                           setApplicationId("");
                           setRecipientPage((value) => value - 1);
                         }}
                         onNext={() => {
                           setLoading(true);
+                          setSelectedTemplate(null);
+                          draftId.current = null;
                           setApplicationId("");
                           setRecipientPage((value) => value + 1);
                         }}
                       ></PaginationControls>
                     </div>
                   )}
-                  <Label htmlFor="message-template">Template</Label>
-                  <NativeSelect
-                    key={applicationId + (current?.id ?? "new")}
-                    id="message-template"
-                    className="form-select"
-                    defaultValue=""
-                    disabled={!applicationId || !!current}
-                    onChange={(event) =>
-                      chooseTemplate(
-                        event.target.value as keyof typeof templates,
-                      )
-                    }
-                  >
-                    <option value="" disabled>
-                      Choose an optional template
-                    </option>
-                    {Object.keys(templates).map((name) => (
-                      <option key={name}>{name}</option>
-                    ))}
-                  </NativeSelect>
-                  <Label htmlFor="message-subject">Subject</Label>
-                  <Input
-                    id="message-subject"
-                    value={subject}
-                    maxLength={200}
-                    required
-                    onChange={(event) => {
-                      setSubject(event.target.value);
-                      if (!current) draftId.current = null;
-                    }}
-                  />
-                  <Label htmlFor="message-body">Message</Label>
+                  <div className="communication-field-row">
+                    <Label htmlFor="message-subject">Subject:</Label>
+                    <Input
+                      id="message-subject"
+                      value={subject}
+                      maxLength={200}
+                      required
+                      onChange={(event) => {
+                        setSelectedTemplate(null);
+                        setSubject(event.target.value);
+                        if (!current) draftId.current = null;
+                      }}
+                    />
+                  </div>
+                  <Label className="sr-only" htmlFor="message-body">
+                    Message
+                  </Label>
+                  <div className="communication-editor-toolbar">
+                    <NativeSelect
+                      aria-label="Insert variable"
+                      defaultValue=""
+                      disabled={
+                        !applicationId ||
+                        !editable ||
+                        isSaving ||
+                        !recipients.some((entry) => entry.id === applicationId)
+                      }
+                      onChange={(event) => {
+                        const recipient = recipients.find(
+                          (entry) => entry.id === applicationId,
+                        );
+                        const value =
+                          event.target.value === "candidate"
+                            ? recipient?.fullName
+                            : recipient?.jobTitle;
+                        if (value) {
+                          const input = bodyInput.current;
+                          const start = input?.selectionStart ?? body.length;
+                          const end = input?.selectionEnd ?? start;
+                          const nextBody =
+                            body.slice(0, start) + value + body.slice(end);
+                          if (nextBody.length <= 10000) {
+                            setBody(nextBody);
+                            setSelectedTemplate(null);
+                            if (!current) draftId.current = null;
+                            requestAnimationFrame(() => {
+                              input?.focus();
+                              input?.setSelectionRange(
+                                start + value.length,
+                                start + value.length,
+                              );
+                            });
+                          }
+                        }
+                        event.target.value = "";
+                      }}
+                    >
+                      <option value="" disabled>
+                        Insert Variable
+                      </option>
+                      <option value="candidate">Candidate name</option>
+                      <option value="job">Job title</option>
+                    </NativeSelect>
+                  </div>
                   <Textarea
+                    ref={bodyInput}
                     id="message-body"
-                    className="min-h-72"
+                    className="communication-body"
                     value={body}
                     maxLength={10000}
                     required
                     onChange={(event) => {
+                      setSelectedTemplate(null);
                       setBody(event.target.value);
                       if (!current) draftId.current = null;
                     }}
                   />
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => void save(false)}
-                    >
-                      {isSaving ? "Working…" : "Save draft"}
-                    </Button>
-                    <Button type="submit">
-                      {isSaving ? "Working…" : "Send email"}
-                    </Button>
-                  </div>
                 </fieldset>
               </form>
               {current?.offerId && (
@@ -465,70 +525,144 @@ export function CommunicationPage() {
               )}
             </section>
           </Card>
-          <Card asChild className="gap-4 py-0 ring-0">
-            <section className="rounded-lg border bg-white p-5">
-              <h2>Message history</h2>
-              {loading ? (
-                <FeedbackMessage role="status">
-                  Loading messages…
-                </FeedbackMessage>
-              ) : loadError ? null : !messages.length ? (
-                <p>No messages saved yet.</p>
-              ) : (
-                messages.map((record) => (
-                  <article className="border-b py-3" key={record.id}>
-                    <h3>{record.subject}</h3>
-                    <p>
-                      {record.recipientName} · {record.recipientEmail}
-                    </p>
-                    <p>
-                      {record.status}
-                      {record.deliveryEvent
-                        ? " · " + record.deliveryEvent
-                        : ""}{" "}
-                      · {new Date(record.updatedAt).toLocaleString()}
-                    </p>
-                    <Button
-                      variant="outline"
-                      disabled={isSaving}
-                      onClick={() => open(record)}
-                    >
-                      Open message
-                    </Button>
-                  </article>
-                ))
-              )}
-              <div className="mt-4 flex gap-3">
-                <PaginationControls
-                  label="Message history pages"
-                  previousLabel="Previous"
-                  nextLabel="Next"
-                  previousDisabled={loading || isSaving || historyPage === 1}
-                  nextDisabled={
-                    loading || isSaving || !!loadError || !moreHistory
-                  }
-                  onPrevious={() => {
-                    setLoading(true);
-                    setHistoryPage((value) => value - 1);
-                  }}
-                  onNext={() => {
-                    setLoading(true);
-                    setHistoryPage((value) => value + 1);
-                  }}
-                >
-                  <span>Page {historyPage}</span>
-                </PaginationControls>
+          <aside
+            className="communication-sidebar"
+            aria-label="Templates and message history"
+          >
+            <Card asChild className="gap-0 py-0 ring-0">
+              <section className="communication-templates rounded-lg border bg-white">
+                <header className="communication-sidebar-heading">
+                  <h2>Email Templates</h2>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="Compose a new message"
+                    title="New message"
+                    disabled={isSaving}
+                    onClick={newMessage}
+                  >
+                    <Plus aria-hidden="true" />
+                  </Button>
+                </header>
+                <div className="communication-template-list">
+                  {(Object.keys(templates) as (keyof typeof templates)[]).map(
+                    (name) => {
+                      const Icon =
+                        name === "Interview invitation"
+                          ? CalendarDays
+                          : name === "Selection notification"
+                            ? CircleCheck
+                            : name === "Rejection notice"
+                              ? CircleX
+                              : name === "Offer communication"
+                                ? Send
+                                : Mail;
+                      return (
+                        <Button
+                          key={name}
+                          type="button"
+                          variant="ghost"
+                          className="communication-template-button"
+                          aria-pressed={selectedTemplate === name}
+                          disabled={
+                            !applicationId || !!current || isSaving || loading
+                          }
+                          onClick={() => chooseTemplate(name)}
+                        >
+                          <Icon aria-hidden="true" />
+                          {name.replace(/\b\w/g, (letter) =>
+                            letter.toUpperCase(),
+                          )}
+                        </Button>
+                      );
+                    },
+                  )}
+                </div>
+                {!applicationId && (
+                  <p className="communication-template-hint">
+                    Select an application to use a template.
+                  </p>
+                )}
+              </section>
+            </Card>
+            <Card asChild className="gap-4 py-0 ring-0">
+              <section className="communication-history rounded-lg border bg-white p-5">
+                <h2>Recent History</h2>
+                {loading ? (
+                  <FeedbackMessage role="status">
+                    Loading messages…
+                  </FeedbackMessage>
+                ) : loadError ? null : !messages.length ? (
+                  <p>No messages saved yet.</p>
+                ) : (
+                  messages.map((record) => (
+                    <article key={record.id}>
+                      <button
+                        type="button"
+                        className="communication-history-entry"
+                        disabled={isSaving}
+                        aria-pressed={current?.id === record.id}
+                        onClick={() => open(record)}
+                        title={record.subject + " / " + record.recipientEmail}
+                      >
+                        <span className="communication-history-top">
+                          <strong>{record.recipientName}</strong>
+                          <time
+                            dateTime={record.updatedAt}
+                            title={new Date(record.updatedAt).toLocaleString()}
+                          >
+                            {relativeTime(record.updatedAt)}
+                          </time>
+                        </span>
+                        <span className="communication-history-subject">
+                          {record.subject}
+                        </span>
+                        <span
+                          className="communication-history-status"
+                          data-status={record.status}
+                        >
+                          {record.deliveryEvent ||
+                            (record.status === "Accepted"
+                              ? "Submitted"
+                              : record.status)}
+                        </span>
+                      </button>
+                    </article>
+                  ))
+                )}
+                <div className="communication-history-pagination">
+                  <PaginationControls
+                    label="Message history pages"
+                    previousLabel="Previous"
+                    nextLabel="Next"
+                    previousDisabled={loading || isSaving || historyPage === 1}
+                    nextDisabled={
+                      loading || isSaving || !!loadError || !moreHistory
+                    }
+                    onPrevious={() => {
+                      setLoading(true);
+                      setHistoryPage((value) => value - 1);
+                    }}
+                    onNext={() => {
+                      setLoading(true);
+                      setHistoryPage((value) => value + 1);
+                    }}
+                  >
+                    <span>Page {historyPage}</span>
+                  </PaginationControls>
 
-                <Button
-                  variant="outline"
-                  disabled={isSaving || loading}
-                  onClick={refresh}
-                >
-                  Refresh
-                </Button>
-              </div>
-            </section>
-          </Card>
+                  <Button
+                    variant="outline"
+                    disabled={isSaving || loading}
+                    onClick={refresh}
+                  >
+                    <RotateCcw aria-hidden="true" /> Refresh
+                  </Button>
+                </div>
+              </section>
+            </Card>
+          </aside>
         </div>
       </div>
     </div>

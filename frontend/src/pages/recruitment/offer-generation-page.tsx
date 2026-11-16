@@ -2,18 +2,17 @@ import { PageHeader } from "@/components/Layout/page-header";
 import { Card } from "@/components/ui/card";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { NativeSelect } from "@/components/ui/native-select";
-import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import "./offer-generation-page.css";
 import { OfferResponseForm } from "./offer-response-form";
 import { StartOnboardingButton } from "@/pages/onboarding/start-onboarding-button";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/forms/form-field";
+import { Eye, Printer, Send } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  listOffers,
   getOffer,
   offerRecipients,
   saveOffer,
@@ -24,45 +23,48 @@ import {
   type OfferRecipient,
 } from "@/data/offers-api";
 
+async function loadRecipients(signal: AbortSignal): Promise<OfferRecipient[]> {
+  const records = new Map<string, OfferRecipient>();
+  for (let page = 1; ; page += 1) {
+    signal.throwIfAborted();
+    const result = await offerRecipients(page, signal);
+    const previousSize = records.size;
+    result.applications.forEach((application) =>
+      records.set(application.id, application),
+    );
+    if (!result.hasMore) return [...records.values()];
+    if (records.size === previousSize)
+      throw new Error("Could not load all applicants. Please try again.");
+  }
+}
+
 export function OfferGenerationPage() {
   const { offerId } = useParams();
   return <OfferWorkspace key={offerId ?? "new"} offerId={offerId} />;
 }
 
 function OfferWorkspace({ offerId }: { offerId?: string }) {
-  const [offers, setOffers] = useState<OfferRecord[]>([]);
   const [recipients, setRecipients] = useState<OfferRecipient[]>([]);
   const [selected, setSelected] = useState<OfferRecord | null>(null);
-  const [query, setQuery] = useState({
-    offers: 1,
-    applications: 1,
-    attempt: 0,
-  });
-  const [moreOffers, setMoreOffers] = useState(false);
-  const [moreApplications, setMoreApplications] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [savedNotice, setSavedNotice] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
   const hydrated = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
     async function load() {
       try {
-        const [history, applications, detail] = await Promise.all([
-          listOffers(query.offers, controller.signal),
-          offerRecipients(query.applications, controller.signal),
+        const [applications, detail] = await Promise.all([
+          loadRecipients(controller.signal),
           offerId && !hydrated.current
             ? getOffer(offerId, controller.signal)
             : Promise.resolve(null),
         ]);
         if (!controller.signal.aborted) {
-          setOffers(history.offers);
-          setMoreOffers(history.hasMore);
-          setRecipients(applications.applications);
-          setMoreApplications(applications.hasMore);
+          setRecipients(applications);
           if (!hydrated.current) {
             setSelected(detail?.offer ?? null);
             hydrated.current = true;
@@ -81,28 +83,21 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
     }
     void load();
     return () => controller.abort();
-  }, [offerId, query]);
-
-  function page(kind: "offers" | "applications", direction: number) {
-    setLoading(true);
-    setQuery((value) => ({ ...value, [kind]: value[kind] + direction }));
-  }
+  }, [offerId, attempt]);
 
   return (
     <div className="page-recruitment-offer-generation-page">
       <div className="page-stack">
         <PageHeader
           className="page-heading"
-          title={<>{offerId ? "Saved offer" : "Create offer draft"}</>}
+          title={offerId ? "Offer details" : "Generate Offer"}
           description={<>Prepare an offer for a submitted application.</>}
           action={
-            <>
-              {offerId && (
-                <Button asChild variant="outline">
-                  <Link to="/offers/new">New offer</Link>
-                </Button>
-              )}
-            </>
+            offerId ? (
+              <Button asChild variant="outline">
+                <Link to="/offers/new">New offer</Link>
+              </Button>
+            ) : undefined
           }
         />
         {savedNotice && (
@@ -114,7 +109,7 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
             <Button
               onClick={() => {
                 setLoading(true);
-                setQuery((value) => ({ ...value, attempt: value.attempt + 1 }));
+                setAttempt((value) => value + 1);
               }}
             >
               Try again
@@ -126,71 +121,15 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
         ) : (
           hasLoaded && (
             <OfferEditor
-              key={selected ? selected.id + ":" + selected.version : "new"}
               saved={selected}
               recipients={recipients}
-              onBusy={setBusy}
               onSaved={(record, notice) => {
-                setSelected((current) =>
-                  current ? { ...current, ...record } : record,
-                );
-                setOffers((current) =>
-                  current.map((offer) =>
-                    offer.id === record.id ? { ...offer, ...record } : offer,
-                  ),
-                );
+                setSelected(record);
                 setSavedNotice(notice ?? "Offer draft saved.");
               }}
             />
           )
         )}
-        {!offerId && (
-          <div className="flex gap-3">
-            <PaginationControls
-              label="Application selection pages"
-              previousLabel="Previous applicants"
-              nextLabel="More applicants"
-              previousDisabled={loading || busy || query.applications === 1}
-              nextDisabled={loading || busy || !!error || !moreApplications}
-              onPrevious={() => page("applications", -1)}
-              onNext={() => page("applications", 1)}
-            ></PaginationControls>
-          </div>
-        )}
-        <section className="offer-history">
-          <h2>Saved offers</h2>
-          {!loading && !error && !offers.length && <p>No offers saved yet.</p>}
-          {!loading &&
-            !error &&
-            offers.map((offer) => (
-              <Card asChild className="gap-4 py-0 ring-0" key={offer.id}>
-                <article
-                  className="rounded-lg border bg-white p-4"
-                  key={offer.id}
-                >
-                  <h3>
-                    {offer.candidateName} · {offer.position}
-                  </h3>
-                  <p>
-                    {offer.candidateEmail} · {offer.status}
-                  </p>
-                  <Link className="underline" to={"/offers/" + offer.id}>
-                    Open offer
-                  </Link>
-                </article>
-              </Card>
-            ))}
-          <div className="mt-3 flex gap-3">
-            <PaginationControls
-              previousDisabled={loading || busy || query.offers === 1}
-              nextDisabled={loading || busy || !!error || !moreOffers}
-              onPrevious={() => page("offers", -1)}
-              onNext={() => page("offers", 1)}
-            >
-              <span>Page {query.offers}</span>
-            </PaginationControls>
-          </div>
-        </section>
       </div>
     </div>
   );
@@ -199,15 +138,19 @@ function OfferWorkspace({ offerId }: { offerId?: string }) {
 function OfferEditor({
   saved,
   recipients,
-  onBusy,
   onSaved,
 }: {
   saved: OfferRecord | null;
   recipients: OfferRecipient[];
-  onBusy: (busy: boolean) => void;
   onSaved: (offer: OfferRecord, notice?: string) => void;
 }) {
-  const navigate = useNavigate();
+  const [step, setStep] = useState<"details" | "preview" | "send">(
+    saved &&
+      (saved.status !== "Draft" ||
+        !["NotSent", "Failed"].includes(saved.sendStatus))
+      ? "send"
+      : "details",
+  );
   const [applicationId, setApplicationId] = useState(
     saved?.applicationId ?? "",
   );
@@ -221,9 +164,6 @@ function OfferEditor({
     benefits: saved?.benefits ?? "",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [chosenApplicant, setChosenApplicant] = useState<
-    OfferRecipient | undefined
-  >(undefined);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [sendUncertain, setSendUncertain] = useState(false);
@@ -234,8 +174,7 @@ function OfferEditor({
     (!saved ||
       (saved.status === "Draft" &&
         ["NotSent", "Failed"].includes(saved.sendStatus)));
-  const applicant =
-    chosenApplicant ?? recipients.find((entry) => entry.id === applicationId);
+  const applicant = recipients.find((entry) => entry.id === applicationId);
   const dirty =
     !saved ||
     Object.entries(fields).some(
@@ -246,9 +185,9 @@ function OfferEditor({
     if (!saved) id.current = crypto.randomUUID();
     setNotice("");
   }
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (lock.current) return;
+    if (lock.current || !editable) return;
     if (!applicationId) {
       setError("Select an application.");
       return;
@@ -257,9 +196,13 @@ function OfferEditor({
       setError("Expiry must be on or before joining date.");
       return;
     }
+    setError(null);
+    setStep("preview");
+  }
+  async function acceptPreview() {
+    if (lock.current || step !== "preview" || !editable) return;
     lock.current = true;
     setIsSaving(true);
-    onBusy(true);
     setError(null);
     setNotice("");
     try {
@@ -269,12 +212,18 @@ function OfferEditor({
         applicationId,
         saved?.version,
       );
-      if (saved) {
-        onSaved(response.offer);
-      } else {
-        navigate("/offers/" + response.offer.id);
-      }
-      setNotice("Offer draft saved.");
+      setFields(
+        (current) =>
+          Object.fromEntries(
+            Object.keys(current).map((name) => [
+              name,
+              response.offer[name as keyof OfferFields],
+            ]),
+          ) as OfferFields,
+      );
+      onSaved(response.offer, "Preview confirmed. Ready to send.");
+      setStep("send");
+      setNotice("Review the recipient, then send the offer.");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Could not save offer.",
@@ -282,14 +231,39 @@ function OfferEditor({
     } finally {
       lock.current = false;
       setIsSaving(false);
-      onBusy(false);
+    }
+  }
+  async function reloadSavedOffer() {
+    if (!saved || lock.current) return;
+    lock.current = true;
+    setIsSaving(true);
+    setError(null);
+    try {
+      const response = await getOffer(saved.id, new AbortController().signal);
+      setFields(
+        (current) =>
+          Object.fromEntries(
+            Object.keys(current).map((name) => [
+              name,
+              response.offer[name as keyof OfferFields],
+            ]),
+          ) as OfferFields,
+      );
+      setSendUncertain(false);
+      onSaved(response.offer, "Saved offer reloaded.");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Could not reload the offer.",
+      );
+    } finally {
+      lock.current = false;
+      setIsSaving(false);
     }
   }
   async function sendSavedOffer() {
-    if (!saved || dirty || !editable || lock.current) return;
+    if (!saved || dirty || !editable || lock.current || step !== "send") return;
     lock.current = true;
     setIsSaving(true);
-    onBusy(true);
     setError(null);
     try {
       const result = await sendOffer(saved.id, saved.version);
@@ -322,7 +296,6 @@ function OfferEditor({
     } finally {
       lock.current = false;
       setIsSaving(false);
-      onBusy(false);
     }
   }
   const name =
@@ -341,251 +314,336 @@ function OfferEditor({
   }
 
   return (
-    <div className="offer-layout">
-      <div>
-        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
-        {notice && <FeedbackMessage role="status">{notice}</FeedbackMessage>}
-        <form className="offer-details" onSubmit={submit}>
-          <fieldset disabled={isSaving || !editable} className="grid gap-3">
-            <Label htmlFor="offer-application">Application</Label>
-            <NativeSelect
-              id="offer-application"
-              className="form-select"
-              value={applicationId}
-              disabled={!!saved}
-              required
-              onChange={(event) => {
-                setApplicationId(event.target.value);
-                id.current = crypto.randomUUID();
-                const application = recipients.find(
-                  (entry) => entry.id === event.target.value,
-                );
-                setChosenApplicant(application);
-                change("position", application?.jobTitle ?? "");
-              }}
-            >
-              <option value="">Select an application</option>
-              {saved && (
-                <option value={saved.applicationId}>
-                  {saved.candidateName} · {saved.jobTitle}
-                </option>
-              )}
-              {!saved &&
-                chosenApplicant &&
-                !recipients.some(
-                  (entry) => entry.id === chosenApplicant.id,
-                ) && (
-                  <option value={chosenApplicant.id}>
-                    {chosenApplicant.fullName} · {chosenApplicant.jobTitle}
-                  </option>
-                )}
-              {!saved &&
-                recipients.map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.fullName} · {entry.jobTitle}
-                  </option>
-                ))}
-            </NativeSelect>
-            <Label htmlFor="offer-position">Position</Label>
-            <Input
-              id="offer-position"
-              value={fields.position}
-              maxLength={200}
-              required
-              onChange={(event) => change("position", event.target.value)}
-            />
-            <Label htmlFor="offer-currency">Currency</Label>
-            <NativeSelect
-              id="offer-currency"
-              className="form-select"
-              value={fields.currency}
-              onChange={(event) => change("currency", event.target.value)}
-            >
-              {["NPR", "USD", "INR", "EUR", "GBP"].map((currency) => (
-                <option key={currency}>{currency}</option>
-              ))}
-            </NativeSelect>
-            <Label htmlFor="offer-salary">Annual base salary</Label>
-            <Input
-              id="offer-salary"
-              type="number"
-              min="0.01"
-              max="999999999999.99"
-              step="0.01"
-              required
-              value={fields.annualSalary}
-              onChange={(event) => change("annualSalary", event.target.value)}
-            />
-            <Label htmlFor="offer-bonus">Sign-on bonus</Label>
-            <Input
-              id="offer-bonus"
-              type="number"
-              min="0"
-              max="999999999999.99"
-              step="0.01"
-              required
-              value={fields.signOnBonus}
-              onChange={(event) => change("signOnBonus", event.target.value)}
-            />
-            <Label htmlFor="offer-start">Joining date</Label>
-            <Input
-              id="offer-start"
-              type="date"
-              required
-              value={fields.joiningDate}
-              onChange={(event) => change("joiningDate", event.target.value)}
-            />
-            <Label htmlFor="offer-expiry">Offer expiry</Label>
-            <Input
-              id="offer-expiry"
-              type="date"
-              required
-              max={fields.joiningDate || undefined}
-              value={fields.expiryDate}
-              onChange={(event) => change("expiryDate", event.target.value)}
-            />
-            <Label htmlFor="offer-benefits">Benefits</Label>
-            <Textarea
-              id="offer-benefits"
-              maxLength={10000}
-              value={fields.benefits}
-              onChange={(event) => change("benefits", event.target.value)}
-            />
-            <Button type="submit">{isSaving ? "Saving…" : "Save draft"}</Button>
-          </fieldset>
-        </form>
-        {saved && (
-          <div className="mt-4 grid gap-3">
-            <p>Send status: {saved.sendStatus}</p>
-            <p>
-              Recipient: {saved.candidateName} · {saved.candidateEmail}
-            </p>
-            {saved.delivery?.lastError && (
-              <FeedbackMessage role="alert">
-                {saved.delivery.lastError}
-              </FeedbackMessage>
-            )}
-            {saved.delivery && (
-              <Link
-                className="underline"
-                to={"/communication?message=" + saved.delivery.id}
-              >
-                View email history and check delivery
-              </Link>
-            )}
-            {saved.sendStatus === "Accepted" && (
-              <p>Accepted by Brevo. Delivery confirmation is pending.</p>
-            )}
-            {["Sending", "Unknown"].includes(saved.sendStatus) && (
-              <p>
-                Check Brevo logs and communication history before sending
-                another offer.
-              </p>
-            )}
-            <Button
-              type="button"
-              disabled={isSaving || dirty || !editable}
-              onClick={() => void sendSavedOffer()}
-            >
-              {isSaving
-                ? "Working…"
-                : saved.sendStatus === "Failed"
-                  ? "Retry sending saved offer"
-                  : "Send saved offer"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSaving}
-              onClick={() => window.location.reload()}
-            >
-              Reload saved offer
-            </Button>
-          </div>
-        )}
-        {sendUncertain && (
-          <FeedbackMessage role="alert">
-            The send outcome could not be checked. Reload the saved offer before
-            continuing.
-          </FeedbackMessage>
-        )}
-        {saved?.status === "Sent" && saved.sendStatus === "Accepted" && (
-          <OfferResponseForm
-            offer={saved}
-            onBusy={onBusy}
-            onRecorded={(record) => onSaved(record, "Offer response recorded.")}
-          />
-        )}
-        {saved?.status === "Accepted" && (
-          <StartOnboardingButton offerId={saved.id} />
-        )}
-        {saved?.responseDate && (
-          <Card asChild className="gap-4 py-0 ring-0">
-            <section className="mt-4 rounded-lg border bg-white p-4">
-              <h2>Recorded outcome: {saved.status}</h2>
-              <p>Response date: {saved.responseDate}</p>
-              <p className="whitespace-pre-line">
-                {saved.responseNotes || "No notes provided."}
-              </p>
-              {saved.responseAudit && (
-                <p>
-                  Recorded by {saved.responseAudit.recordedName} on{" "}
-                  {new Date(saved.responseAudit.recordedAt).toLocaleString()}
-                </p>
-              )}
-            </section>
-          </Card>
-        )}
-      </div>
-      <section className="offer-preview">
-        <header>
-          <span>{dirty ? "Unsaved preview" : "Saved offer preview"}</span>
-          <Button
-            variant="outline"
-            disabled={isSaving || dirty}
-            onClick={() => window.print()}
+    <div className="offer-editor">
+      <nav className="offer-steps" aria-label="Offer preparation">
+        <button
+          type="button"
+          disabled={isSaving || !editable}
+          onClick={() => setStep("details")}
+          aria-current={step === "details" ? "step" : undefined}
+        >
+          <span>1</span>Details
+        </button>
+        <button
+          type="button"
+          disabled={isSaving || !editable || step === "details"}
+          onClick={() => setStep("preview")}
+          aria-current={step === "preview" ? "step" : undefined}
+        >
+          <span>2</span>Preview
+        </button>
+        <span
+          className="offer-step-label"
+          aria-current={step === "send" ? "step" : undefined}
+        >
+          <span>3</span>Send
+        </span>
+      </nav>
+      <div className={"offer-layout offer-step-" + step}>
+        <div>
+          {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+          {notice && <FeedbackMessage role="status">{notice}</FeedbackMessage>}
+          <form
+            hidden={step !== "details"}
+            id="offer-details"
+            className="offer-details"
+            onSubmit={submit}
           >
-            Print / Save PDF
-          </Button>
-        </header>
-        <article className="offer-paper">
-          <div className="offer-letterhead">
-            <div>
-              <h2>Trikshati Poly Packs</h2>
-              <p>Employment offer · {saved?.status ?? "Draft"}</p>
-            </div>
-            <div>
+            <fieldset disabled={isSaving || !editable} className="offer-fields">
+              <h2>Offer Details</h2>
+              <FormField
+                htmlFor="offer-application"
+                label="Candidate / Application"
+              >
+                <NativeSelect
+                  id="offer-application"
+                  className="form-select"
+                  value={applicationId}
+                  disabled={!!saved}
+                  required
+                  onChange={(event) => {
+                    setApplicationId(event.target.value);
+                    id.current = crypto.randomUUID();
+                    const application = recipients.find(
+                      (entry) => entry.id === event.target.value,
+                    );
+                    change("position", application?.jobTitle ?? "");
+                  }}
+                >
+                  <option value="">Select an application</option>
+                  {saved && (
+                    <option value={saved.applicationId}>
+                      {saved.candidateName} · {saved.jobTitle}
+                    </option>
+                  )}
+                  {!saved &&
+                    recipients.map((entry) => (
+                      <option key={entry.id} value={entry.id}>
+                        {entry.fullName} · {entry.jobTitle}
+                      </option>
+                    ))}
+                </NativeSelect>
+              </FormField>
+              <FormField htmlFor="offer-position" label="Position">
+                <Input
+                  id="offer-position"
+                  value={fields.position}
+                  maxLength={200}
+                  required
+                  onChange={(event) => change("position", event.target.value)}
+                />
+              </FormField>
+              <FormField htmlFor="offer-currency" label="Currency">
+                <NativeSelect
+                  id="offer-currency"
+                  className="form-select"
+                  value={fields.currency}
+                  onChange={(event) => change("currency", event.target.value)}
+                >
+                  {["NPR", "USD", "INR", "EUR", "GBP"].map((currency) => (
+                    <option key={currency}>{currency}</option>
+                  ))}
+                </NativeSelect>
+              </FormField>
+              <FormField htmlFor="offer-salary" label="Annual base salary">
+                <Input
+                  id="offer-salary"
+                  type="number"
+                  min="0.01"
+                  max="999999999999.99"
+                  step="0.01"
+                  required
+                  value={fields.annualSalary}
+                  onChange={(event) =>
+                    change("annualSalary", event.target.value)
+                  }
+                />
+              </FormField>
+              <FormField htmlFor="offer-bonus" label="Sign-on bonus">
+                <Input
+                  id="offer-bonus"
+                  type="number"
+                  min="0"
+                  max="999999999999.99"
+                  step="0.01"
+                  required
+                  value={fields.signOnBonus}
+                  onChange={(event) =>
+                    change("signOnBonus", event.target.value)
+                  }
+                />
+              </FormField>
+              <div className="offer-dates">
+                <FormField htmlFor="offer-start" label="Joining date">
+                  <Input
+                    id="offer-start"
+                    type="date"
+                    required
+                    value={fields.joiningDate}
+                    onChange={(event) =>
+                      change("joiningDate", event.target.value)
+                    }
+                  />
+                </FormField>
+                <FormField htmlFor="offer-expiry" label="Offer expiry">
+                  <Input
+                    id="offer-expiry"
+                    type="date"
+                    required
+                    max={fields.joiningDate || undefined}
+                    value={fields.expiryDate}
+                    onChange={(event) =>
+                      change("expiryDate", event.target.value)
+                    }
+                  />
+                </FormField>
+              </div>
+              <FormField htmlFor="offer-benefits" label="Key Benefits">
+                <Textarea
+                  id="offer-benefits"
+                  maxLength={10000}
+                  value={fields.benefits}
+                  onChange={(event) => change("benefits", event.target.value)}
+                />
+              </FormField>
+              <Button type="submit">
+                <Send aria-hidden="true" />
+                Send Offer to Candidate
+              </Button>
+            </fieldset>
+          </form>
+          <div id="offer-delivery" hidden={step !== "send"}>
+            <h2 className="offer-send-heading">Send Offer</h2>
+            <p className="offer-save-hint">
+              Review the recipient and send status below.
+            </p>
+            {saved && (
+              <div className="offer-delivery-controls">
+                <p>Send status: {saved.sendStatus}</p>
+                <p>
+                  Recipient: {saved.candidateName} · {saved.candidateEmail}
+                </p>
+                {saved.delivery?.lastError && (
+                  <FeedbackMessage role="alert">
+                    {saved.delivery.lastError}
+                  </FeedbackMessage>
+                )}
+                {saved.delivery && (
+                  <Link
+                    className="underline"
+                    to={"/communication?message=" + saved.delivery.id}
+                  >
+                    View email history and check delivery
+                  </Link>
+                )}
+                {saved.sendStatus === "Accepted" && (
+                  <p>Accepted by Brevo. Delivery confirmation is pending.</p>
+                )}
+                {["Sending", "Unknown"].includes(saved.sendStatus) && (
+                  <p>
+                    Check Brevo logs and communication history before sending
+                    another offer.
+                  </p>
+                )}
+                <Button
+                  type="button"
+                  disabled={isSaving || dirty || !editable}
+                  onClick={() => void sendSavedOffer()}
+                >
+                  {isSaving
+                    ? "Working…"
+                    : saved.sendStatus === "Failed"
+                      ? "Retry sending saved offer"
+                      : "Send Offer to Candidate"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSaving}
+                  onClick={() => void reloadSavedOffer()}
+                >
+                  Reload saved offer
+                </Button>
+              </div>
+            )}
+          </div>
+          {sendUncertain && (
+            <FeedbackMessage role="alert">
+              The send outcome could not be checked. Reload the saved offer
+              before continuing.
+            </FeedbackMessage>
+          )}
+          {saved?.status === "Sent" && saved.sendStatus === "Accepted" && (
+            <OfferResponseForm
+              offer={saved}
+              onBusy={setIsSaving}
+              onRecorded={(record) =>
+                onSaved(record, "Offer response recorded.")
+              }
+            />
+          )}
+          {saved?.status === "Accepted" && (
+            <StartOnboardingButton offerId={saved.id} />
+          )}
+          {saved?.responseDate && (
+            <Card asChild className="gap-4 py-0 ring-0">
+              <section className="mt-4 rounded-lg border bg-white p-4">
+                <h2>Recorded outcome: {saved.status}</h2>
+                <p>Response date: {saved.responseDate}</p>
+                <p className="whitespace-pre-line">
+                  {saved.responseNotes || "No notes provided."}
+                </p>
+                {saved.responseAudit && (
+                  <p>
+                    Recorded by {saved.responseAudit.recordedName} on{" "}
+                    {new Date(saved.responseAudit.recordedAt).toLocaleString()}
+                  </p>
+                )}
+              </section>
+            </Card>
+          )}
+        </div>
+        <section
+          hidden={step === "send"}
+          id="offer-preview"
+          className="offer-preview"
+          aria-label="Offer letter preview"
+        >
+          <header>
+            <h2>
+              <Eye aria-hidden="true" />
+              {dirty ? "Document Preview / Unsaved" : "Document Preview"}
+            </h2>
+            <Button
+              variant="outline"
+              disabled={isSaving || step === "details"}
+              onClick={() => window.print()}
+            >
+              <Printer aria-hidden="true" /> Generate PDF
+            </Button>
+          </header>
+          {step === "preview" && editable && (
+            <div className="offer-preview-actions">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSaving}
+                onClick={() => setStep("details")}
+              >
+                Back to Details
+              </Button>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void acceptPreview()}
+              >
+                {isSaving ? "Continuing..." : "Accept and Continue"}
+              </Button>
               <p>
-                {saved
-                  ? "Ref: TSH-OFFER-" + saved.id
-                  : "Save to generate a reference"}
+                Confirms this preview for sending; it does not record the
+                candidate's acceptance.
               </p>
-              {saved && (
-                <p>Date: {new Date(saved.updatedAt).toLocaleDateString()}</p>
-              )}
             </div>
-          </div>
-          <p>Dear {name},</p>
-          <p>{email}</p>
-          <p>
-            We offer you the position of{" "}
-            <strong>{fields.position || "—"}</strong> at Trikshati Poly Packs.
-          </p>
-          <h3>Compensation</h3>
-          <p>Annual base salary: {money(fields.annualSalary)}</p>
-          <p>Sign-on bonus: {money(fields.signOnBonus)}</p>
-          <h3>Benefits</h3>
-          <p className="whitespace-pre-line">
-            {fields.benefits || "No benefits specified."}
-          </p>
-          <h3>Dates</h3>
-          <p>Joining date: {fields.joiningDate || "—"}</p>
-          <p>Offer expiry: {fields.expiryDate || "—"}</p>
-          <div className="offer-signature">
-            Authorized signature<span>Candidate acceptance</span>
-          </div>
-        </article>
-      </section>
+          )}
+          <article className="offer-paper">
+            <div className="offer-letterhead">
+              <div>
+                <h2>Trikshati Poly Packs</h2>
+                <p>Employment offer · {saved?.status ?? "Draft"}</p>
+              </div>
+              <div>
+                <p>
+                  {saved
+                    ? "Ref: TSH-OFFER-" + saved.id
+                    : "Save to generate a reference"}
+                </p>
+                {saved && (
+                  <p>Date: {new Date(saved.updatedAt).toLocaleDateString()}</p>
+                )}
+              </div>
+            </div>
+            <p>Dear {name},</p>
+            <p>{email}</p>
+            <p>
+              We offer you the position of{" "}
+              <strong>{fields.position || "—"}</strong> at Trikshati Poly Packs.
+            </p>
+            <h3>Compensation</h3>
+            <p>Annual base salary: {money(fields.annualSalary)}</p>
+            <p>Sign-on bonus: {money(fields.signOnBonus)}</p>
+            <h3>Benefits</h3>
+            <p className="whitespace-pre-line">
+              {fields.benefits || "No benefits specified."}
+            </p>
+            <h3>Terms &amp; Acceptance</h3>
+            <p>Joining date: {fields.joiningDate || "—"}</p>
+            <p>Offer expiry: {fields.expiryDate || "—"}</p>
+            <div className="offer-signature">
+              Authorized signature<span>Candidate acceptance</span>
+            </div>
+          </article>
+        </section>
+      </div>
     </div>
   );
 }
