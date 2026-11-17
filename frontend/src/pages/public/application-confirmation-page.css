@@ -113,12 +113,6 @@
   font-size: 12px;
 }
 /* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.confirmation-demo {
-  display: block;
-  font-size: 10px;
-  margin-top: 20px;
-  color: #9ca391;
-}
 @media (max-width: 700px) {
   /* Viewport-specific adjustment: set spacing between this region and its content; control dimensions. */
   .application-confirmation {

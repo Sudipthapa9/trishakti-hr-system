@@ -156,11 +156,6 @@
   outline: 2px solid #194e65;
 }
 /* set text hierarchy and readability; apply the intended surface or text colors. */
-.public-application .application-preview-note {
-  font-size: 10px;
-  color: #8d9680;
-  line-height: 1.5;
-}
 /* set spacing between this region and its content. */
 .public-job-unavailable {
   text-align: center;

@@ -2,7 +2,10 @@ const { createHash } = require("node:crypto");
 const path = require("node:path");
 const { z } = require("zod");
 const pool = require("../../config/db");
-const { applicationSchema } = require("./applications.schema");
+const {
+  applicationSchema,
+  applicationStageSchema,
+} = require("./applications.schema");
 const { validateResume } = require("./resume-validation");
 
 async function submitApplication(req, res, next) {
@@ -45,12 +48,10 @@ async function submitApplication(req, res, next) {
     if (existing.rows.length) {
       await client.query("ROLLBACK");
       if (existing.rows[0].submission_hash !== fingerprint) {
-        return res
-          .status(409)
-          .json({
-            error:
-              "This submission reference has already been used. Change a field before submitting again.",
-          });
+        return res.status(409).json({
+          error:
+            "This submission reference has already been used. Change a field before submitting again.",
+        });
       }
       return res.json({ application: receipt });
     }
@@ -66,11 +67,9 @@ async function submitApplication(req, res, next) {
     );
     if (!job.rows.length) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error: "This job is closed or no longer accepting applications.",
-        });
+      return res.status(409).json({
+        error: "This job is closed or no longer accepting applications.",
+      });
     }
     // Matching an email never overwrites an existing person's contact profile.
     await client.query(
@@ -125,12 +124,10 @@ async function submitApplication(req, res, next) {
   } catch (error) {
     await client.query("ROLLBACK");
     if (error.code === "23505") {
-      return res
-        .status(409)
-        .json({
-          error:
-            "An application with this email has already been submitted for this job.",
-        });
+      return res.status(409).json({
+        error:
+          "An application with this email has already been submitted for this job.",
+      });
     }
     next(error);
   } finally {
@@ -151,6 +148,11 @@ async function listApplications(req, res, next) {
   if (!jobId.success) {
     return res.status(400).json({ error: "Invalid job identifier." });
   }
+  const stage = applicationStageSchema.optional().safeParse(req.query.stage);
+  const search = z.string().trim().max(200).optional().safeParse(req.query.q);
+  if (!stage.success || !search.success) {
+    return res.status(400).json({ error: "Invalid application filters." });
+  }
   try {
     const result = await pool.query(
       `
@@ -162,10 +164,19 @@ async function listApplications(req, res, next) {
       FROM public.applications a
 JOIN public.jobs j ON j.id = a.job_id
 WHERE ($2::uuid IS NULL OR a.job_id = $2::uuid)
+  AND ($3::text IS NULL OR a.stage = $3::text)
+  AND ($4::text IS NULL OR strpos(lower(a.full_name), lower($4::text)) > 0
+    OR strpos(lower(a.email), lower($4::text)) > 0
+    OR strpos(lower(j.title), lower($4::text)) > 0)
 ORDER BY a.created_at DESC, a.id DESC
 LIMIT 21 OFFSET $1
    `,
-      [(page.data - 1) * 20, jobId.data ?? null],
+      [
+        (page.data - 1) * 20,
+        jobId.data ?? null,
+        stage.data ?? null,
+        search.data || null,
+      ],
     );
     res.json({
       applications: result.rows.slice(0, 20),

@@ -1,22 +1,41 @@
 const { z } = require("zod");
 
-const applicationSchema = z.object({
-  requestId: z.string().uuid(),
-  jobId: z.string().uuid(),
-  fullName: z.string().trim().min(1).max(200),
-  email: z.string().trim().toLowerCase().email().max(254),
-  phone: z.string().trim().min(5).max(50).regex(/^[+\d\s().-]+$/),
-  coverLetter: z.string().trim().max(10000).optional().default(""),
-}).strict();
+const applicationSchema = z
+  .object({
+    requestId: z.string().uuid(),
+    jobId: z.string().uuid(),
+    fullName: z.string().trim().min(1).max(200),
+    email: z.string().trim().toLowerCase().email().max(254),
+    phone: z
+      .string()
+      .trim()
+      .min(5)
+      .max(50)
+      .regex(/^[+\d\s().-]+$/),
+    coverLetter: z.string().trim().max(10000).optional().default(""),
+  })
+  .strict();
 
 const applicationStageSchema = z.enum([
-  "Review", "Screening", "Shortlisted", "Interview", "Offer",
-  "Hired", "Rejected", "Withdrawn",
+  "Review",
+  "Screening",
+  "Shortlisted",
+  "Interview",
+  "Offer",
+  "Hired",
+  "Rejected",
+  "Withdrawn",
 ]);
 
-const updateStageSchema = z.object({
-  stage: applicationStageSchema,
-  expectedStage: applicationStageSchema,
-}).strict();
+const updateStageSchema = z
+  .object({
+    stage: applicationStageSchema,
+    expectedStage: applicationStageSchema,
+  })
+  .strict();
 
-module.exports = { applicationSchema, updateStageSchema };
+module.exports = {
+  applicationSchema,
+  applicationStageSchema,
+  updateStageSchema,
+};

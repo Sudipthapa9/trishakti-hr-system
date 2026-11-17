@@ -68,25 +68,8 @@
 
 /* set spacing between this region and its content; apply the intended surface or text colors. */
 
-.search-row {
-  align-items: center;
-  padding: 12px;
-  border: 1px solid var(--color-border-default);
-  border-radius: 10px;
-  background: var(--color-bg-surface);
-}
-
 /* apply the intended surface or text colors. */
-
-.search-row input {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
 /* Focus feedback: define the visual boundary or interaction treatment. */
-.search-row input:focus {
-  box-shadow: none;
-}
 
 /* define the visual boundary or interaction treatment. */
 
@@ -110,22 +93,9 @@ th {
 }
 
 /* control dimensions. */
-
-.shell-search {
-  width: min(460px, 42vw);
-}
 /* apply the intended surface or text colors. */
-.shell-search input::placeholder {
-  color: #8b98a0;
-}
 
 /* arrange the contained elements; set spacing between this region and its content. */
-
-.content-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
-  gap: 16px;
-}
 
 /* set spacing between this region and its content; apply the intended surface or text colors. */
 
@@ -157,8 +127,7 @@ th {
 
 /* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
 
-.panel-heading p,
-.section-label {
+.panel-heading p {
   margin: 0;
   color: var(--color-action-primary);
   font-size: 12px;
@@ -169,33 +138,11 @@ th {
 
 /* arrange the contained elements; set spacing between this region and its content. */
 
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
 /* position this element relative to its surrounding layout. */
-
-.search-field {
-  position: relative;
-  flex: 1;
-}
 
 /* apply the intended surface or text colors; position this element relative to its surrounding layout. */
 
-.search-field svg {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  color: var(--color-text-secondary);
-}
-
 /* set spacing between this region and its content. */
-
-.search-field input {
-  padding-left: 38px;
-}
 
 /* set spacing between this region and its content; apply the intended surface or text colors; control dimensions. */
 
@@ -210,47 +157,13 @@ th {
 
 /* arrange the contained elements; set spacing between this region and its content. */
 
-.candidate-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 /* arrange the contained elements; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
-
-.candidate-initials {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  place-items: center;
-  border-radius: 50%;
-  background: #e7f0ed;
-  color: var(--color-action-primary);
-  font-weight: 700;
-}
 
 /* arrange the contained elements. */
 
-.candidate-name small,
-.candidate-name strong {
-  display: block;
-}
-
 /* set spacing between this region and its content; apply the intended surface or text colors. */
 
-.candidate-name small {
-  margin-top: 3px;
-  color: var(--color-text-secondary);
-}
-
 /* arrange the contained elements; set spacing between this region and its content. */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
 
 /* arrange the contained elements; set spacing between this region and its content. */
 
@@ -267,10 +180,6 @@ th {
 }
 
 /* define the visual boundary or interaction treatment. */
-
-.form-field-wide {
-  grid-column: 1 / -1;
-}
 
 /* arrange the contained elements; set spacing between this region and its content. */
 
@@ -291,9 +200,6 @@ th {
 
 @media (max-width: 900px) {
   /* Viewport-specific adjustment: arrange the contained elements. */
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 600px) {
@@ -311,11 +217,6 @@ th {
 
   /* Viewport-specific adjustment: arrange the contained elements. */
 
-  .search-row,
-  .form-grid {
-    flex-direction: column;
-  }
-
   /* Viewport-specific adjustment: set text hierarchy and readability. */
 
   .page-heading h1 {
@@ -323,8 +224,4 @@ th {
   }
 
   /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-
-  .form-field-wide {
-    grid-column: auto;
-  }
 }

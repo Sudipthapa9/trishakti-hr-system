@@ -1,4 +1,5 @@
-import { Card } from "@/components/ui/card";
+import "./onboarding-documents.css";
+import { Upload, Plus } from "lucide-react";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { FileUploadField } from "@/components/shared/forms/file-upload-field";
 import { DocumentRow } from "@/components/shared/data-display/document-row";
@@ -9,11 +10,14 @@ import { hrRequest } from "@/data/hr-api";
 type Document = { id: string; name: string; size: number; createdAt: string };
 export function OnboardingDocuments({
   onboardingId,
+  title = "Additional Documentation",
 }: {
   onboardingId: string;
+  title?: string;
 }) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [page, setPage] = useState(1);
+  const [showUpload, setShowUpload] = useState(false);
   const [more, setMore] = useState(false);
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -96,18 +100,35 @@ export function OnboardingDocuments({
     }
   }
   return (
-    <Card asChild className="gap-4 py-0 ring-0">
-      <section className="rounded-lg border bg-white p-5">
-        <h2>Private onboarding documents</h2>
+    <section className="onboarding-documents">
+      <header>
+        <h2>{title}</h2>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          disabled={saving}
+          aria-expanded={showUpload}
+          aria-controls="onboarding-document-upload"
+          onClick={() => setShowUpload((current) => !current)}
+        >
+          <Upload aria-hidden="true" /> Upload File
+        </Button>
+      </header>
+      <div className="onboarding-documents-content">
         <p>
           PDF or DOCX, up to 10MB per file. Uploading does not automatically
           mark documents verified.
         </p>
         {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
-        <form onSubmit={upload} className="my-4 flex flex-wrap gap-3">
+        <form
+          id="onboarding-document-upload"
+          hidden={!showUpload}
+          onSubmit={upload}
+          className="onboarding-document-upload"
+        >
           <FileUploadField
             aria-label="Onboarding document"
-
             name="document"
             accept=".pdf,.docx"
             required
@@ -123,33 +144,45 @@ export function OnboardingDocuments({
         {loading ? (
           <FeedbackMessage role="status">Loading documents…</FeedbackMessage>
         ) : !documents.length ? (
-          <p>No documents uploaded.</p>
+          <div className="onboarding-document-empty">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={saving}
+              onClick={() => setShowUpload(true)}
+            >
+              <Plus aria-hidden="true" /> Add Document
+            </Button>
+            <p>No documents uploaded yet.</p>
+          </div>
         ) : (
-          documents.map((document) => (
-            <DocumentRow
-              key={document.id}
-              name={document.name}
-              metadata={Math.ceil(document.size / 1024) + " KB"}
-              action={
-                <Button
-                  variant="outline"
-                  disabled={saving}
-                  onClick={() => void download(document)}
-                >
-                  Download
-                </Button>
-              }
-            />
-          ))
+          <div className="onboarding-document-grid">
+            {documents.map((document) => (
+              <DocumentRow
+                key={document.id}
+                name={document.name}
+                metadata={Math.ceil(document.size / 1024) + " KB"}
+                action={
+                  <Button
+                    variant="outline"
+                    disabled={saving}
+                    onClick={() => void download(document)}
+                  >
+                    Download
+                  </Button>
+                }
+              />
+            ))}
+          </div>
         )}
-        <div className="mt-3 flex gap-3">
+        <div className="onboarding-document-pagination">
           <PaginationControls
-            previousDisabled={loading || page === 1}
+            previousDisabled={loading || saving || page === 1}
             onPrevious={() => {
               setLoading(true);
               setPage((p) => p - 1);
             }}
-            nextDisabled={loading || !more}
+            nextDisabled={loading || saving || !more}
             onNext={() => {
               setLoading(true);
               setPage((p) => p + 1);
@@ -157,7 +190,7 @@ export function OnboardingDocuments({
           />
           <Button
             variant="outline"
-            disabled={loading}
+            disabled={loading || saving}
             onClick={() => {
               setLoading(true);
               setRevision((v) => v + 1);
@@ -166,7 +199,7 @@ export function OnboardingDocuments({
             Reload documents
           </Button>
         </div>
-      </section>
-    </Card>
+      </div>
+    </section>
   );
 }

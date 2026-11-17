@@ -64,7 +64,9 @@ export function ApplicationStageControl({
           }}
         >
           {applicationStages.map((value) => (
-            <option key={value}>{value}</option>
+            <option key={value} value={value}>
+              {value === "Review" ? "Applied" : value}
+            </option>
           ))}
         </NativeSelect>
         <Button

@@ -1,7 +1,7 @@
 import keycloak from "@/keycloak";
 import type { ApplicationStage } from "./application-stages";
 
-export type CandidateRecord = {
+type CandidateRecord = {
   id: string;
   fullName: string;
   email: string;
@@ -10,7 +10,7 @@ export type CandidateRecord = {
   applicationCount: number;
 };
 
-export type CandidateApplication = {
+type CandidateApplication = {
   id: string;
   jobId: string;
   jobTitle: string;

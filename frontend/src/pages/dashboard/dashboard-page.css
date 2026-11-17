@@ -133,15 +133,6 @@
   padding: 18px 24px 30px;
 }
 
-.page-dashboard-dashboard-page .dashboard-daily-counts {
-  margin-top: 12px;
-  font-size: 12px;
-}
-
-.page-dashboard-dashboard-page .dashboard-daily-counts summary {
-  cursor: pointer;
-}
-
 /* Recent applications use the same class in TSX and CSS. */
 .page-dashboard-dashboard-page .recent-applications-header {
   display: flex;

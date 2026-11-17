@@ -9,6 +9,11 @@ async function list(req, res, next) {
     .object({
       page: z.coerce.number().int().min(1).max(100000).default(1),
       date: z.iso.date().optional(),
+      status: z
+        .string()
+        .transform((value) => (value ? value.split(",") : []))
+        .pipe(z.array(z.enum(["Scheduled", "Completed", "Cancelled"])).max(3))
+        .optional(),
     })
     .safeParse(req.query);
   if (!query.success)
@@ -17,8 +22,13 @@ async function list(req, res, next) {
     const result = await pool.query(
       `SELECT ${columns} ${joins}
       WHERE ($1::date IS NULL OR (i.starts_at AT TIME ZONE 'Asia/Kathmandu')::date=$1::date)
+      AND ($3::text[] IS NULL OR i.status = ANY($3::text[]))
       ORDER BY i.starts_at DESC,i.id DESC LIMIT 21 OFFSET $2`,
-      [query.data.date || null, (query.data.page - 1) * 20],
+      [
+        query.data.date || null,
+        (query.data.page - 1) * 20,
+        query.data.status ?? null,
+      ],
     );
     res.json({
       interviews: result.rows.slice(0, 20),
@@ -77,12 +87,10 @@ async function create(req, res, next) {
         ],
       );
       if (!existing.rows.length)
-        return res
-          .status(409)
-          .json({
-            error:
-              "Application is not eligible or this interview reference has changed.",
-          });
+        return res.status(409).json({
+          error:
+            "Application is not eligible or this interview reference has changed.",
+        });
     }
     req.params.id = b.id;
     res.status(result.rows.length ? 201 : 200);
@@ -109,12 +117,10 @@ async function update(req, res, next) {
     );
     if (sending.rows.length) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error:
-            "A notification is being sent. Confirm its outcome before rescheduling.",
-        });
+      return res.status(409).json({
+        error:
+          "A notification is being sent. Confirm its outcome before rescheduling.",
+      });
     }
     const result = await client.query(
       `UPDATE public.interviews SET starts_at=$1,ends_at=$2,interviewer=$3,meeting_url=$4,location=$5,notes=$6,version=version+1,updated_at=now(),updated_by=$7
@@ -133,11 +139,9 @@ async function update(req, res, next) {
     );
     if (!result.rows.length) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error: "Interview changed or is no longer scheduled. Reload first.",
-        });
+      return res.status(409).json({
+        error: "Interview changed or is no longer scheduled. Reload first.",
+      });
     }
     await client.query("COMMIT");
     client.release();
@@ -165,12 +169,10 @@ async function status(req, res, next) {
     );
     if (sending.rows.length) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error:
-            "A notification is being sent. Confirm its outcome before changing the schedule.",
-        });
+      return res.status(409).json({
+        error:
+          "A notification is being sent. Confirm its outcome before changing the schedule.",
+      });
     }
     const result = await client.query(
       `UPDATE public.interviews SET status=$1,version=version+1,updated_at=now(),updated_by=$2
@@ -179,12 +181,10 @@ async function status(req, res, next) {
     );
     if (!result.rows.length) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error:
-            "Reload the interview. Only a scheduled interview can change status, and completion requires its end time to have passed.",
-        });
+      return res.status(409).json({
+        error:
+          "Reload the interview. Only a scheduled interview can change status, and completion requires its end time to have passed.",
+      });
     }
     await client.query("COMMIT");
     client.release();
@@ -213,11 +213,9 @@ async function notification(req, res, next) {
       i.status === "Completed"
     ) {
       await client.query("ROLLBACK");
-      return res
-        .status(409)
-        .json({
-          error: "Reload the saved interview before preparing a notification.",
-        });
+      return res.status(409).json({
+        error: "Reload the saved interview before preparing a notification.",
+      });
     }
     const time = new Intl.DateTimeFormat("en-GB", {
       timeZone: "Asia/Kathmandu",

@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 import { Badge } from "@/components/ui/badge";
 
 type Tone = ComponentProps<typeof Badge>["variant"];
-type StatusDomain = "application" | "job";
+type StatusDomain = "application" | "job" | "interview" | "onboarding";
 const tones: Record<StatusDomain, Record<string, Tone>> = {
   application: {
     Review: "neutral",
@@ -15,6 +15,16 @@ const tones: Record<StatusDomain, Record<string, Tone>> = {
     Withdrawn: "neutral",
   },
   job: { Open: "success", Draft: "warning", Archived: "neutral" },
+  onboarding: {
+    "In progress": "secondary",
+    "Ready for approval": "warning",
+    Completed: "success",
+  },
+  interview: {
+    Scheduled: "secondary",
+    Completed: "success",
+    Cancelled: "danger",
+  },
 };
 
 // Unknown domain statuses retain their exact text and a neutral appearance.
