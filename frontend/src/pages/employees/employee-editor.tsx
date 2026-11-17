@@ -28,11 +28,16 @@ type Change = {
 export function EmployeeEditor({
   employee,
   onSaved,
+  editing,
+  onEditingChange,
+  onBusyChange,
 }: {
   employee: EmployeeRecord;
+  editing: boolean;
+  onEditingChange: (editing: boolean) => void;
+  onBusyChange: (busy: boolean) => void;
   onSaved: (employee: EmployeeRecord) => void;
 }) {
-  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [history, setHistory] = useState<Change[]>([]);
@@ -46,6 +51,7 @@ export function EmployeeEditor({
     const form = new FormData(event.currentTarget);
     busy.current = true;
     setSaving(true);
+    onBusyChange(true);
     setError("");
     try {
       const result = await hrRequest("employees/" + employee.id, {
@@ -58,7 +64,7 @@ export function EmployeeEditor({
         }),
       });
       onSaved(result.employee);
-      setEditing(false);
+      onEditingChange(false);
       setShowHistory(false);
     } catch (error) {
       setError(
@@ -67,12 +73,14 @@ export function EmployeeEditor({
     } finally {
       busy.current = false;
       setSaving(false);
+      onBusyChange(false);
     }
   }
   async function loadHistory(nextPage: number) {
     if (busy.current) return;
     busy.current = true;
     setSaving(true);
+    onBusyChange(true);
     setError("");
     try {
       const result = await hrRequest(
@@ -89,20 +97,17 @@ export function EmployeeEditor({
     } finally {
       busy.current = false;
       setSaving(false);
+      onBusyChange(false);
     }
   }
   return (
     <Card asChild className="gap-4 py-0 ring-0">
-      <section className="rounded-lg border bg-white p-5">
-        <h2>Manage employee details</h2>
+      <section
+        id="employee-editor-panel"
+        className="employee-editor rounded-lg border bg-white p-5"
+      >
+        <h2>{editing ? "Edit Employee Record" : "Employee Edit History"}</h2>
         <div className="flex gap-3">
-          <Button
-            disabled={saving}
-            variant="outline"
-            onClick={() => setEditing((v) => !v)}
-          >
-            {editing ? "Cancel edit" : "Edit record"}
-          </Button>
           <Button
             disabled={saving}
             variant="outline"
@@ -140,6 +145,13 @@ export function EmployeeEditor({
                 Fill all emergency contact fields or leave them all empty. Edits
                 are recorded in history.
               </p>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onEditingChange(false)}
+              >
+                Cancel
+              </Button>
               <Button type="submit">
                 {saving ? "Saving…" : "Save employee"}
               </Button>

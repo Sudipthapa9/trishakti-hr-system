@@ -30,7 +30,7 @@ test("pipeline filters by a validated job before paging and retains unfiltered a
     pool.query = async (sql, values) => {
       calls++;
       assert.match(sql, /WHERE \(\$2::uuid IS NULL OR a\.job_id = \$2::uuid\)/);
-      assert.deepEqual(values, [20, jobId]);
+      assert.deepEqual(values, [20, jobId, null, null]);
       return {
         rows: Array.from({ length: 21 }, (_, index) => ({ id: index, jobId })),
       };
@@ -48,7 +48,7 @@ test("pipeline filters by a validated job before paging and retains unfiltered a
     assert.equal(calls, 1);
 
     pool.query = async (_, values) => {
-      assert.deepEqual(values, [0, null]);
+      assert.deepEqual(values, [0, null, null, null]);
       return { rows: [] };
     };
     const unfiltered = response();

@@ -1,265 +1,414 @@
-/* employee-record-page: styles for this module. Shared tokens come from index.css; prefixed selectors keep page-specific rules isolated. */
 @reference "../../index.css";
-/* arrange the contained elements. */
 .page-employees-employee-record-page {
   display: contents;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
+.employees-list-heading h1 {
+  color: #292d28;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.employees-list-heading p {
+  margin-top: 6px;
+  color: #737b86;
+  font-size: 13px;
+}
+.employees-list-panel {
+  overflow: hidden;
+  border: 1px solid #e1dfd6;
+  border-radius: 9px;
+  background: white;
+}
+.employees-list-panel > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e1dfd6;
+  background: #faf4ea;
+}
+.employees-list-panel > header h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.employees-list-panel > header span {
+  color: #737b86;
+  font-size: 11px;
+}
+.employees-list-panel table {
+  min-width: 900px;
+}
+.employees-list-panel th {
+  padding: 12px 18px;
+  background: #f8f5ee;
+  color: #737b86;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.employees-list-panel td {
+  padding: 18px;
+  font-size: 12px;
+}
+.employee-person-link {
+  color: inherit;
+  text-decoration: none;
+}
+.employee-person-link:focus-visible {
+  outline: 2px solid #194e65;
+  outline-offset: 4px;
+}
+.employees-list-panel > footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid #e1dfd6;
+}
+.employees-list-panel > footer p {
+  color: #737b86;
+  font-size: 11px;
+}
+.employees-list-empty {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid #e1dfd6;
+  border-radius: 9px;
+  background: white;
+}
+.employees-list-empty h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+.employees-list-empty p {
+  color: #737b86;
+  font-size: 13px;
+}
+.employee-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  color: #737b86;
+  font-size: 12px;
+}
+.employee-back-link svg {
+  width: 14px;
+  height: 14px;
+}
 .employee-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
-/* set text hierarchy and readability; apply the intended surface or text colors. */
 .employee-heading small {
-  text-transform: uppercase;
+  color: #8a9282;
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: #8a9282;
+  text-transform: uppercase;
 }
-/* set spacing between this region and its content; set text hierarchy and readability. */
 .employee-heading h1 {
-  font-size: 30px;
-  letter-spacing: -0.03em;
+  margin-top: 5px;
+  color: #292d28;
+  font-size: 28px;
   font-weight: 600;
-  margin-top: 6px;
+  letter-spacing: -0.03em;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
 .employee-heading > div:last-child {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-/* set text hierarchy and readability. */
 .employee-heading button {
   font-size: 12px;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
 .employee-layout {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr);
   gap: 24px;
   align-items: stretch;
+  color: #292d28;
 }
-/* set spacing between this region and its content; apply the intended surface or text colors. */
 .employee-profile,
-.employee-personal,
-.employee-documents {
-  background: #fffdf8;
-  border: 1px solid #e5e1d7;
-  border-radius: 10px;
+.employee-personal {
+  min-width: 0;
   padding: 24px;
+  border: 1px solid #e5e1d7;
+  border-radius: 9px;
+  background: #fffdf8;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
 .employee-profile {
-  text-align: center;
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   padding-top: 30px;
+  text-align: center;
 }
-/* set spacing between this region and its content; control dimensions. */
-.employee-profile > img {
-  width: 126px;
-  height: 126px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 24px;
+.employee-profile .employee-profile-avatar {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 18px;
 }
-/* set text hierarchy and readability. */
-.employee-profile h2 {
-  font-size: 18px;
+.employee-profile-avatar [data-slot="avatar-fallback"] {
+  color: #194e65;
+  background: #e7eeec;
+  font-size: 30px;
   font-weight: 600;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
+.employee-profile h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
 .employee-profile > p {
-  font-size: 12px;
-  color: #7c8475;
   margin-top: 6px;
+  color: #737b86;
+  font-size: 12px;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; control dimensions. */
 .employee-profile > [data-slot="badge"] {
-  min-height: 20px;
+  margin-top: 9px;
+  padding: 3px 8px;
   font-size: 10px;
-  padding: 2px 8px;
-  margin-top: 8px;
 }
-/* arrange the contained elements; set spacing between this region and its content; control dimensions. */
 .employee-profile dl {
-  width: 100%;
-  text-align: left;
-  border-top: 1px solid #deded4;
-  padding-top: 24px;
-  margin-top: auto;
   display: grid;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  width: 100%;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e1d7;
+  text-align: left;
 }
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
 .employee-profile dt {
+  color: #737b86;
   font-size: 10px;
-  color: #8c9385;
-  margin-bottom: 5px;
 }
-/* set text hierarchy and readability. */
 .employee-profile dd {
-  font-size: 13px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
 .employee-details {
   display: grid;
-  gap: 24px;
+  gap: 20px;
+  min-width: 0;
 }
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability. */
 .employee-personal h2,
-.employee-documents h2,
 .employee-journey h2 {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
 }
-/* apply the intended surface or text colors. */
 .employee-personal h2 svg {
   color: #194e65;
+  width: 16px;
+  height: 16px;
 }
-/* arrange the contained elements; set spacing between this region and its content. */
 .employee-fields {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px 36px;
-  margin-top: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px 28px;
+  margin-top: 20px;
 }
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.employee-fields label {
-  display: block;
+.employee-fields dt {
+  color: #737b86;
   font-size: 10px;
-  color: #92998c;
-  margin-bottom: 6px;
 }
-/* set text hierarchy and readability. */
-.employee-fields p {
-  font-size: 13px;
-}
-/* set spacing between this region and its content. */
-.employee-personal > h2:nth-of-type(2) {
-  border-top: 1px solid #deded4;
-  margin-top: 26px;
-  padding-top: 22px;
-}
-/* set spacing between this region and its content. */
-.employee-personal > button {
-  margin-top: 20px;
-}
-/* arrange the contained elements. */
-.emergency-fields {
-  grid-template-columns: 1fr 1fr 1.3fr;
-}
-/* arrange the contained elements; set spacing between this region and its content. */
-.employee-bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-/* arrange the contained elements; set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors; control dimensions. */
-.employee-documents button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: 1px solid #deddd3;
-  background: #faf4e9;
-  text-align: left;
+.employee-fields dd {
   font-size: 12px;
 }
-/* define the visual boundary or interaction treatment. */
-.employee-documents button > span {
-  flex: 1;
-}
-/* set spacing between this region and its content. */
-.employee-documents h2 {
-  margin-bottom: 22px;
-}
-/* set spacing between this region and its content; apply the intended surface or text colors; position this element relative to its surrounding layout. */
-.employee-journey {
-  padding: 24px;
-  background: #194e65;
-  color: white;
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-}
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.employee-journey p {
-  font-size: 12px;
-  color: #d0dee0;
-  margin-top: 14px;
-  line-height: 1.6;
-}
-/* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.employee-journey [data-slot="button"] {
-  margin-top: 20px;
-  font-size: 11px;
-  background: #fff8ef;
+.employee-fields a {
   color: #194e65;
 }
-/* position this element relative to its surrounding layout; control dimensions. */
-.employee-journey:after {
-  content: "";
+.employee-emergency {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e1d7;
+}
+.emergency-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.employee-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.employee-bottom .onboarding-documents > header {
+  padding: 14px;
+  background: #fffdf8;
+}
+.employee-bottom .onboarding-documents h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.employee-bottom .onboarding-documents-content {
+  padding: 14px;
+}
+.employee-bottom .onboarding-document-grid {
+  grid-template-columns: 1fr;
+}
+.employee-bottom .onboarding-document-upload input {
+  min-width: 0;
+  max-width: 100%;
+}
+.employee-journey {
+  position: relative;
+  padding: 22px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #194e65;
+  color: white;
+}
+.employee-journey h2 svg {
+  width: 17px;
+  height: 17px;
+}
+.employee-journey p {
+  margin-top: 12px;
+  color: #d0dee0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.employee-journey [data-slot="button"] {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  height: auto;
+  min-height: 28px;
+  margin-top: 18px;
+  padding: 8px;
+  background: #fff8ef;
+  color: #194e65;
+  white-space: normal;
+  font-size: 11px;
+}
+.employee-onboarding-link {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 14px;
+  color: #e9f1f2;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.employee-journey::after {
   position: absolute;
   right: -25px;
   bottom: -30px;
-  width: 140px;
-  height: 140px;
+  width: 130px;
+  height: 130px;
   border: 24px solid #ffffff08;
   border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+.employee-created-note {
+  color: #737b86;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.employee-editor h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.employee-editor > .flex {
+  margin-top: 12px;
+}
+.employee-editor label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+.employee-editor form fieldset {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.employee-editor form fieldset > p {
+  grid-column: 1 / -1;
+  color: #737b86;
+  font-size: 12px;
+}
+.employee-editor article {
+  padding: 14px;
+  border: 1px solid #e5e1d7;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
 }
 @media (max-width: 1100px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
   .employee-layout {
     grid-template-columns: 250px minmax(0, 1fr);
+    gap: 18px;
   }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
   .employee-bottom {
-    gap: 16px;
-  }
-  /* Viewport-specific adjustment: set spacing between this region and its content. */
-  .employee-profile,
-  .employee-personal,
-  .employee-documents,
-  .employee-journey {
-    padding: 20px;
-  }
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .emergency-fields {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 800px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
   .employee-layout {
     grid-template-columns: 1fr;
   }
-  /* Viewport-specific adjustment: arrange the contained elements; set spacing between this region and its content. */
   .employee-profile dl {
-    margin-top: 30px;
     grid-template-columns: 1fr 1fr;
   }
-  /* Viewport-specific adjustment: define the visual boundary or interaction treatment. */
-  .employee-heading {
-    flex-wrap: wrap;
-  }
 }
-@media (max-width: 500px) {
-  /* Viewport-specific adjustment: arrange the contained elements. */
-  .employee-bottom,
-  .employee-fields {
+@media (max-width: 550px) {
+  .employee-fields,
+  .employee-editor form fieldset {
     grid-template-columns: 1fr;
   }
-  /* Viewport-specific adjustment: set text hierarchy and readability. */
   .employee-heading h1 {
-    font-size: 25px;
+    font-size: 24px;
   }
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .employee-heading,
+  .employee-heading *,
+  .employee-layout,
+  .employee-layout * {
+    visibility: visible;
+  }
+  .employee-heading > div:last-child,
+  .employee-layout button,
+  .employee-layout form,
+  .employee-layout .onboarding-document-pagination {
+    display: none;
+  }
+  .page-employees-employee-record-page .page-stack {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    background: white;
+  }
+  .employee-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+  .employee-bottom {
+    grid-template-columns: 1fr 1fr;
+  }
+  .employee-profile,
+  .employee-personal,
+  .employee-bottom {
+    break-inside: avoid;
+  }
+}
+
+.employee-heading > div > p {
+  color: #737b86;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

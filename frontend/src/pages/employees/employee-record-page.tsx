@@ -1,6 +1,6 @@
-import { ProfileSummary } from "@/components/shared/data-display/profile-summary";
-import { DetailList } from "@/components/shared/data-display/detail-list";
-import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/Layout/page-header";
+import { RotateCcw } from "lucide-react";
+import { EmployeesTable } from "./employees-table";
 import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useEffect, useState } from "react";
@@ -12,8 +12,7 @@ import {
   type EmployeeRecord,
 } from "@/data/employees-api";
 import "./employee-record-page.css";
-import { EmployeeEditor } from "./employee-editor";
-import { OnboardingDocuments } from "@/pages/onboarding/onboarding-documents";
+import { EmployeeDetail } from "./employee-detail";
 
 export function EmployeeRecordPage() {
   const { employeeId } = useParams();
@@ -59,95 +58,96 @@ function EmployeeContent({ id }: { id?: string }) {
   return (
     <div className="page-employees-employee-record-page">
       <div className="page-stack">
-        <h1>{employee ? employee.fullName : "Employee records"}</h1>
+        {!id && (
+          <PageHeader
+            className="employees-list-heading"
+            title="Employees"
+            description="Employee records created from completed onboarding."
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                onClick={() => window.location.reload()}
+              >
+                <RotateCcw aria-hidden="true" /> Reload
+              </Button>
+            }
+          />
+        )}
         {loading && (
           <FeedbackMessage role="status">
             Loading employee records…
           </FeedbackMessage>
         )}
-        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Reload saved records
-        </Button>
+        {error && (
+          <div className="employee-load-error">
+            <FeedbackMessage role="alert">{error}</FeedbackMessage>
+            {id && (
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+              >
+                Try Again
+              </Button>
+            )}
+          </div>
+        )}
+
         {!id && !loading && !error && (
           <>
             {!employees.length && (
-              <p>
-                No employee records yet. Complete an onboarding checklist to
-                create one.
-              </p>
+              <div className="employees-list-empty">
+                <h2>
+                  {page > 1
+                    ? "No employees on this page"
+                    : "No employee records yet"}
+                </h2>
+                <p>
+                  Complete an onboarding checklist to create an employee record.
+                </p>
+                {page > 1 ? (
+                  <Button variant="outline" onClick={() => setPage(page - 1)}>
+                    Previous page
+                  </Button>
+                ) : (
+                  <Button asChild variant="outline">
+                    <Link to="/onboarding">Go to Onboarding</Link>
+                  </Button>
+                )}
+              </div>
             )}
-            {employees.map((record) => (
-              <Card asChild className="gap-4 py-0 ring-0" key={record.id}>
-                <section
-                  className="rounded-lg border bg-white p-4"
-                  key={record.id}
-                >
-                  <Link to={"/employees/" + record.id}>
-                    <ProfileSummary
-                      name={record.fullName}
-                      detail={record.position}
-                    />
-                  </Link>
-                  <p>Joining: {record.joiningDate}</p>
-                </section>
-              </Card>
-            ))}
-            <div className="flex gap-3">
-              <PaginationControls
-                previousDisabled={page === 1}
-                nextDisabled={!hasMore}
-                onPrevious={() => setPage(page - 1)}
-                onNext={() => setPage(page + 1)}
-              >
-                <span>Page {page}</span>
-              </PaginationControls>
-            </div>
+            {employees.length > 0 && (
+              <section className="employees-list-panel">
+                <header>
+                  <h2>Employee Directory</h2>
+                  <span>Saved employee records</span>
+                </header>
+                <EmployeesTable employees={employees} />
+                <footer>
+                  <p>
+                    Showing {(page - 1) * 20 + 1} to{" "}
+                    {(page - 1) * 20 + employees.length}
+                  </p>
+                  <PaginationControls
+                    previousDisabled={page === 1}
+                    nextDisabled={!hasMore}
+                    onPrevious={() => setPage(page - 1)}
+                    onNext={() => setPage(page + 1)}
+                  >
+                    <span>Page {page}</span>
+                  </PaginationControls>
+                </footer>
+              </section>
+            )}
           </>
         )}
-        {employee && !loading && (
-          <>
-            <Link to="/employees">All employee records</Link>
-            <section className="employee-personal">
-              <h2>Employment details</h2>
-              <DetailList
-                items={[
-                  ["Employee ID", employee.id],
-                  ["Position", employee.position],
-                  ["Department", employee.department],
-                  ["Location", employee.location],
-                  ["Joining date", employee.joiningDate],
-                  ["Email", employee.email],
-                  ["Phone", employee.phone],
-                ]}
-              />
-            </section>
-            <EmployeeEditor
-              key={employee.version}
-              employee={employee}
-              onSaved={setEmployee}
-            />
-            <OnboardingDocuments onboardingId={employee.onboardingId} />
-            <p>
-              Emergency contact:{" "}
-              {employee.emergencyName
-                ? `${employee.emergencyName} · ${employee.emergencyRelationship} · ${employee.emergencyPhone}`
-                : "Not provided"}
-            </p>
-            <p>
-              Created from the accepted offer and submitted application on{" "}
-              {new Date(employee.createdAt).toLocaleString()}. Joining date is
-              recorded separately from onboarding completion.
-            </p>
-            <div className="flex gap-4">
-              <Link to={"/onboarding/" + employee.onboardingId}>
-                Completed onboarding
-              </Link>
-              <Link to={"/candidates/" + employee.candidateId}>
-                Source candidate
-              </Link>
-            </div>
-          </>
+        {employee && !loading && !error && (
+          <EmployeeDetail
+            employee={employee}
+            onSaved={setEmployee}
+            onReload={() => window.location.reload()}
+          />
         )}
       </div>
     </div>

@@ -1,5 +1,5 @@
 /**
- * Combines shared navigation with database jobs and sample candidate state; Outlet renders the selected workspace page.
+ * Combines shared navigation with database jobs; Outlet renders the selected workspace page.
  */
 import { useEffect, useState } from "react";
 import {
@@ -16,7 +16,6 @@ import {
 import { Outlet } from "react-router-dom";
 import { AppShell, type NavItem } from "@/components/Layout/app-shell";
 import { useAuth } from "@/auth/auth-context";
-import { initialCandidates } from "@/data/demo-data";
 import { WorkspaceContext } from "@/data/workspace-context";
 import keycloak from "@/keycloak";
 import {
@@ -25,7 +24,7 @@ import {
   updateJob,
   type JobChanges,
 } from "@/data/jobs-api";
-import type { CandidateStage, Job, JobStatus } from "@/types/hr";
+import type { Job, JobStatus } from "@/types/hr";
 
 // Keep navigation labels, icons, and destinations in one shared list.
 const navigationItems: NavItem[] = [
@@ -45,7 +44,7 @@ const navigationItems: NavItem[] = [
   { label: "Employees", icon: UserRound, to: "/employees" },
 ];
 
-// Combines shared navigation with database jobs and sample candidate state; Outlet renders the selected workspace page.
+// Combines shared navigation with database jobs; Outlet renders the selected workspace page.
 export function WorkspaceLayout() {
   const { username, roleLabel, logout } = useAuth();
   // Keep jobs in component state; updates trigger a render.
@@ -71,8 +70,6 @@ export function WorkspaceLayout() {
       });
     return () => controller.abort();
   }, []);
-  // Keep candidates in component state; updates trigger a render.
-  const [candidates, setCandidates] = useState(initialCandidates);
 
   async function editJob(id: string, changes: JobChanges) {
     const saved = await updateJob(id, changes);
@@ -90,28 +87,15 @@ export function WorkspaceLayout() {
     setJobs((current) => [saved, ...current]);
   }
 
-  // Change the matching candidate stage and update its relative timestamp in shared state.
-  function updateCandidateStage(candidateId: string, stage: CandidateStage) {
-    setCandidates((currentCandidates) =>
-      currentCandidates.map((candidate) =>
-        candidate.id === candidateId
-          ? { ...candidate, stage, updated: "Just now" }
-          : candidate,
-      ),
-    );
-  }
-
   return (
     <WorkspaceContext.Provider
       value={{
         jobs,
         jobsLoading,
         jobsError,
-        candidates,
         updateJobStatus,
         editJob,
         createJob,
-        updateCandidateStage,
       }}
     >
       <AppShell

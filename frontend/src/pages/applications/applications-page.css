@@ -1,0 +1,329 @@
+@reference "../../index.css";
+.page-applications {
+  color: #292d29;
+}
+.applications-heading h1 {
+  color: #292d29;
+  font-size: 29px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.applications-heading > div > p:last-child {
+  margin-top: 6px;
+  color: #737b86;
+  font-size: 13px;
+}
+.applications-heading > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.applications-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e1dfd6;
+  border-radius: 9px;
+  background: #fffdf8;
+}
+.applications-search {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.applications-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: #929b9b;
+}
+.applications-search input {
+  height: 38px;
+  padding-left: 36px;
+  background: white;
+  font-size: 12px;
+}
+.applications-filter-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.applications-filter-field label {
+  color: #737b86;
+  font-size: 11px;
+}
+.applications-filter-field select {
+  width: 180px;
+  max-width: 100%;
+  height: 38px;
+  background: white;
+  font-size: 12px;
+}
+.applications-filters > button {
+  height: 36px;
+  font-size: 12px;
+}
+.applications-panel {
+  overflow: hidden;
+  border: 1px solid #e1dfd6;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 2px 5px rgb(25 78 101 / 3%);
+}
+.applications-panel > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid #e8e4db;
+}
+.applications-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.applications-panel-title h2 {
+  color: #292d29;
+  font-size: 15px;
+  font-weight: 600;
+}
+.applications-panel-title p {
+  margin-top: 3px;
+  color: #8a929a;
+  font-size: 11px;
+}
+.applications-panel-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  background: #edf2f2;
+  color: #194e65;
+}
+.applications-panel-icon svg {
+  width: 17px;
+  height: 17px;
+}
+.applications-result-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #737b86;
+  font-size: 11px;
+}
+.applications-result-label svg {
+  width: 13px;
+  height: 13px;
+}
+.applications-panel table {
+  min-width: 950px;
+}
+.applications-panel th {
+  padding: 13px 20px;
+  border-bottom: 1px solid #e8e4db;
+  background: #faf6ee;
+  color: #737b86;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.applications-panel td {
+  padding: 20px;
+  border-color: #efede7;
+  font-size: 12px;
+  vertical-align: middle;
+}
+.applications-panel td:first-child {
+  min-width: 230px;
+}
+.applications-panel td:nth-child(2) {
+  min-width: 160px;
+  max-width: 240px;
+  white-space: normal;
+}
+.applications-panel [data-slot="avatar"] {
+  width: 34px;
+  height: 34px;
+}
+.applications-panel [data-slot="badge"] {
+  font-size: 10px;
+  padding: 3px 9px;
+}
+.application-timezone {
+  display: block;
+  margin-top: 4px;
+  color: #929b9b;
+  font-size: 10px;
+}
+.application-resume-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #929b9b;
+  font-size: 11px;
+}
+.application-resume-label.has-resume {
+  color: #527665;
+}
+.application-resume-label svg {
+  width: 14px;
+  height: 14px;
+}
+.application-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.application-row-actions button {
+  font-size: 11px;
+}
+.applications-panel > footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 20px;
+  border-top: 1px solid #e8e4db;
+  background: #fffdf9;
+}
+.applications-panel > footer p {
+  color: #737b86;
+  font-size: 11px;
+}
+.applications-privacy-note {
+  color: #8a929a;
+  font-size: 11px;
+}
+.applications-state {
+  padding: 20px;
+}
+.applications-empty {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+}
+.applications-empty > svg {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  box-sizing: content-box;
+  border-radius: 50%;
+  background: #f5f2ea;
+  color: #82928e;
+}
+.applications-empty h3 {
+  color: #373e38;
+  font-size: 17px;
+  font-weight: 500;
+}
+.applications-empty p {
+  max-width: 380px;
+  color: #737b86;
+  font-size: 13px;
+}
+.applications-detail-sheet[data-slot="sheet-content"] {
+  width: min(100vw, 520px);
+  max-width: 520px;
+  overflow-y: auto;
+  background: #fffdf9;
+}
+.applications-detail-sheet [data-slot="sheet-header"] {
+  padding: 24px;
+  border-bottom: 1px solid #e8e4db;
+}
+.applications-detail-sheet [data-slot="sheet-title"] {
+  font-size: 19px;
+  font-weight: 600;
+}
+.applications-detail-sheet [data-slot="sheet-description"] {
+  margin-top: 5px;
+  font-size: 12px;
+}
+.application-detail-content {
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+  padding: 8px 24px 24px;
+}
+.application-detail-content dl {
+  width: 100%;
+}
+.application-detail-content dd {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.application-cover-letter {
+  width: 100%;
+  padding-top: 20px;
+  border-top: 1px solid #e8e4db;
+}
+.application-cover-letter h3 {
+  margin-bottom: 12px;
+  color: #373e38;
+  font-size: 13px;
+  font-weight: 600;
+}
+.application-cover-letter p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #737b86;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.application-document {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e8e4db;
+  border-radius: 8px;
+  background: #faf6ee;
+}
+.application-document > svg {
+  width: 22px;
+  height: 22px;
+  color: #194e65;
+}
+.application-document > div {
+  flex: 1;
+  min-width: 0;
+}
+.application-document h3 {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  font-weight: 500;
+}
+.application-document p {
+  margin-top: 4px;
+  color: #8a929a;
+  font-size: 10px;
+}
+.application-document button {
+  font-size: 11px;
+}
+@media (max-width: 800px) {
+  .applications-filter-field {
+    flex: 1 1 170px;
+  }
+  .applications-filter-field select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+  }
+}

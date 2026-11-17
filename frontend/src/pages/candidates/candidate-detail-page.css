@@ -1,0 +1,344 @@
+@reference "../../index.css";
+.candidate-detail-page {
+  color: #292d29;
+}
+.candidate-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  color: #737b86;
+  font-size: 12px;
+}
+.candidate-back-link svg {
+  width: 14px;
+  height: 14px;
+}
+.candidate-profile-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.candidate-profile-heading > div > p {
+  margin-bottom: 6px;
+  color: #8a929a;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.candidate-profile-heading h1 {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.candidate-profile-heading > div > span {
+  display: block;
+  margin-top: 7px;
+  color: #737b86;
+  font-size: 13px;
+}
+.candidate-profile-layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.candidate-profile-sidebar {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.candidate-identity-panel,
+.candidate-edit-panel {
+  padding: 24px;
+  border: 1px solid #e1dfd6;
+  border-radius: 9px;
+  background: #fffdf8;
+}
+.candidate-identity-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.candidate-identity-panel .candidate-profile-avatar {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+}
+.candidate-profile-avatar [data-slot="avatar-fallback"] {
+  color: #194e65;
+  background: #e7eeec;
+  font-size: 26px;
+  font-weight: 600;
+}
+.candidate-identity-panel h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.candidate-profile-type {
+  margin-top: 5px;
+  color: #8a929a;
+  font-size: 11px;
+}
+.candidate-contact {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e4db;
+  text-align: left;
+}
+.candidate-contact a,
+.candidate-contact p,
+.candidate-profile-meta p {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: #737b86;
+}
+.candidate-contact a {
+  color: #194e65;
+}
+.candidate-contact svg,
+.candidate-profile-meta svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.candidate-profile-meta {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e8e4db;
+}
+.candidate-profile-meta p {
+  font-size: 11px;
+}
+.candidate-edit-panel h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.candidate-edit-panel > p {
+  margin: 10px 0 16px;
+  color: #737b86;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.candidate-edit-panel form label {
+  font-size: 11px;
+}
+.candidate-edit-panel form input {
+  min-width: 0;
+  background: white;
+  font-size: 12px;
+}
+.candidate-edit-panel form .flex {
+  flex-wrap: wrap;
+}
+.candidate-edit-panel button {
+  font-size: 11px;
+}
+.candidate-applications-panel {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.candidate-applications-panel > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+}
+.candidate-applications-panel > header h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.candidate-applications-panel > header p {
+  margin-top: 5px;
+  color: #737b86;
+  font-size: 12px;
+}
+.candidate-applications-panel > header > span {
+  border-radius: 12px;
+  padding: 4px 10px;
+  background: #eeeae1;
+  color: #737b86;
+  font-size: 11px;
+}
+.candidate-application-card {
+  overflow: hidden;
+  border: 1px solid #e1dfd6;
+  border-radius: 9px;
+  background: white;
+}
+.candidate-application-card > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+}
+.candidate-application-position {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.candidate-application-position > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #edf2f2;
+  color: #194e65;
+}
+.candidate-application-position svg {
+  width: 17px;
+  height: 17px;
+}
+.candidate-application-position h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.candidate-application-position p {
+  margin-top: 5px;
+  color: #8a929a;
+  font-size: 11px;
+}
+.candidate-application-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 18px;
+  font-size: 10px;
+  color: #8a929a;
+}
+.candidate-cv-received {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  color: #527665;
+}
+.candidate-cv-received svg {
+  width: 13px;
+  height: 13px;
+}
+.candidate-stage-panel {
+  padding: 0 20px;
+  border-top: 1px solid #eeeae2;
+  background: #fffdf8;
+}
+.candidate-stage-panel label {
+  font-size: 11px;
+  color: #737b86;
+}
+.candidate-stage-panel select {
+  min-width: 0;
+  width: 180px;
+  background: white;
+  font-size: 12px;
+}
+.candidate-stage-panel button {
+  font-size: 11px;
+}
+.candidate-submission-details {
+  padding: 16px 20px;
+  border-top: 1px solid #eeeae2;
+}
+.candidate-submission-details summary {
+  cursor: pointer;
+  color: #194e65;
+  font-size: 12px;
+}
+.candidate-submission-details dl {
+  margin-top: 18px;
+}
+.candidate-submission-details dd {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.candidate-submission-details h4 {
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.candidate-submission-details > p {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #737b86;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.candidate-application-card > footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid #eeeae2;
+  background: #faf6ee;
+}
+.candidate-application-card > footer > span {
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  color: #8a929a;
+}
+.candidate-application-card > footer button {
+  font-size: 11px;
+}
+.candidate-applications-empty {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 50px 24px;
+  border: 1px dashed #dedfd6;
+  border-radius: 9px;
+  background: #fffdf8;
+  text-align: center;
+}
+.candidate-applications-empty > svg {
+  color: #8a929a;
+}
+.candidate-applications-empty p {
+  color: #737b86;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .candidate-profile-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+@media (max-width: 700px) {
+  .candidate-profile-layout {
+    grid-template-columns: 1fr;
+  }
+  .candidate-profile-sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 500px) {
+  .candidate-profile-sidebar {
+    grid-template-columns: 1fr;
+  }
+  .candidate-profile-heading h1 {
+    font-size: 24px;
+  }
+}

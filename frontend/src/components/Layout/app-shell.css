@@ -316,9 +316,6 @@
   margin-top: 6px;
 }
 /* arrange the contained elements. */
-.hr-workspace .page-heading .section-label {
-  display: none;
-}
 /* apply the intended surface or text colors. */
 .hr-workspace .form-select {
   background: #fff8ef;
@@ -442,15 +439,6 @@
   border-color: #e2e4dc;
 }
 /* set spacing between this region and its content; set text hierarchy and readability; apply the intended surface or text colors. */
-.candidate-match-score {
-  background: #edf1eb;
-  border: 1px solid #d7dfd4;
-  color: #668173;
-  border-radius: 12px;
-  padding: 2px 6px;
-  font-size: 10px;
-  font-weight: 500;
-}
 
 /* apply the intended surface or text colors. */
 

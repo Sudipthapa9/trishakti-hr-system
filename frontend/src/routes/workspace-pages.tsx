@@ -41,14 +41,7 @@ export function CandidatesRoute() {
 
 // Read the required workspace values and pass them to the corresponding page component.
 export function ScreeningRankingRoute() {
-  const { jobs, candidates, updateCandidateStage } = useWorkspace();
-  return (
-    <ScreeningRankingPage
-      jobs={jobs}
-      candidates={candidates}
-      onStageChange={updateCandidateStage}
-    />
-  );
+  return <ScreeningRankingPage />;
 }
 
 // Read the required workspace values and pass them to the corresponding page component.

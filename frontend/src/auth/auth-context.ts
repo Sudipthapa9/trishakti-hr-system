@@ -6,7 +6,7 @@ import { createContext, useContext } from "react";
 // Define AuthState so callers and implementations agree on the required data shape.
 export type AuthState = "loading" | "signed-out" | "signed-in";
 // Define AuthSession so callers and implementations agree on the required data shape.
-export type AuthSession = {
+type AuthSession = {
   authState: AuthState;
   username: string;
   roleLabel: string;

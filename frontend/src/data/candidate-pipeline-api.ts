@@ -10,7 +10,7 @@ export type PipelineApplication = {
   createdAt: string;
 };
 
-export type PipelinePage = {
+type PipelinePage = {
   applications: PipelineApplication[];
   hasMore: boolean;
 };

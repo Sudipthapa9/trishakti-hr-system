@@ -22,19 +22,3 @@ export type Job = {
   shortlistMultiplier?: number;
   previousStatus?: Exclude<JobStatus, "Archived">;
 };
-
-// Define CandidateStage so callers and implementations agree on the required data shape.
-export type CandidateStage =
-  "Review" | "Screening" | "Shortlisted" | "Interview" | "Offer";
-
-// Define Candidate so callers and implementations agree on the required data shape.
-export type Candidate = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  location: string;
-  score: number;
-  stage: CandidateStage;
-  updated: string;
-};

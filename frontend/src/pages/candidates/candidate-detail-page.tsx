@@ -1,14 +1,11 @@
-import { PageHeader } from "@/components/Layout/page-header";
-import { Card } from "@/components/ui/card";
-import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
-import "./candidates-page.css";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { FeedbackMessage } from "@/components/shared/feedback/feedback-message";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/shared/data-display/status-badge";
 import { requestCandidate, type CandidateDetail } from "@/data/candidates-api";
-import { ApplicationStageControl } from "./application-stage-control";
-import { CandidateProfileEditor } from "./candidate-profile-editor";
+import { CandidateProfileView } from "./candidate-profile-view";
+import "./candidate-detail-page.css";
 
 export function CandidateDetailPage() {
   const { candidateId } = useParams();
@@ -25,10 +22,7 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
     const controller = new AbortController();
     async function load() {
       try {
-        const data = await requestCandidate(
-          candidateId ?? "",
-          controller.signal,
-        );
+        const data = await requestCandidate(candidateId, controller.signal);
         if (!controller.signal.aborted) {
           setCandidate(data.candidate);
           setLoadError(null);
@@ -50,14 +44,15 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
   }, [candidateId, attempt]);
 
   return (
-    <div className="page-stack">
-      <Link className="underline" to="/candidates">
-        Back to candidates
-      </Link>
+    <div className="candidate-detail-page page-stack">
       {isLoading ? (
         <FeedbackMessage role="status">Loading candidate…</FeedbackMessage>
       ) : loadError ? (
         <div role="alert">
+          <Link className="candidate-back-link" to="/candidates">
+            <ArrowLeft aria-hidden="true" />
+            Back to Candidates
+          </Link>
           <p>{loadError}</p>
           <Button
             variant="outline"
@@ -70,92 +65,23 @@ function CandidateDetails({ candidateId }: { candidateId: string }) {
           </Button>
         </div>
       ) : candidate ? (
-        <>
-          <PageHeader
-            className="page-heading"
-            title={<>{candidate.fullName}</>}
-            description={
-              <>
-                {candidate.email} · {candidate.phone}
-              </>
-            }
-          />
-          <CandidateProfileEditor
-            candidate={candidate}
-            onSaved={(profile) => {
-              setCandidate((current) => current && { ...current, ...profile });
-            }}
-          />
-          <h2>Applications ({candidate.applications.length})</h2>
-          {!candidate.applications.length ? (
-            <p>This candidate has no applications.</p>
-          ) : (
-            <div className="grid gap-4">
-              {candidate.applications.map((application) => (
-                <Card
-                  asChild
-                  className="gap-4 py-0 ring-0"
-                  key={application.id}
-                >
-                  <article
-                    className="rounded-lg border bg-white p-5"
-                    key={application.id}
-                  >
-                    <h3>{application.jobTitle}</h3>
-                    <p>Job status: {application.jobStatus}</p>
-                    <StatusBadge
-                      domain="application"
-                      status={application.stage}
-                    />
-                    <ApplicationStageControl
-                      id={application.id}
-                      stage={application.stage}
-                      onSaved={(stage) => {
-                        setCandidate(
-                          (current) =>
-                            current && {
-                              ...current,
-                              applications: current.applications.map(
-                                (record) =>
-                                  record.id === application.id
-                                    ? { ...record, stage }
-                                    : record,
-                              ),
-                            },
-                        );
-                      }}
-                    />
-                    <p>
-                      Submitted{" "}
-                      {new Date(application.createdAt).toLocaleString()}
-                    </p>
-                    <p>Reference TSH-{application.id}</p>
-                    <details className="my-3">
-                      <summary>
-                        Submitted contact details and cover letter
-                      </summary>
-                      <p>
-                        {application.fullName} · {application.email} ·{" "}
-                        {application.phone}
-                      </p>
-                      <p className="whitespace-pre-line">
-                        {application.coverLetter || "No cover letter provided."}
-                      </p>
-                    </details>
-                    <p>
-                      {application.hasResume
-                        ? "CV received."
-                        : "No CV available."}
-                    </p>
-                  </article>
-                </Card>
-              ))}
-            </div>
-          )}
-          <Button asChild variant="outline">
-            <Link to="/applications">Review applications and CVs</Link>
-          </Button>
-        </>
+        <CandidateProfileView
+          candidate={candidate}
+          onProfileSaved={(profile) =>
+            setCandidate((current) => current && { ...current, ...profile })
+          }
+          onStageSaved={(id, stage) =>
+            setCandidate(
+              (current) =>
+                current && {
+                  ...current,
+                  applications: current.applications.map((record) =>
+                    record.id === id ? { ...record, stage } : record,
+                  ),
+                },
+            )
+          }
+        />
       ) : null}
     </div>
   );
