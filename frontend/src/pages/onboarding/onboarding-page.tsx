@@ -25,6 +25,7 @@ function OnboardingContent({ id }: { id?: string }) {
   const [records, setRecords] = useState<OnboardingRecord[]>([]);
   const [record, setRecord] = useState<OnboardingRecord | null>(null);
   const [page, setPage] = useState(1);
+  const [revision, setRevision] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,7 +40,10 @@ function OnboardingContent({ id }: { id?: string }) {
       try {
         if (id) {
           const result = await getOnboarding(id, controller.signal);
-          if (!controller.signal.aborted) setRecord(result.record);
+          if (!controller.signal.aborted) {
+            setRecord(result.record);
+            setUncertain(false);
+          }
         } else {
           const result = await listOnboarding(page, controller.signal);
           if (!controller.signal.aborted) {
@@ -60,7 +64,7 @@ function OnboardingContent({ id }: { id?: string }) {
     }
     void load();
     return () => controller.abort();
-  }, [id, page]);
+  }, [id, page, revision]);
   async function toggle(key: keyof Checklist) {
     if (!record || busy.current || uncertain || record.completedAt) return;
     busy.current = true;
@@ -118,7 +122,7 @@ function OnboardingContent({ id }: { id?: string }) {
                 variant="outline"
                 size="sm"
                 disabled={loading}
-                onClick={() => window.location.reload()}
+                onClick={() => setRevision((value) => value + 1)}
               >
                 <RotateCcw aria-hidden="true" /> Reload
               </Button>
@@ -185,7 +189,7 @@ function OnboardingContent({ id }: { id?: string }) {
             uncertain={uncertain}
             onToggle={(key) => void toggle(key)}
             onFinish={() => void finish()}
-            onReload={() => window.location.reload()}
+            onReload={() => setRevision((value) => value + 1)}
           />
         )}
       </div>

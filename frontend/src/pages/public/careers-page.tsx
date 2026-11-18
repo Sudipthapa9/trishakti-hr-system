@@ -18,11 +18,12 @@ import {
   Search,
   Users,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { usePublicJobs } from "./use-public-jobs";
 import "./careers-page.css";
 export function CareersPage() {
+  const openPositions = useRef<HTMLElement>(null);
   const result = usePublicJobs();
   // Keep query in component state; updates trigger a render.
   const [query, setQuery] = useState("");
@@ -61,9 +62,7 @@ export function CareersPage() {
               className="careers-search"
               onSubmit={(e) => {
                 e.preventDefault();
-                document
-                  .getElementById("open-positions")
-                  ?.scrollIntoView({ behavior: "smooth" });
+                openPositions.current?.scrollIntoView({ behavior: "smooth" });
               }}
             >
               <Label>
@@ -225,7 +224,11 @@ export function CareersPage() {
             <small>Senior Packaging Engineer</small>
           </section>
           {/* Group related content and controls in this screen section. */}
-          <section className="careers-open" id="open-positions">
+          <section
+            className="careers-open"
+            ref={openPositions}
+            id="open-positions"
+          >
             {/* Page or panel heading and contextual actions. */}
             <header>
               <div>

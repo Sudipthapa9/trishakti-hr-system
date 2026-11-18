@@ -254,14 +254,35 @@
   }
 }
 @media print {
-  body * {
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    * {
     visibility: hidden;
   }
-  .offer-paper,
-  .offer-paper * {
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    .offer-paper,
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    .offer-paper
+    * {
     visibility: visible;
   }
-  .offer-paper {
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    .offer-paper {
     position: absolute;
     left: 0;
     top: 0;
@@ -270,8 +291,18 @@
     border: 0;
     min-height: 0;
   }
-  .workspace-header,
-  .workspace-prototype-note {
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    .workspace-header,
+  body:has(
+      .page-recruitment-offer-generation-page
+        .offer-preview:not([hidden])
+        .offer-paper
+    )
+    .workspace-prototype-note {
     display: none;
   }
 }
