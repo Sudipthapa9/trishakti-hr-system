@@ -372,36 +372,57 @@
   }
 }
 @media print {
-  body * {
+  body:has(.page-employees-employee-record-page .employee-layout) * {
     visibility: hidden;
   }
-  .employee-heading,
-  .employee-heading *,
-  .employee-layout,
-  .employee-layout * {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-heading,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-heading
+    *,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout
+    * {
     visibility: visible;
   }
-  .employee-heading > div:last-child,
-  .employee-layout button,
-  .employee-layout form,
-  .employee-layout .onboarding-document-pagination {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-heading
+    > div:last-child,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout
+    button,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout
+    form,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout
+    .onboarding-document-pagination {
     display: none;
   }
-  .page-employees-employee-record-page .page-stack {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .page-employees-employee-record-page
+    .page-stack {
     position: absolute;
     inset: 0;
     padding: 20px;
     background: white;
   }
-  .employee-layout {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-layout {
     grid-template-columns: 230px minmax(0, 1fr);
   }
-  .employee-bottom {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-bottom {
     grid-template-columns: 1fr 1fr;
   }
-  .employee-profile,
-  .employee-personal,
-  .employee-bottom {
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-profile,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-personal,
+  body:has(.page-employees-employee-record-page .employee-layout)
+    .employee-bottom {
     break-inside: avoid;
   }
 }

@@ -23,10 +23,13 @@ export function requestApplications(
     if (filters[key]) query.set(key, filters[key]);
   return hrRequest("applications?" + query.toString(), { signal });
 }
-export async function downloadApplicationResume(id: string): Promise<Blob> {
+export async function downloadApplicationResume(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Blob> {
   return hrRequest(
     "applications/" + encodeURIComponent(id) + "/resume",
-    {},
+    { signal },
     true,
   );
 }

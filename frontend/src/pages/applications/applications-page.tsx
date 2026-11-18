@@ -23,6 +23,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { usePrivateDownload } from "@/hooks/use-private-download";
 import { useWorkspace } from "@/data/workspace-context";
 import { applicationStages } from "@/data/application-stages";
 import {
@@ -48,11 +49,15 @@ export function ApplicationsPage() {
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [downloadId, setDownloadId] = useState<string | null>(null);
-  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const {
+    downloadId,
+    error: downloadError,
+    download: downloadFile,
+    clearError: clearDownloadError,
+  } = usePrivateDownload();
   const [selected, setSelected] = useState<ApplicationRecord | null>(null);
-  const downloadBusy = useRef(false);
   const lastFocus = useRef<HTMLElement | null>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
   const filtered = Boolean(query.jobId || query.stage || query.q);
   useEffect(() => {
     const controller = new AbortController();
@@ -80,7 +85,7 @@ export function ApplicationsPage() {
     setIsLoading(true);
     setError(null);
     setSelected(null);
-    setDownloadError(null);
+    clearDownloadError();
     setQuery((current) => ({ ...current, ...changes }));
   }
   function clearFilters() {
@@ -92,30 +97,17 @@ export function ApplicationsPage() {
     updateQuery({ q: search.trim(), page: 1 });
   }
   async function download(application: ApplicationRecord) {
-    if (downloadBusy.current || !application.hasResume) return;
-    downloadBusy.current = true;
-    setDownloadId(application.id);
-    setDownloadError(null);
-    try {
-      const blob = await downloadApplicationResume(application.id);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = application.resumeName || "resume";
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (error) {
-      setDownloadError(
-        error instanceof Error ? error.message : "Could not download the CV.",
-      );
-    } finally {
-      downloadBusy.current = false;
-      setDownloadId(null);
-    }
+    if (!application.hasResume) return;
+    await downloadFile(application.id, async (signal) => ({
+      blob: await downloadApplicationResume(application.id, signal),
+      name: application.resumeName || "resume",
+    }));
   }
   function view(application: ApplicationRecord) {
-    lastFocus.current = document.activeElement as HTMLElement | null;
-    setDownloadError(null);
+    const active = document.activeElement;
+    lastFocus.current =
+      active instanceof HTMLElement && active !== document.body ? active : null;
+    clearDownloadError();
     setSelected(application);
   }
   return (
@@ -157,6 +149,7 @@ export function ApplicationsPage() {
             </Label>
             <Search aria-hidden="true" />
             <Input
+              ref={searchInput}
               id="applications-search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -314,8 +307,15 @@ export function ApplicationsPage() {
       <SheetContent
         className="applications-detail-sheet"
         onCloseAutoFocus={(event) => {
-          event.preventDefault();
-          lastFocus.current?.focus();
+          const trigger = lastFocus.current;
+          const target =
+            trigger?.isConnected && !trigger.matches(":disabled")
+              ? trigger
+              : searchInput.current;
+          if (target?.isConnected) {
+            event.preventDefault();
+            target.focus();
+          }
         }}
       >
         <SheetHeader>

@@ -22,6 +22,7 @@ function EmployeeContent({ id }: { id?: string }) {
   const [employee, setEmployee] = useState<EmployeeRecord | null>(null);
   const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
   const [page, setPage] = useState(1);
+  const [revision, setRevision] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -54,7 +55,7 @@ function EmployeeContent({ id }: { id?: string }) {
     }
     void load();
     return () => controller.abort();
-  }, [id, page]);
+  }, [id, page, revision]);
   return (
     <div className="page-employees-employee-record-page">
       <div className="page-stack">
@@ -68,7 +69,7 @@ function EmployeeContent({ id }: { id?: string }) {
                 variant="outline"
                 size="sm"
                 disabled={loading}
-                onClick={() => window.location.reload()}
+                onClick={() => setRevision((value) => value + 1)}
               >
                 <RotateCcw aria-hidden="true" /> Reload
               </Button>
@@ -86,7 +87,7 @@ function EmployeeContent({ id }: { id?: string }) {
             {id && (
               <Button
                 variant="outline"
-                onClick={() => window.location.reload()}
+                onClick={() => setRevision((value) => value + 1)}
               >
                 Try Again
               </Button>
@@ -146,7 +147,7 @@ function EmployeeContent({ id }: { id?: string }) {
           <EmployeeDetail
             employee={employee}
             onSaved={setEmployee}
-            onReload={() => window.location.reload()}
+            onReload={() => setRevision((value) => value + 1)}
           />
         )}
       </div>

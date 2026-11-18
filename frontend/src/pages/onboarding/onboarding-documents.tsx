@@ -6,6 +6,7 @@ import { DocumentRow } from "@/components/shared/data-display/document-row";
 import { PaginationControls } from "@/components/shared/navigation/pagination-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { usePrivateDownload } from "@/hooks/use-private-download";
 import { hrRequest } from "@/data/hr-api";
 type Document = { id: string; name: string; size: number; createdAt: string };
 export function OnboardingDocuments({
@@ -23,6 +24,13 @@ export function OnboardingDocuments({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const {
+    downloadId,
+    error: downloadError,
+    download: downloadFile,
+    clearError: clearDownloadError,
+  } = usePrivateDownload();
+  const isBusy = saving || downloadId !== null;
   const busy = useRef(false);
   const uploadId = useRef(crypto.randomUUID());
   const base = `onboarding/${onboardingId}/documents`;
@@ -46,7 +54,7 @@ export function OnboardingDocuments({
   }, [base, page, revision]);
   async function upload(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy.current) return;
+    if (busy.current || downloadId !== null) return;
     const form = event.currentTarget;
     const data = new FormData(form);
     const file = data.get("document");
@@ -58,6 +66,7 @@ export function OnboardingDocuments({
     busy.current = true;
     setSaving(true);
     setError("");
+    clearDownloadError();
     try {
       await hrRequest(base, { method: "POST", body: data });
       uploadId.current = crypto.randomUUID();
@@ -75,29 +84,15 @@ export function OnboardingDocuments({
   }
   async function download(document: Document) {
     if (busy.current) return;
-    busy.current = true;
-    setSaving(true);
     setError("");
-    try {
-      const blob = (await hrRequest(
+    await downloadFile(document.id, async (signal) => ({
+      blob: (await hrRequest(
         base + "/" + document.id,
-        {},
+        { signal },
         true,
-      )) as Blob;
-      const url = URL.createObjectURL(blob);
-      const link = window.document.createElement("a");
-      link.href = url;
-      link.download = document.name;
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Could not download document.",
-      );
-    } finally {
-      busy.current = false;
-      setSaving(false);
-    }
+      )) as Blob,
+      name: document.name,
+    }));
   }
   return (
     <section className="onboarding-documents">
@@ -107,7 +102,7 @@ export function OnboardingDocuments({
           type="button"
           variant="ghost"
           size="sm"
-          disabled={saving}
+          disabled={isBusy}
           aria-expanded={showUpload}
           aria-controls="onboarding-document-upload"
           onClick={() => setShowUpload((current) => !current)}
@@ -120,7 +115,11 @@ export function OnboardingDocuments({
           PDF or DOCX, up to 10MB per file. Uploading does not automatically
           mark documents verified.
         </p>
-        {error && <FeedbackMessage role="alert">{error}</FeedbackMessage>}
+        {(error || downloadError) && (
+          <FeedbackMessage role="alert">
+            {error || downloadError}
+          </FeedbackMessage>
+        )}
         <form
           id="onboarding-document-upload"
           hidden={!showUpload}
@@ -132,12 +131,12 @@ export function OnboardingDocuments({
             name="document"
             accept=".pdf,.docx"
             required
-            disabled={saving}
+            disabled={isBusy}
             onChange={() => {
               uploadId.current = crypto.randomUUID();
             }}
           />
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={isBusy}>
             {saving ? "Working…" : "Upload document"}
           </Button>
         </form>
@@ -148,7 +147,7 @@ export function OnboardingDocuments({
             <Button
               type="button"
               variant="outline"
-              disabled={saving}
+              disabled={isBusy}
               onClick={() => setShowUpload(true)}
             >
               <Plus aria-hidden="true" /> Add Document
@@ -165,7 +164,7 @@ export function OnboardingDocuments({
                 action={
                   <Button
                     variant="outline"
-                    disabled={saving}
+                    disabled={isBusy}
                     onClick={() => void download(document)}
                   >
                     Download
@@ -177,12 +176,12 @@ export function OnboardingDocuments({
         )}
         <div className="onboarding-document-pagination">
           <PaginationControls
-            previousDisabled={loading || saving || page === 1}
+            previousDisabled={loading || isBusy || page === 1}
             onPrevious={() => {
               setLoading(true);
               setPage((p) => p - 1);
             }}
-            nextDisabled={loading || saving || !more}
+            nextDisabled={loading || isBusy || !more}
             onNext={() => {
               setLoading(true);
               setPage((p) => p + 1);
@@ -190,7 +189,7 @@ export function OnboardingDocuments({
           />
           <Button
             variant="outline"
-            disabled={loading || saving}
+            disabled={loading || isBusy}
             onClick={() => {
               setLoading(true);
               setRevision((v) => v + 1);

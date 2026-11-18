@@ -76,6 +76,17 @@ export function CommunicationPage() {
   >(null);
   const [isSaving, setIsSaving] = useState(false);
   const bodyInput = useRef<HTMLTextAreaElement>(null);
+  const caretFrame = useRef<number | null>(null);
+  function cancelCaretRestore() {
+    if (caretFrame.current !== null) cancelAnimationFrame(caretFrame.current);
+    caretFrame.current = null;
+  }
+  useEffect(
+    () => () => {
+      if (caretFrame.current !== null) cancelAnimationFrame(caretFrame.current);
+    },
+    [],
+  );
   const busy = useRef(false);
   const draftId = useRef<string | null>(null);
   const openedId = useRef<string | null>(searchParams.get("message"));
@@ -151,6 +162,7 @@ export function CommunicationPage() {
     setRevision((value) => value + 1);
   }
   function newMessage() {
+    cancelCaretRestore();
     setSelectedTemplate(null);
     setCurrent(null);
     openedId.current = null;
@@ -162,6 +174,7 @@ export function CommunicationPage() {
     setNotice("");
   }
   function open(record: MessageRecord) {
+    cancelCaretRestore();
     setSelectedTemplate(null);
     setCurrent(record);
     openedId.current = record.id;
@@ -436,9 +449,16 @@ export function CommunicationPage() {
                             setBody(nextBody);
                             setSelectedTemplate(null);
                             if (!current) draftId.current = null;
-                            requestAnimationFrame(() => {
-                              input?.focus();
-                              input?.setSelectionRange(
+                            cancelCaretRestore();
+                            caretFrame.current = requestAnimationFrame(() => {
+                              caretFrame.current = null;
+                              if (
+                                !input?.isConnected ||
+                                input !== bodyInput.current
+                              )
+                                return;
+                              input.focus();
+                              input.setSelectionRange(
                                 start + value.length,
                                 start + value.length,
                               );

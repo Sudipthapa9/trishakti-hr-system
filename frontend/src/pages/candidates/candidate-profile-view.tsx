@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { usePrivateDownload } from "@/hooks/use-private-download";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -36,9 +36,11 @@ export function CandidateProfileView({
   onProfileSaved: (profile: CandidateProfile) => void;
   onStageSaved: (id: string, stage: ApplicationStage) => void;
 }) {
-  const [downloadId, setDownloadId] = useState<string | null>(null);
-  const [downloadError, setDownloadError] = useState("");
-  const downloading = useRef(false);
+  const {
+    downloadId,
+    error: downloadError,
+    download: downloadFile,
+  } = usePrivateDownload();
   const initials = candidate.fullName
     .trim()
     .split(/\s+/)
@@ -47,27 +49,14 @@ export function CandidateProfileView({
     .join("")
     .toUpperCase();
   async function download(id: string) {
-    if (downloading.current) return;
-    downloading.current = true;
-    setDownloadId(id);
-    setDownloadError("");
-    try {
-      const blob = await downloadApplicationResume(id);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download =
-        "candidate-resume" + (blob.type.includes("pdf") ? ".pdf" : ".docx");
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (error) {
-      setDownloadError(
-        error instanceof Error ? error.message : "Could not download CV.",
-      );
-    } finally {
-      downloading.current = false;
-      setDownloadId(null);
-    }
+    await downloadFile(id, async (signal) => {
+      const blob = await downloadApplicationResume(id, signal);
+      return {
+        blob,
+        name:
+          "candidate-resume" + (blob.type.includes("pdf") ? ".pdf" : ".docx"),
+      };
+    });
   }
   return (
     <>
